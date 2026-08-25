@@ -324,6 +324,7 @@ select:focus{outline:2px solid var(--bone);outline-offset:1px}
     <div class="kpi"><span class="kl">Dein Ergebnis</span>
       <span class="kv" id="kE">–</span><span class="kn">Rake − Rewards − Boni</span></div>
   </div>
+  <div id="rewSplit"></div>
   <p class="note" id="resNote"></p>
 </section>
 
@@ -384,7 +385,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 13;
+const VERSION = 14;
 const VDATE   = "25.08.2026";
 
 const BB = 50;
@@ -526,6 +527,13 @@ function model(rebateRate){
     r.hFree   = r.stakeH>0 ? (r.wx*r.wBase)/r.stakeH : Infinity;      // volle Bonusbedingung
     r.hDepFree = r.stakeH>0 ? r.dep/r.stakeH : Infinity;              // 1× Einzahlung umgesetzt
     r.hBust   = r.lossH>0  ? (r.dep+r.amt)/r.lossH    : Infinity;
+    // Vier Bust-Szenarien: Bonus ja/nein × Rewards ja/nein. Der Rebate senkt den
+    // Verlust je Hand, deshalb sitzt er mit Rewards deutlich länger.
+    r.lossRawH = (-r.netRaw/100)*BB;                 // Verlust je Hand ohne alle Rewards
+    r.bustBonusRew   = r.lossH>0     ? (r.dep+r.amt)/r.lossH    : Infinity;
+    r.bustBonusRaw   = r.lossRawH>0  ? (r.dep+r.amt)/r.lossRawH : Infinity;
+    r.bustNoBonusRew = r.lossH>0     ? r.dep/r.lossH            : Infinity;
+    r.bustNoBonusRaw = r.lossRawH>0  ? r.dep/r.lossRawH         : Infinity;
     r.makes   = r.hFree <= r.hBust;
     // Die Handzahl gibst du vor; mehr als bis zum Bust geht nicht
     r.hPlay    = Math.min(r.hands, r.hBust);
@@ -560,15 +568,19 @@ function model(rebateRate){
   const H = bonused.length
     ? Math.max.apply(null, bonused.map(function(r){ return Number.isFinite(r.hPlay)?r.hPlay:0; }))
     : (Number.isFinite(handsDepth)?handsDepth:0);
-  // Rake zählt je Spieler nur solange er sitzt
-  const rakeTotal = rows.reduce(function(a,r){
+  // Je Spieler in Euro über die Session — Rake zählt nur, solange er sitzt.
+  // Von hier kommen alle Summen darunter, damit sie nicht auseinanderlaufen.
+  rows.forEach(function(r){
     const h = r.bon ? Math.min(r.hPlay,H) : H;
-    return a + (Number.isFinite(h)?h:0)*r.rakeH;
-  },0);
-  const rewardCost = rows.reduce(function(a,r){
-    const h = r.bon ? Math.min(r.hPlay,H) : H;
-    return a + (Number.isFinite(h)?h:0)*(r.rewards/100)*BB;
-  },0);
+    r.hSess = Number.isFinite(h) ? h : 0;
+    r.rakeE = r.hSess*r.rakeH;                       // sein Rakebeitrag in €
+    r.backE = r.hSess*(r.back/100)*BB;               // sein Rakeback in €
+    r.rebE  = r.hSess*(r.reb/100)*BB;                // sein Verlust-Rebate in €
+    r.rewE  = r.backE + r.rebE;                      // was er an Rewards bekommt
+    r.netToYou = r.rakeE - r.rewE - (r.bon ? r.bonusCost : 0);
+  });
+  const rakeTotal  = rows.reduce(function(a,r){ return a+r.rakeE; },0);
+  const rewardCost = rows.reduce(function(a,r){ return a+r.rewE;  },0);
   // Alles, was rausgeht, gehört ins Ergebnis: Boni UND Rewards (Rakeback + Rebate)
   const result = rakeTotal - bonusCost - rewardCost;
 
@@ -1181,7 +1193,7 @@ function draw(){
 
   const br = $("bonusResults");
   if(br) br.innerHTML = m.bonused.length ? m.bonused.map(function(r){
-    return '<div class="kpis" style="margin-bottom:10px">'+
+    return '<div class="kpis six" style="margin-bottom:10px">'+
       '<div class="kpi"><span class="kl">'+r.name+' spielt Bonus frei?</span>'+
         '<span class="kv" style="color:'+(r.freed?"var(--reg)":"var(--rake)")+'">'+(r.freed?"Ja":"Nein")+'</span>'+
         '<span class="kn">'+(r.freed?"nach "+kh(r.hFree)+" von "+kh(r.hPlay)+" Händen"
@@ -1190,11 +1202,26 @@ function draw(){
         '<span class="kv" style="color:'+(r.own>0?"var(--rake)":"var(--fish)")+'">'+eur(r.cashOut)+'</span>'+
         '<span class="kn">von '+eur(r.balance)+' Chips · Ergebnis '+eur(r.own)+'</span></div>'+
       '<div class="kpi"><span class="kl">Rake von ihm</span>'+
-        '<span class="kv">'+eur(r.rakeOwn)+'</span>'+
+        '<span class="kv">'+eur(r.rakeE)+'</span>'+
         '<span class="kn">gegen '+eur(r.amt)+' Bonus</span></div>'+
+      '<div class="kpi"><span class="kl">Rewards an ihn</span>'+
+        '<span class="kv" style="color:'+(r.rewE>0?"var(--fish)":"")+'">'+eur(r.rewE)+'</span>'+
+        '<span class="kn">Rakeback '+eur(r.backE)+' · Rebate '+eur(r.rebE)+'</span></div>'+
       '<div class="kpi"><span class="kl">Am Tisch verspielt</span>'+
         '<span class="kv">'+eur(r.dep+r.amt-r.balance)+'</span>'+
         '<span class="kn">davon '+eur(Math.min(r.amt, r.dep+r.amt-r.balance))+' dein Geld</span></div>'+
+      '<div class="kpi"><span class="kl">Bringt dir netto</span>'+
+        '<span class="kv" style="color:'+(r.netToYou>0?"var(--reg)":"var(--rake)")+'">'+eur(r.netToYou)+'</span>'+
+        '<span class="kn">Rake − Rewards − Bonuskosten</span></div>'+
+      '</div>'+
+      '<div class="formula" style="margin:0 0 18px">'+
+        "Hände bis Bust · "+r.name+"\n"+
+        "                        ohne Rewards    mit Rewards\n"+
+        "ohne Bonus".padEnd(24)+kh(r.bustNoBonusRaw).padStart(12)+kh(r.bustNoBonusRew).padStart(15)+"\n"+
+        ("mit Bonus "+eur(r.amt)).padEnd(24)+kh(r.bustBonusRaw).padStart(12)+kh(r.bustBonusRew).padStart(15)+"\n\n"+
+        "Verlust je Hand   ohne Rewards "+eur2(r.lossRawH)+"   mit Rewards "+eur2(r.lossH)+"\n"+
+        "sitzt tatsächlich "+kh(r.hPlay)+" Hände"+
+        (r.overBust ? "   (deine "+kh(r.hands)+" gehen nicht — vorher pleite)" : "")+
       '</div>';
   }).join("") : '<p class="note">Kein Spieler hat einen Bonus.</p>';
 
@@ -1220,6 +1247,34 @@ function draw(){
       "nichts abrufen — auch nicht anteilig. Danach wird alles auf einen Schlag frei."
     : "Zwei Schwellen: Die Einzahlung wird frei, sobald er sie einfach (1×) umgesetzt hat. Der "+
       "Bonus bleibt separat gesperrt, bis die volle Bedingung erfüllt ist.";
+  /* Wer hat was bekommen — jede Auszahlung namentlich, damit die Summe oben
+     nicht als Blackbox dasteht. */
+  (function(){
+    const box = $("rewSplit");
+    if(!box) return;
+    const W2 = 14, W3 = 12;
+    const rowTxt = function(name, back, reb, sum, rake){
+      return String(name).padEnd(10)+eur(back).padStart(W2)+eur(reb).padStart(W3)+
+             eur(sum).padStart(W3)+eur(rake).padStart(W3);
+    };
+    const lines = [
+      "Rewards je Spieler über "+kh(m.H)+" Hände",
+      "",
+      "Spieler".padEnd(10)+"Rakeback".padStart(W2)+"Rebate".padStart(W3)+
+        "Summe".padStart(W3)+"sein Rake".padStart(W3)
+    ];
+    m.rows.forEach(function(r){
+      lines.push(rowTxt(r.name, r.backE, r.rebE, r.rewE, r.rakeE));
+    });
+    const sumBack = m.rows.reduce(function(a,r){ return a+r.backE; },0);
+    const sumReb  = m.rows.reduce(function(a,r){ return a+r.rebE;  },0);
+    lines.push("");
+    lines.push(rowTxt("gesamt", sumBack, sumReb, m.rewardCost, m.rakeTotal));
+    if(m.bonusCost>0) lines.push("\ndazu Bonuskosten "+eur(m.bonusCost)+
+      " → dein Ergebnis "+eur(m.result));
+    box.innerHTML = '<div class="formula" style="margin-top:14px">'+lines.join("\n")+'</div>';
+  })();
+
   $("resNote").innerHTML = m.bonused.length>1
     ? "Bei mehreren Boni läuft der Tisch, bis der letzte durch ist. Wer vorher geht, erzeugt ab dann keinen Rake mehr — das ist eingerechnet."
     : "Rake zählt nur, solange der Spieler tatsächlich am Tisch sitzt.";
