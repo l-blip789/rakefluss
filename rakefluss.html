@@ -139,14 +139,20 @@ select:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <header>
   <h1>Rakefluss</h1>
-  <div class="sub" id="sub">PLO5 · 25/50 · 6-max</div>
+  <div class="sub" id="sub">PLO5</div>
   <div><span class="ver" id="verBadge">V–</span></div>
 </header>
 
-<!-- TISCHGRÖSSE -->
+<!-- TISCH -->
 <section>
-  <span class="lab">Tischgröße</span>
+  <span class="lab">Tisch · Stakes und Größe</span>
   <div class="panel">
+    <div class="fields two" style="margin-bottom:16px">
+      <div class="field"><label for="sb">Small Blind €</label>
+        <input type="text" inputmode="decimal" id="sb"></div>
+      <div class="field"><label for="bb">Big Blind €</label>
+        <input type="text" inputmode="decimal" id="bb"></div>
+    </div>
     <div class="btns">
       <button class="btn" data-grp="seats" data-val="2">2-max · HU</button>
       <button class="btn" data-grp="seats" data-val="3">3-max</button>
@@ -400,10 +406,12 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 15;
+const VERSION = 16;
 const VDATE   = "25.08.2026";
 
-const BB = 50;
+/* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
+   Kommt aus den Eingaben und wird in sanitize() und model() neu gesetzt. */
+let BB = 50;
 
 const DEFAULTS = {
   players: [
@@ -417,7 +425,7 @@ const DEFAULTS = {
   pct:5, cap:2.5, flop:70, median:14,
   rbReg:0, rbFish:0, rebate:0, rebBase:"net",
   wagerBase:"both", lockMode:"both",
-  ceiling:3, depth:250, hph:65, rebH:1000, seats:6,
+  ceiling:3, depth:250, hph:65, rebH:1000, seats:6, sb:25, bb:50,
   goalMode:"ferry", goalVal:-5000, goalWho:5
 };
 
@@ -425,7 +433,7 @@ const DEFAULTS = {
    kommt zurück, sobald der Tisch wieder größer wird. */
 function seated(){ return S.players.slice(0, S.seats); }
 
-const NUMKEYS = ["pct","cap","flop","median","rbReg","rbFish","rebate","ceiling","depth","hph","rebH","goalVal"];
+const NUMKEYS = ["pct","cap","flop","median","rbReg","rbFish","rebate","ceiling","depth","hph","rebH","sb","bb","goalVal"];
 
 /* Jede Zahl muss endlich sein. NaN/null/undefined fallen auf den Startwert zurück,
    sonst bricht ein einziges kaputtes Feld das ganze Rendern ab. */
@@ -456,6 +464,10 @@ function sanitize(o){
              wx:  Math.max(toNum(q.wx,  def.wx), 0.01),
              hands: Math.max(toNum(q.hands, 1000), 1) };
   });
+  // Stakes: der Big Blind ist der Umrechnungskurs, er darf nie 0 werden
+  o.bb = Math.max(o.bb, 0.01);
+  o.sb = Math.max(o.sb, 0);
+  BB = o.bb;
   // Tischgröße erst nach den Spielern — sie kann nie größer sein als die Liste
   o.seats = Math.round(toNum(o.seats, d.seats));
   if(!Number.isFinite(o.seats)) o.seats = d.seats;
@@ -502,6 +514,7 @@ function capFor(target){
 }
 
 function model(rebateRate){
+  BB = Math.max(S.bb, 0.01);
   const t = tableRake(S.cap, S.pct);
   const PL = seated();
   const invCount = PL.filter(p=>p.inv>0).length;
@@ -623,6 +636,11 @@ const sbb = n => Number.isFinite(n) ? (n>=0?"+":"−")+Math.abs(n).toFixed(1) : 
 const kh  = n => !isFinite(n) ? "∞" : (n>=10000 ? (n/1000).toFixed(1)+"k" : Math.round(n).toLocaleString("de-DE"));
 const parseNum = v => { const n = parseFloat(String(v).replace("−","-").replace(",",".")); return Number.isFinite(n)?n:0; };
 const fx = (n,d) => Number.isFinite(n) ? n.toFixed(d) : "–";
+/* Stakes lesbar: 0,25 bleibt 0,25 — 2000 wird nicht zu 2000,00 */
+const fmtStake = n => Number.isFinite(n)
+  ? (Math.abs(n%1)<1e-9 ? n.toLocaleString("de-DE")
+                        : n.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2}))
+  : "–";
 
 /* ── Spielertabelle einmalig bauen ───────────────────────── */
 const rowsEl = document.getElementById("rows");
@@ -653,7 +671,7 @@ buildRows();
 
 /* ── Verdrahtung ─────────────────────────────────────────── */
 const $ = id => document.getElementById(id);
-const NUMS = ["pct","cap","flop","median","deposit","bonus","wagerX","invBB","ceiling","depth","hph","rebH","goalVal"];
+const NUMS = ["pct","cap","flop","median","ceiling","depth","hph","rebH","sb","bb","goalVal"];
 const RANGES = ["rbReg","rbFish","rebate"];
 
 function fillInputs(){
@@ -928,7 +946,8 @@ function draw(){
   scenRefresh();
   const W = m.whale.name;
 
-  $("sub").textContent = "PLO5 · 25/50 · "+
+  const stakes = fmtStake(S.sb)+"/"+fmtStake(S.bb);
+  $("sub").textContent = "PLO5 · "+stakes+" · "+
     (S.seats===2 ? "Heads-up" : S.seats+"-max")+" · Whale: "+W;
 
   /* Tischgröße */
@@ -1073,7 +1092,7 @@ function draw(){
       const baseName = S.rebBase==="gross" ? "Verlust vor Rake" : "Verlust nach Rake";
       const rebNow = baseBB<0 ? -e(baseBB)*(S.rebate/100) : 0;
       const lines = [
-        r.name+" · "+N.toLocaleString("de-DE")+" Hände · bb = €"+BB,
+        r.name+" · "+N.toLocaleString("de-DE")+" Hände · 1 bb = €"+fmtStake(BB),
         "",
         L("Brutto verloren",  eur(e(r.gross)),   sbb(r.gross)+" bb/100"),
         L("Rake gezahlt",     eur(-e(r.rakePaid)), "−"+fx(r.rakePaid,1)+" bb/100"),
