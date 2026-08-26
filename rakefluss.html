@@ -199,11 +199,15 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
       <button class="btn" id="ioDump">Aktuelles kopieren</button>
       <button class="btn" id="ioClear">Feld leeren</button>
     </div>
+    <div class="btns" style="margin-top:8px">
+      <button class="btn" id="ioRakeBtn"></button>
+    </div>
     <div class="flash" id="ioFlash"></div>
-    <p class="note" id="ioNote">Einlesen überschreibt alle Eingaben oben — vorher bei
-      Bedarf als Szenario speichern. „Aktuelles kopieren“ gibt dir den Block für dieses
-      Setup, damit du ihn auf einem anderen Gerät oder in einem anderen Browser wieder
-      einlesen kannst.</p>
+    <p class="note" id="ioNote"><b>Rake % und Cap werden beim Einlesen nicht angefasst.</b>
+      Sie sind deine Setzung, keine Messung — ein Block kann sie nicht überschreiben,
+      solange der Knopf darüber auf „aus“ steht. Alles andere wird überschrieben, also
+      vorher bei Bedarf als Szenario speichern. „Aktuelles kopieren“ gibt dir den Block
+      für dieses Setup, für ein anderes Gerät oder einen anderen Browser.</p>
   </div>
 </section>
 
@@ -435,7 +439,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 17;
+const VERSION = 18;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -964,6 +968,25 @@ function ioFlash(msg, bad){
   clearTimeout(ioFlash._t);
   ioFlash._t = setTimeout(function(){ f.textContent=""; }, 6000);
 }
+/* Rake % und Cap sind Leos Setzung, nicht aus Daten gemessen. Der Import lässt
+   sie deshalb in Ruhe — nur wenn dieser Schalter an ist, kommen sie mit.
+   Absichtlich keine Zustandsgröße: nichts, was ein Block umstellen könnte. */
+let ioTakeRake = false;
+function ioRakeLabel(){
+  const b = $("ioRakeBtn");
+  if(!b) return;
+  b.textContent = "Rake % und Cap mit einlesen: "+(ioTakeRake?"an":"aus");
+  b.classList.toggle("on", ioTakeRake);
+}
+$("ioRakeBtn").addEventListener("click", function(){
+  ioTakeRake = !ioTakeRake;
+  ioRakeLabel();
+  ioFlash(ioTakeRake
+    ? "Achtung: der nächste Block überschreibt jetzt auch Rake % und Cap."
+    : "Rake % und Cap sind wieder geschützt.");
+});
+ioRakeLabel();
+
 $("srcTxt").addEventListener("input", function(e){ S.src = e.target.value; render(); });
 $("ioClear").addEventListener("click", function(){ $("ioBox").value = ""; ioFlash(""); });
 $("ioDump").addEventListener("click", function(){
@@ -994,13 +1017,23 @@ $("ioLoad").addEventListener("click", function(){
   const used = known.filter(function(k){ return state[k] !== undefined; });
   const unknown = Object.keys(state).filter(function(k){ return known.indexOf(k) < 0; });
   if(!used.length){ ioFlash("Keine bekannten Felder im Block gefunden.", true); return; }
+  const keepRake = { pct:S.pct, cap:S.cap };
   S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), state));
+  var rakeMsg = "";
+  if(!ioTakeRake){
+    S.pct = keepRake.pct; S.cap = keepRake.cap;
+    const hadRake = state.pct !== undefined || state.cap !== undefined;
+    rakeMsg = " · Rake "+fx(S.pct,2)+" % / Cap "+fx(S.cap,2)+" bb unverändert"+
+              (hadRake ? " (im Block standen andere Werte, ignoriert)" : "");
+  } else {
+    rakeMsg = " · Rake und Cap mit übernommen";
+  }
   if(name && !S.src) S.src = name;
   pickSig = ""; blockSig = "";
   buildRows();
   render();
   if(name) $("scenName").value = name;
-  ioFlash("Eingelesen: "+used.length+" Felder, "+S.seats+" Plätze"+
+  ioFlash("Eingelesen: "+used.length+" Felder, "+S.seats+" Plätze"+rakeMsg+
     (unknown.length ? " · ignoriert: "+unknown.join(", ") : "")+
     (name ? " · Name „"+name+"“ steht im Szenario-Feld" : ""));
 });
