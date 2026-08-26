@@ -153,11 +153,13 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 <section>
   <span class="lab">Tisch · Stakes und Größe</span>
   <div class="panel">
-    <div class="fields two" style="margin-bottom:16px">
+    <div class="fields" style="margin-bottom:16px">
       <div class="field"><label for="sb">Small Blind €</label>
         <input type="text" inputmode="decimal" id="sb"></div>
       <div class="field"><label for="bb">Big Blind €</label>
         <input type="text" inputmode="decimal" id="bb"></div>
+      <div class="field"><label for="gameTxt">Spielart</label>
+        <input type="text" id="gameTxt" class="nm" placeholder="PLO5"></div>
     </div>
     <div class="btns">
       <button class="btn" data-grp="seats" data-val="2">2-max · HU</button>
@@ -439,7 +441,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 18;
+const VERSION = 20;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -458,7 +460,7 @@ const DEFAULTS = {
   pct:5, cap:2.5, flop:70, median:14,
   rbReg:0, rbFish:0, rebate:0, rebBase:"net",
   wagerBase:"both", lockMode:"both",
-  ceiling:3, depth:250, hph:65, rebH:1000, seats:6, sb:25, bb:50, src:"",
+  ceiling:3, depth:250, hph:65, rebH:1000, seats:6, sb:25, bb:50, src:"", game:"PLO5",
   goalMode:"ferry", goalVal:-5000, goalWho:5
 };
 
@@ -498,6 +500,7 @@ function sanitize(o){
              hands: Math.max(toNum(q.hands, 1000), 1) };
   });
   o.src = typeof o.src === "string" ? o.src.slice(0,220) : "";
+  o.game = (typeof o.game === "string" && o.game.trim()) ? o.game.trim().slice(0,24) : d.game;
   // Stakes: der Big Blind ist der Umrechnungskurs, er darf nie 0 werden
   o.bb = Math.max(o.bb, 0.01);
   o.sb = Math.max(o.sb, 0);
@@ -988,6 +991,7 @@ $("ioRakeBtn").addEventListener("click", function(){
 ioRakeLabel();
 
 $("srcTxt").addEventListener("input", function(e){ S.src = e.target.value; render(); });
+$("gameTxt").addEventListener("input", function(e){ S.game = e.target.value; render(); });
 $("ioClear").addEventListener("click", function(){ $("ioBox").value = ""; ioFlash(""); });
 $("ioDump").addEventListener("click", function(){
   const box = $("ioBox");
@@ -1017,6 +1021,14 @@ $("ioLoad").addEventListener("click", function(){
   const used = known.filter(function(k){ return state[k] !== undefined; });
   const unknown = Object.keys(state).filter(function(k){ return known.indexOf(k) < 0; });
   if(!used.length){ ioFlash("Keine bekannten Felder im Block gefunden.", true); return; }
+  // Ein Spieler ohne "gross" im Block bekommt 0, nicht den Startwert aus DEFAULTS.
+  // Sonst liest man die Beispielzahlen (12, −47 …) als gemessene Winrates.
+  if(Array.isArray(state.players)) state.players = state.players.map(function(q){
+    const o = (q && typeof q === "object") ? Object.assign({}, q) : {};
+    if(o.gross === undefined || o.gross === null || o.gross === "") o.gross = 0;
+    if(o.bon === undefined) o.bon = false;
+    return o;
+  });
   const keepRake = { pct:S.pct, cap:S.cap };
   S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), state));
   var rakeMsg = "";
@@ -1067,8 +1079,11 @@ function draw(){
   const srcIn = $("srcTxt");
   if(srcIn && document.activeElement!==srcIn) srcIn.value = S.src;
 
+  const gIn = $("gameTxt");
+  if(gIn && document.activeElement!==gIn) gIn.value = S.game;
+
   const stakes = fmtStake(S.sb)+"/"+fmtStake(S.bb);
-  $("sub").textContent = "PLO5 · "+stakes+" · "+
+  $("sub").textContent = S.game+" · "+stakes+" · "+
     (S.seats===2 ? "Heads-up" : S.seats+"-max")+" · Whale: "+W;
 
   /* Tischgröße */
@@ -1126,6 +1141,21 @@ function draw(){
     if(!box) return;
     const sum = m.grossSum, win = m.grossWin, los = m.grossLoss;
     box.style.display = "";
+    // Sonderfall Import: Winrates absichtlich nicht übernommen (zu varianzbehaftet).
+    // Dann ist die Bilanz trivial null — das darf nicht als „alles gut“ dastehen.
+    if(m.rows.every(function(r){ return Math.abs(r.gross) < 0.005; })){
+      box.dataset.key = "";
+      box.className = "warn";
+      box.innerHTML = "<b>Keine Winrates eingetragen.</b> Die Rakeverteilung stimmt trotzdem — "+
+        "sie läuft über Invested bb/Hand, und das ist gemessen. Alles, was auf Verlust aufbaut, "+
+        "bleibt aber leer: Netto, Rebate, Hände bis Bust, dein Ergebnis. Trag in der Spalte "+
+        "<b>Brutto</b> deine Annahme ein — aus Handdaten kommen Winrates absichtlich nicht, "+
+        "sie brauchen zehntausende Hände, um etwas zu bedeuten.";
+      if(rowsEl) rowsEl.querySelectorAll('[data-f="gross"]').forEach(function(el){
+        el.classList.remove("bad");
+      });
+      return;
+    }
     const off = Math.abs(sum) > 0.5;
     // Brutto-Felder mitmarkieren: die Zahlen selbst sind das Problem, nicht die Zeile
     if(rowsEl) rowsEl.querySelectorAll('[data-f="gross"]').forEach(function(el){
