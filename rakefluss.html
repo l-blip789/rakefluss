@@ -127,6 +127,11 @@ select{background:var(--surface2);border:1px solid var(--line);color:var(--bone)
   background-position:calc(100% - 15px) 18px,calc(100% - 10px) 18px;
   background-size:5px 5px,5px 5px;background-repeat:no-repeat}
 select:focus{outline:2px solid var(--bone);outline-offset:1px}
+textarea{background:var(--surface2);border:1px solid var(--line);color:var(--bone);
+  font-family:var(--mono);font-size:13px;padding:9px;width:100%;border-radius:0;
+  resize:vertical;line-height:1.45}
+textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
+.srcline{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:6px}
 .savebar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .savebar input{flex:1;min-width:130px;width:auto;text-align:left}
 .flash{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:8px;min-height:14px}
@@ -141,6 +146,7 @@ select:focus{outline:2px solid var(--bone);outline-offset:1px}
   <h1>Rakefluss</h1>
   <div class="sub" id="sub">PLO5</div>
   <div><span class="ver" id="verBadge">V–</span></div>
+  <div class="srcline" id="srcLine"></div>
 </header>
 
 <!-- TISCH -->
@@ -175,6 +181,29 @@ select:focus{outline:2px solid var(--bone);outline-offset:1px}
       <button class="btn" id="scenDel">Löschen</button>
     </div>
     <div class="flash" id="scenFlash"></div>
+  </div>
+</section>
+
+<!-- DATEN ÜBERNEHMEN -->
+<section>
+  <span class="lab">Daten übernehmen · aus Handdaten gerechnet</span>
+  <div class="panel">
+    <div class="field" style="margin-bottom:12px">
+      <label for="srcTxt">Quelle / Notiz</label>
+      <input type="text" id="srcTxt" class="nm" style="width:100%;max-width:none"
+        placeholder="z. B. 25/50 PLO5, 17.–23.08., 36.863 Hände">
+    </div>
+    <textarea id="ioBox" rows="4" placeholder="JSON-Block hier einfügen und auf Einlesen tippen"></textarea>
+    <div class="savebar">
+      <button class="btn" id="ioLoad">Einlesen</button>
+      <button class="btn" id="ioDump">Aktuelles kopieren</button>
+      <button class="btn" id="ioClear">Feld leeren</button>
+    </div>
+    <div class="flash" id="ioFlash"></div>
+    <p class="note" id="ioNote">Einlesen überschreibt alle Eingaben oben — vorher bei
+      Bedarf als Szenario speichern. „Aktuelles kopieren“ gibt dir den Block für dieses
+      Setup, damit du ihn auf einem anderen Gerät oder in einem anderen Browser wieder
+      einlesen kannst.</p>
   </div>
 </section>
 
@@ -406,7 +435,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 16;
+const VERSION = 17;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -425,7 +454,7 @@ const DEFAULTS = {
   pct:5, cap:2.5, flop:70, median:14,
   rbReg:0, rbFish:0, rebate:0, rebBase:"net",
   wagerBase:"both", lockMode:"both",
-  ceiling:3, depth:250, hph:65, rebH:1000, seats:6, sb:25, bb:50,
+  ceiling:3, depth:250, hph:65, rebH:1000, seats:6, sb:25, bb:50, src:"",
   goalMode:"ferry", goalVal:-5000, goalWho:5
 };
 
@@ -464,6 +493,7 @@ function sanitize(o){
              wx:  Math.max(toNum(q.wx,  def.wx), 0.01),
              hands: Math.max(toNum(q.hands, 1000), 1) };
   });
+  o.src = typeof o.src === "string" ? o.src.slice(0,220) : "";
   // Stakes: der Big Blind ist der Umrechnungskurs, er darf nie 0 werden
   o.bb = Math.max(o.bb, 0.01);
   o.sb = Math.max(o.sb, 0);
@@ -922,6 +952,59 @@ $("scenDel").addEventListener("click", ()=>{
   flash('"'+name+'" gelöscht.');
 });
 
+/* ── Daten übernehmen ───────────────────────────────────────
+   Nimmt einen JSON-Block: entweder direkt ein Setup, oder
+   {name:"...", state:{...}}. Alles läuft durch sanitize(), ein
+   fehlendes Feld behält seinen Startwert. */
+function ioFlash(msg, bad){
+  const f = $("ioFlash");
+  if(!f) return;
+  f.textContent = msg;
+  f.style.color = bad ? "var(--rake)" : "var(--reg)";
+  clearTimeout(ioFlash._t);
+  ioFlash._t = setTimeout(function(){ f.textContent=""; }, 6000);
+}
+$("srcTxt").addEventListener("input", function(e){ S.src = e.target.value; render(); });
+$("ioClear").addEventListener("click", function(){ $("ioBox").value = ""; ioFlash(""); });
+$("ioDump").addEventListener("click", function(){
+  const box = $("ioBox");
+  box.value = JSON.stringify(S);
+  box.focus(); box.select();
+  try { document.execCommand("copy"); } catch(e){}
+  // writeText liefert ein Promise; ohne catch knallt es als unbehandelter Fehler,
+  // sobald der Browser die Zwischenablage verweigert.
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    try { const pr = navigator.clipboard.writeText(box.value);
+          if(pr && pr.catch) pr.catch(function(){}); } catch(e){}
+  }
+  ioFlash("Block steht im Feld und ist markiert — kopieren mit Strg+C.");
+});
+$("ioLoad").addEventListener("click", function(){
+  const raw = $("ioBox").value.trim();
+  if(!raw){ ioFlash("Erst einen JSON-Block einfügen.", true); return; }
+  var obj;
+  try { obj = JSON.parse(raw); }
+  catch(err){ ioFlash("Kein gültiges JSON: "+(err.message||err), true); return; }
+  if(!obj || typeof obj !== "object" || Array.isArray(obj)){
+    ioFlash("Der Block muss ein Objekt sein, keine Liste.", true); return;
+  }
+  const name = typeof obj.name === "string" ? obj.name : "";
+  const state = (obj.state && typeof obj.state === "object") ? obj.state : obj;
+  const known = Object.keys(DEFAULTS);
+  const used = known.filter(function(k){ return state[k] !== undefined; });
+  const unknown = Object.keys(state).filter(function(k){ return known.indexOf(k) < 0; });
+  if(!used.length){ ioFlash("Keine bekannten Felder im Block gefunden.", true); return; }
+  S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), state));
+  if(name && !S.src) S.src = name;
+  pickSig = ""; blockSig = "";
+  buildRows();
+  render();
+  if(name) $("scenName").value = name;
+  ioFlash("Eingelesen: "+used.length+" Felder, "+S.seats+" Plätze"+
+    (unknown.length ? " · ignoriert: "+unknown.join(", ") : "")+
+    (name ? " · Name „"+name+"“ steht im Szenario-Feld" : ""));
+});
+
 $("minCapBtn").addEventListener("click", ()=>{ S.cap = capFor(model(S.rebate).minR); render(); });
 
 /* ── Zeichnen ────────────────────────────────────────────── */
@@ -945,6 +1028,11 @@ function draw(){
   fillInputs();
   scenRefresh();
   const W = m.whale.name;
+
+  const srcEl = $("srcLine");
+  if(srcEl) srcEl.textContent = S.src ? "Daten: "+S.src : "";
+  const srcIn = $("srcTxt");
+  if(srcIn && document.activeElement!==srcIn) srcIn.value = S.src;
 
   const stakes = fmtStake(S.sb)+"/"+fmtStake(S.bb);
   $("sub").textContent = "PLO5 · "+stakes+" · "+
