@@ -441,7 +441,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 21;
+const VERSION = 22;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -467,6 +467,18 @@ const DEFAULTS = {
 /* Am Tisch sitzen die ersten S.seats Zeilen. Der Rest bleibt gespeichert und
    kommt zurück, sobald der Tisch wieder größer wird. */
 function seated(){ return S.players.slice(0, S.seats); }
+
+/* Ein leerer Platz: keine Winrate, kein Invested — nichts, was man für gemessen
+   halten könnte. VPIP 40 nur, damit der Rakeschlüssel nicht durch 0 teilt. */
+function neutralPlayer(i){
+  return { name:"Spieler "+(i+1), gross:0, vpip:40, inv:0, reg:true, bon:false,
+           dep:0, amt:0, wx:4, hands:1000 };
+}
+/* Tisch größer als die Spielerliste? Dann Plätze anlegen statt die Auswahl zu
+   verweigern — ein eingelesener Heads-up-Block hat nur zwei Zeilen. */
+function padPlayers(n){
+  while(S.players.length < n) S.players.push(neutralPlayer(S.players.length));
+}
 
 const NUMKEYS = ["pct","cap","flop","median","rbReg","rbFish","rebate","ceiling","depth","hph","rebH","sb","bb","goalVal"];
 
@@ -508,7 +520,11 @@ function sanitize(o){
   // Tischgröße erst nach den Spielern — sie kann nie größer sein als die Liste
   o.seats = Math.round(toNum(o.seats, d.seats));
   if(!Number.isFinite(o.seats)) o.seats = d.seats;
-  o.seats = Math.max(2, Math.min(o.players.length, o.seats));
+  o.seats = Math.max(2, Math.min(6, o.seats));
+  // Fehlt für einen Platz eine Zeile, wird sie angelegt — nicht der Tisch gekürzt
+  while(o.players.length < o.seats)
+    o.players.push({ name:"Spieler "+(o.players.length+1), gross:0, vpip:40, inv:0,
+                     reg:true, bon:false, dep:0, amt:0, wx:4, hands:1000 });
   o.goalWho = Number.isFinite(Number(o.goalWho))
     ? Math.max(0, Math.min(o.seats-1, Math.round(Number(o.goalWho)))) : 0;
   return o;
@@ -771,7 +787,8 @@ rowsEl.addEventListener("click", e=>{
 document.querySelectorAll("[data-grp]").forEach(b=>{
   b.addEventListener("click", ()=>{
     if(b.dataset.grp==="seats"){
-      S.seats = Math.max(2, Math.min(S.players.length, +b.dataset.val));
+      S.seats = Math.max(2, Math.min(6, +b.dataset.val));
+      padPlayers(S.seats);
       seatFish(S.seats);
       render();
       return;
