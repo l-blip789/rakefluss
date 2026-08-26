@@ -441,7 +441,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 20;
+const VERSION = 21;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -1006,14 +1006,70 @@ $("ioDump").addEventListener("click", function(){
   }
   ioFlash("Block steht im Feld und ist markiert — kopieren mit Strg+C.");
 });
+/* Sucht in einem beliebigen Text alle vollständigen {...}-Objekte. Damit darf man
+   auch eine ganze Datei mit Kopfzeilen und mehreren Blöcken einwerfen. Anführungs-
+   zeichen und Escapes werden mitgezählt, sonst zählt eine Klammer im Text mit. */
+function jsonBlocks(text){
+  // Sucht das Ende des Objekts, das bei "from" beginnt. -1, wenn es nicht schließt.
+  const closeAt = function(from){
+    var depth = 0, inStr = false, esc = false;
+    for(var i=from;i<text.length;i++){
+      const c = text[i];
+      if(inStr){
+        if(esc) esc = false;
+        else if(c === "\\") esc = true;
+        else if(c === '"') inStr = false;
+        continue;
+      }
+      if(c === '"'){ inStr = true; continue; }
+      if(c === "{") depth++;
+      else if(c === "}"){ depth--; if(depth === 0) return i; }
+    }
+    return -1;
+  };
+  const out = [];
+  var i = 0;
+  while(i < text.length){
+    if(text[i] !== "{"){ i++; continue; }
+    const end = closeAt(i);
+    // Schließt von hier aus nichts, war es eine Klammer aus dem Fließtext —
+    // eine Stelle weiterrücken und erneut versuchen, nicht abbrechen.
+    if(end < 0){ i++; continue; }
+    var ok = false;
+    try {
+      const o = JSON.parse(text.slice(i, end+1));
+      if(o && typeof o === "object" && !Array.isArray(o)){ out.push(o); ok = true; }
+    } catch(e){}
+    // Klammer aus einem Notiztext: weitersuchen ab dem nächsten Zeichen
+    i = ok ? end+1 : i+1;
+  }
+  return out;
+}
+
 $("ioLoad").addEventListener("click", function(){
   const raw = $("ioBox").value.trim();
   if(!raw){ ioFlash("Erst einen JSON-Block einfügen.", true); return; }
-  var obj;
-  try { obj = JSON.parse(raw); }
-  catch(err){ ioFlash("Kein gültiges JSON: "+(err.message||err), true); return; }
-  if(!obj || typeof obj !== "object" || Array.isArray(obj)){
-    ioFlash("Der Block muss ein Objekt sein, keine Liste.", true); return;
+  var obj = null, extra = "";
+  try { const direct = JSON.parse(raw);
+        if(direct && typeof direct === "object" && !Array.isArray(direct)) obj = direct; } catch(e){}
+  if(!obj){
+    // Ganze Datei eingeworfen? Dann die enthaltenen Blöcke herausziehen.
+    const found = jsonBlocks(raw).filter(function(o){
+      const st = (o.state && typeof o.state === "object") ? o.state : o;
+      return Object.keys(DEFAULTS).some(function(k){ return st[k] !== undefined; });
+    });
+    if(!found.length){
+      ioFlash("Kein verwertbarer Block gefunden — im Text steht kein vollständiges "+
+              "{…} mit bekannten Feldern.", true); return;
+    }
+    obj = found[0];
+    if(found.length > 1){
+      const names = found.map(function(o,i){
+        return (i+1)+". "+(o.name || (o.state && o.state.src) || "ohne Namen");
+      }).join(" · ");
+      extra = " · "+found.length+" Blöcke im Text, den ersten genommen ("+names+
+              "). Für einen anderen nur dessen Zeile einfügen.";
+    }
   }
   const name = typeof obj.name === "string" ? obj.name : "";
   const state = (obj.state && typeof obj.state === "object") ? obj.state : obj;
@@ -1045,7 +1101,7 @@ $("ioLoad").addEventListener("click", function(){
   buildRows();
   render();
   if(name) $("scenName").value = name;
-  ioFlash("Eingelesen: "+used.length+" Felder, "+S.seats+" Plätze"+rakeMsg+
+  ioFlash("Eingelesen: "+used.length+" Felder, "+S.seats+" Plätze"+rakeMsg+extra+
     (unknown.length ? " · ignoriert: "+unknown.join(", ") : "")+
     (name ? " · Name „"+name+"“ steht im Szenario-Feld" : ""));
 });
