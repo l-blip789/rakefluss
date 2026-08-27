@@ -227,6 +227,10 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
       <span class="big" id="r100">–</span>
       <span class="unit" id="r100note"></span>
     </div>
+    <div class="btns" id="hintWrap" style="margin-top:14px;display:none">
+      <button class="btn" id="hintBtn"></button>
+    </div>
+    <p class="note" id="hintNote"></p>
   </div>
 </section>
 
@@ -441,7 +445,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 22;
+const VERSION = 24;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -460,7 +464,7 @@ const DEFAULTS = {
   pct:5, cap:2.5, flop:70, median:14,
   rbReg:0, rbFish:0, rebate:0, rebBase:"net",
   wagerBase:"both", lockMode:"both",
-  ceiling:3, depth:250, hph:65, rebH:1000, seats:6, sb:25, bb:50, src:"", game:"PLO5",
+  ceiling:3, depth:250, hph:65, rebH:1000, pctHint:0, capHint:0, seats:6, sb:25, bb:50, src:"", game:"PLO5", dataSeats:0,
   goalMode:"ferry", goalVal:-5000, goalWho:5
 };
 
@@ -513,6 +517,12 @@ function sanitize(o){
   });
   o.src = typeof o.src === "string" ? o.src.slice(0,220) : "";
   o.game = (typeof o.game === "string" && o.game.trim()) ? o.game.trim().slice(0,24) : d.game;
+  // An wie vielen Plätzen die eingelesenen Daten gemessen wurden. 0 = keine Daten.
+  o.dataSeats = Math.max(0, Math.min(6, Math.round(toNum(o.dataSeats, 0))));
+  // Aus den Handdaten gemessene Rakestruktur. Nur Hinweis, wird nie angewendet —
+  // erst wenn Leo im Block „Rakestruktur“ auf Übernehmen tippt.
+  o.pctHint = toNum(o.pctHint, 0);
+  o.capHint = toNum(o.capHint, 0);
   // Stakes: der Big Blind ist der Umrechnungskurs, er darf nie 0 werden
   o.bb = Math.max(o.bb, 0.01);
   o.sb = Math.max(o.sb, 0);
@@ -1063,29 +1073,62 @@ function jsonBlocks(text){
   return out;
 }
 
+/* Ein Spieler ohne "gross" im Block bekommt 0, nicht den Startwert aus DEFAULTS.
+   Sonst liest man die Beispielzahlen (12, −47 …) als gemessene Winrates. */
+function prepPlayers(st){
+  const o = Object.assign({}, st);
+  if(Array.isArray(o.players)) o.players = o.players.map(function(q){
+    const q2 = (q && typeof q === "object") ? Object.assign({}, q) : {};
+    if(q2.gross === undefined || q2.gross === null || q2.gross === "") q2.gross = 0;
+    if(q2.bon === undefined) q2.bon = false;
+    return q2;
+  });
+  return o;
+}
+
 $("ioLoad").addEventListener("click", function(){
   const raw = $("ioBox").value.trim();
   if(!raw){ ioFlash("Erst einen JSON-Block einfügen.", true); return; }
   var obj = null, extra = "";
   try { const direct = JSON.parse(raw);
         if(direct && typeof direct === "object" && !Array.isArray(direct)) obj = direct; } catch(e){}
-  if(!obj){
-    // Ganze Datei eingeworfen? Dann die enthaltenen Blöcke herausziehen.
-    const found = jsonBlocks(raw).filter(function(o){
+  const useful = function(o){
+    const st = (o && o.state && typeof o.state === "object") ? o.state : o;
+    return st && typeof st === "object" &&
+           Object.keys(DEFAULTS).some(function(k){ return st[k] !== undefined; });
+  };
+  // Sammelblock {scenarios:[…]} oder mehrere Objekte im Text: alle als Szenarien
+  // ablegen, das erste laden. So braucht man nur einmal einzufügen.
+  var list = [];
+  if(obj && Array.isArray(obj.scenarios)) list = obj.scenarios.filter(useful);
+  else if(obj && useful(obj)) list = [obj];
+  else list = jsonBlocks(raw).filter(useful);
+  if(!list.length){
+    ioFlash("Kein verwertbarer Block gefunden — im Text steht kein vollständiges "+
+            "{…} mit bekannten Feldern.", true); return;
+  }
+  obj = list[0];
+  if(list.length > 1){
+    const all = scenAll();
+    var saved = [];
+    list.forEach(function(o, i){
       const st = (o.state && typeof o.state === "object") ? o.state : o;
-      return Object.keys(DEFAULTS).some(function(k){ return st[k] !== undefined; });
+      const nm = (typeof o.name === "string" && o.name.trim()) ? o.name.trim()
+               : (typeof st.src === "string" && st.src ? st.src.split(" · ")[0] : "Block "+(i+1));
+      var cand = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)),
+        prepPlayers(st)));
+      if(!ioTakeRake){ cand.pct = S.pct; cand.cap = S.cap; }   // Struktur bleibt deine
+      cand.dataSeats = cand.seats;
+      if(!cand.src) cand.src = nm;
+      all[nm] = cand;
+      saved.push(nm);
     });
-    if(!found.length){
-      ioFlash("Kein verwertbarer Block gefunden — im Text steht kein vollständiges "+
-              "{…} mit bekannten Feldern.", true); return;
-    }
-    obj = found[0];
-    if(found.length > 1){
-      const names = found.map(function(o,i){
-        return (i+1)+". "+(o.name || (o.state && o.state.src) || "ohne Namen");
-      }).join(" · ");
-      extra = " · "+found.length+" Blöcke im Text, den ersten genommen ("+names+
-              "). Für einen anderen nur dessen Zeile einfügen.";
+    if(scenWrite(all)){
+      scenSig = ""; scenRefresh();
+      extra = " · "+saved.length+" Tische als Szenarien gespeichert: "+saved.join(" · ")+
+              " — oben im Menü umschalten";
+    } else {
+      extra = " · Szenarien konnten nicht gespeichert werden (Browser blockiert den Speicher)";
     }
   }
   const name = typeof obj.name === "string" ? obj.name : "";
@@ -1094,16 +1137,8 @@ $("ioLoad").addEventListener("click", function(){
   const used = known.filter(function(k){ return state[k] !== undefined; });
   const unknown = Object.keys(state).filter(function(k){ return known.indexOf(k) < 0; });
   if(!used.length){ ioFlash("Keine bekannten Felder im Block gefunden.", true); return; }
-  // Ein Spieler ohne "gross" im Block bekommt 0, nicht den Startwert aus DEFAULTS.
-  // Sonst liest man die Beispielzahlen (12, −47 …) als gemessene Winrates.
-  if(Array.isArray(state.players)) state.players = state.players.map(function(q){
-    const o = (q && typeof q === "object") ? Object.assign({}, q) : {};
-    if(o.gross === undefined || o.gross === null || o.gross === "") o.gross = 0;
-    if(o.bon === undefined) o.bon = false;
-    return o;
-  });
   const keepRake = { pct:S.pct, cap:S.cap };
-  S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), state));
+  S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), prepPlayers(state)));
   var rakeMsg = "";
   if(!ioTakeRake){
     S.pct = keepRake.pct; S.cap = keepRake.cap;
@@ -1113,6 +1148,9 @@ $("ioLoad").addEventListener("click", function(){
   } else {
     rakeMsg = " · Rake und Cap mit übernommen";
   }
+  // Die Tischgröße, für die diese Messwerte gelten — Invested, Median-Pot und
+  // Flop-Anteil sind an einem Tisch dieser Größe entstanden.
+  S.dataSeats = S.seats;
   if(name && !S.src) S.src = name;
   pickSig = ""; blockSig = "";
   buildRows();
@@ -1124,6 +1162,11 @@ $("ioLoad").addEventListener("click", function(){
 });
 
 $("minCapBtn").addEventListener("click", ()=>{ S.cap = capFor(model(S.rebate).minR); render(); });
+$("hintBtn").addEventListener("click", function(){
+  if(S.pctHint > 0) S.pct = S.pctHint;
+  if(S.capHint > 0) S.cap = S.capHint;
+  render();
+});
 
 /* ── Zeichnen ────────────────────────────────────────────── */
 function render(){
@@ -1164,7 +1207,16 @@ function draw(){
     const n = $("seatsNote");
     if(!n) return;
     const noFish = m.fish.length === 0;
+    const mismatch = S.dataSeats && S.dataSeats !== S.seats;
     n.innerHTML =
+      (mismatch
+        ? "<b style='color:var(--rake)'>Daten passen nicht zur Tischgröße.</b> Invested bb/Hand, "+
+          "Median-Pot und Flop-Anteil sind an einem <b>"+
+          (S.dataSeats===2 ? "Heads-up" : S.dataSeats+"-max")+"</b>-Tisch gemessen, "+
+          "du rechnest gerade "+(S.seats===2 ? "Heads-up" : S.seats+"-max")+". "+
+          "Am kurzen Tisch schiebt jeder mehr Geld pro Hand rein — lies den Block für "+
+          (S.seats===2 ? "Heads-up" : S.seats+"-max")+" ein, statt hier Plätze aufzumachen.<br>"
+        : "")+
       (S.seats===2
         ? "<b>Heads-up.</b> Es zählen die ersten zwei Zeilen. "
         : "Es zählen die ersten <b>"+S.seats+"</b> Zeilen. ")+
@@ -1266,6 +1318,26 @@ function draw(){
   $("r100").textContent = m.t.r100.toFixed(1);
   $("r100note").innerHTML = "bb/100 brutto am Tisch<br>Cap greift ab "+fx(m.t.capPot,0)+
     " bb (€"+Math.round(m.t.capPot*BB).toLocaleString("de-DE")+") · in "+(m.t.pCap*100).toFixed(0)+"% der Hände";
+
+  /* Gemessene Rakestruktur als Angebot — nie automatisch angewendet */
+  (function(){
+    const w = $("hintWrap"), b = $("hintBtn"), n = $("hintNote");
+    if(!w || !b || !n) return;
+    const hp = S.pctHint, hc = S.capHint;
+    if(!(hp > 0) && !(hc > 0)){ w.style.display = "none"; n.textContent = ""; return; }
+    const same = (!(hp>0) || Math.abs(hp-S.pct) < 0.005) && (!(hc>0) || Math.abs(hc-S.cap) < 0.005);
+    const txt = (hp>0 ? fx(hp,2)+" %" : "—")+" / Cap "+(hc>0 ? fx(hc,2)+" bb" : "—");
+    if(same){
+      w.style.display = "none";
+      n.innerHTML = "<b style='color:var(--reg)'>Deine Struktur entspricht den Daten</b> ("+txt+").";
+      return;
+    }
+    w.style.display = "";
+    b.textContent = "Auf "+txt+" setzen";
+    n.innerHTML = "Aus den Handdaten gemessen: <b>"+txt+"</b>. Eingetragen ist "+
+      fx(S.pct,2)+" % / Cap "+fx(S.cap,2)+" bb. Der Knopf übernimmt die gemessenen Werte — "+
+      "sonst bleibt deine Setzung stehen.";
+  })();
 
   /* Obergrenze */
   const bestReg = m.regs.length ? m.regs.reduce((a,b)=>a.netRaw>b.netRaw?a:b) : null;
