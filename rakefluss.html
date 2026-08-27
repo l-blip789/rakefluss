@@ -182,6 +182,7 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
       <input type="text" id="scenName" placeholder="Name, z. B. Ferry Bonus 15k">
       <button class="btn" id="scenSave">Speichern</button>
       <button class="btn" id="scenDel">Löschen</button>
+      <button class="btn" id="scenDelAll">Alle löschen</button>
     </div>
     <div class="flash" id="scenFlash"></div>
   </div>
@@ -190,7 +191,10 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 <!-- DATEN ÜBERNEHMEN -->
 <section>
   <span class="lab">Daten übernehmen · aus Handdaten gerechnet</span>
-  <div class="panel">
+  <div class="btns" style="margin-bottom:10px">
+    <button class="btn" id="ioToggle">öffnen</button>
+  </div>
+  <div class="panel" id="ioPanel" style="display:none">
     <div class="field" style="margin-bottom:12px">
       <label for="srcTxt">Quelle / Notiz</label>
       <input type="text" id="srcTxt" class="nm" style="width:100%;max-width:none"
@@ -446,7 +450,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 25;
+const VERSION = 26;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -991,6 +995,18 @@ $("scenBtns").addEventListener("click", function(e){
   const b = e.target.closest("button");
   if(b && b.dataset.scen !== undefined) loadScen(b.dataset.scen);
 });
+$("scenDelAll").addEventListener("click", ()=>{
+  const all = scenAll();
+  const n = Object.keys(all).length;
+  if(!n){ flash("Es gibt keine Szenarien.", true); return; }
+  if(!confirm("Alle "+n+" Szenarien löschen? Das lässt sich nicht rückgängig machen.")) return;
+  if(scenWrite({})){
+    scenSig = "";
+    $("scenSel").value = ""; $("scenName").value = "";
+    scenRefresh();
+    flash(n+(n===1?" Szenario":" Szenarien")+" gelöscht.");
+  } else flash("Löschen nicht möglich — Browser blockiert den Speicher.", true);
+});
 $("scenDel").addEventListener("click", ()=>{
   const name = $("scenSel").value || $("scenName").value.trim();
   if(!name){ flash("Kein Szenario ausgewählt.", true); return; }
@@ -1017,6 +1033,25 @@ function ioFlash(msg, bad){
   clearTimeout(ioFlash._t);
   ioFlash._t = setTimeout(function(){ f.textContent=""; }, 6000);
 }
+/* Der Import-Block ist zugeklappt, bis man ihn braucht. Der Zustand liegt neben
+   den Eingaben im Gerätespeicher, nicht im Szenario — sonst würde ein
+   eingelesener Block die Ansicht umstellen. */
+const IOKEY = "rakefluss.ioOpen";
+function ioOpenSet(open){
+  const pan = $("ioPanel"), btn = $("ioToggle");
+  if(pan) pan.style.display = open ? "" : "none";
+  if(btn){ btn.textContent = open ? "schließen" : "öffnen"; btn.classList.toggle("on", open); }
+  try { localStorage.setItem(IOKEY, open ? "1" : "0"); } catch(e){}
+}
+$("ioToggle").addEventListener("click", function(){
+  ioOpenSet($("ioPanel").style.display === "none");
+});
+(function(){
+  var open = false;
+  try { open = localStorage.getItem(IOKEY) === "1"; } catch(e){}
+  ioOpenSet(open);
+})();
+
 /* Rake % und Cap sind Leos Setzung, nicht aus Daten gemessen. Der Import lässt
    sie deshalb in Ruhe — nur wenn dieser Schalter an ist, kommen sie mit.
    Absichtlich keine Zustandsgröße: nichts, was ein Block umstellen könnte. */
