@@ -132,6 +132,8 @@ textarea{background:var(--surface2);border:1px solid var(--line);color:var(--bon
   resize:vertical;line-height:1.45}
 textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 .srcline{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:6px}
+/* Unterblock innerhalb einer Karte — trennt Stakes, Größe, Szenarien, Import */
+.part{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}
 .savebar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .savebar input{flex:1;min-width:130px;width:auto;text-align:left}
 .flash{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:8px;min-height:14px}
@@ -149,11 +151,13 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
   <div class="srcline" id="srcLine"></div>
 </header>
 
-<!-- TISCH -->
+<!-- TISCH · alles, was einen Tisch definiert, an einer Stelle -->
 <section>
-  <span class="lab">Tisch · Stakes und Größe</span>
+  <span class="lab">Tisch</span>
   <div class="panel">
-    <div class="fields" style="margin-bottom:16px">
+
+    <span class="sname">Stakes und Spielart</span>
+    <div class="fields" style="margin-top:8px">
       <div class="field"><label for="sb">Small Blind €</label>
         <input type="text" inputmode="decimal" id="sb"></div>
       <div class="field"><label for="bb">Big Blind €</label>
@@ -161,60 +165,60 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
       <div class="field"><label for="gameTxt">Spielart</label>
         <input type="text" id="gameTxt" class="nm" placeholder="PLO5"></div>
     </div>
-    <div class="btns">
-      <button class="btn" data-grp="seats" data-val="2">2-max · HU</button>
-      <button class="btn" data-grp="seats" data-val="3">3-max</button>
-      <button class="btn" data-grp="seats" data-val="4">4-max</button>
-      <button class="btn" data-grp="seats" data-val="5">5-max</button>
-      <button class="btn" data-grp="seats" data-val="6">6-max</button>
-    </div>
-    <p class="note" id="seatsNote"></p>
-  </div>
-</section>
 
-<!-- SZENARIEN -->
-<section>
-  <span class="lab">Szenarien · antippen lädt den Tisch</span>
-  <div class="panel">
-    <div class="btns" id="scenBtns" style="margin-bottom:12px"></div>
-    <select id="scenSel"><option value="">— gespeichertes Szenario laden —</option></select>
-    <div class="savebar">
-      <input type="text" id="scenName" placeholder="Name, z. B. Ferry Bonus 15k">
-      <button class="btn" id="scenSave">Speichern</button>
-      <button class="btn" id="scenDel">Löschen</button>
-      <button class="btn" id="scenDelAll">Alle löschen</button>
+    <div class="part">
+      <span class="sname">Tischgröße</span>
+      <div class="btns" style="margin-top:8px">
+        <button class="btn" data-grp="seats" data-val="2">2-max · HU</button>
+        <button class="btn" data-grp="seats" data-val="3">3-max</button>
+        <button class="btn" data-grp="seats" data-val="4">4-max</button>
+        <button class="btn" data-grp="seats" data-val="5">5-max</button>
+        <button class="btn" data-grp="seats" data-val="6">6-max</button>
+      </div>
+      <p class="note" id="seatsNote"></p>
     </div>
-    <div class="flash" id="scenFlash"></div>
-  </div>
-</section>
 
-<!-- DATEN ÜBERNEHMEN -->
-<section>
-  <span class="lab">Daten übernehmen · aus Handdaten gerechnet</span>
-  <div class="btns" style="margin-bottom:10px">
-    <button class="btn" id="ioToggle">öffnen</button>
-  </div>
-  <div class="panel" id="ioPanel" style="display:none">
-    <div class="field" style="margin-bottom:12px">
-      <label for="srcTxt">Quelle / Notiz</label>
-      <input type="text" id="srcTxt" class="nm" style="width:100%;max-width:none"
-        placeholder="z. B. 25/50 PLO5, 17.–23.08., 36.863 Hände">
+    <div class="part">
+      <span class="sname">Gespeicherte Tische · antippen lädt</span>
+      <div class="btns" id="scenBtns" style="margin-top:8px"></div>
+      <div class="savebar">
+        <input type="text" id="scenName" placeholder="Name, z. B. Ferry Bonus 15k">
+        <button class="btn" id="scenSave">Speichern</button>
+        <button class="btn" id="scenDel">Löschen</button>
+        <button class="btn" id="scenDelAll">Alle löschen</button>
+      </div>
+      <div class="flash" id="scenFlash"></div>
     </div>
-    <textarea id="ioBox" rows="4" placeholder="JSON-Block hier einfügen und auf Einlesen tippen"></textarea>
-    <div class="savebar">
-      <button class="btn" id="ioLoad">Einlesen</button>
-      <button class="btn" id="ioDump">Aktuelles kopieren</button>
-      <button class="btn" id="ioClear">Feld leeren</button>
+
+    <div class="part">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <span class="sname">Daten übernehmen · aus Handdaten gerechnet</span>
+        <button class="btn" id="ioToggle">öffnen</button>
+      </div>
+      <div id="ioPanel" style="display:none;margin-top:12px">
+        <div class="field" style="margin-bottom:12px">
+          <label for="srcTxt">Quelle / Notiz</label>
+          <input type="text" id="srcTxt" class="nm" style="width:100%;max-width:none"
+            placeholder="z. B. 25/50 PLO5, 17.–23.08., 36.863 Hände">
+        </div>
+        <textarea id="ioBox" rows="4" placeholder="JSON-Block hier einfügen und auf Einlesen tippen"></textarea>
+        <div class="savebar">
+          <button class="btn" id="ioLoad">Einlesen</button>
+          <button class="btn" id="ioDump">Aktuelles kopieren</button>
+          <button class="btn" id="ioClear">Feld leeren</button>
+        </div>
+        <div class="btns" style="margin-top:8px">
+          <button class="btn" id="ioRakeBtn"></button>
+        </div>
+        <div class="flash" id="ioFlash"></div>
+        <p class="note" id="ioNote"><b>Rake % und Cap werden beim Einlesen nicht angefasst.</b>
+          Sie sind deine Setzung, keine Messung — ein Block kann sie nicht überschreiben,
+          solange der Knopf darüber auf „aus“ steht. Alles andere wird überschrieben, also
+          vorher bei Bedarf als Szenario speichern. „Aktuelles kopieren“ gibt dir den Block
+          für dieses Setup, für ein anderes Gerät oder einen anderen Browser.</p>
+      </div>
     </div>
-    <div class="btns" style="margin-top:8px">
-      <button class="btn" id="ioRakeBtn"></button>
-    </div>
-    <div class="flash" id="ioFlash"></div>
-    <p class="note" id="ioNote"><b>Rake % und Cap werden beim Einlesen nicht angefasst.</b>
-      Sie sind deine Setzung, keine Messung — ein Block kann sie nicht überschreiben,
-      solange der Knopf darüber auf „aus“ steht. Alles andere wird überschrieben, also
-      vorher bei Bedarf als Szenario speichern. „Aktuelles kopieren“ gibt dir den Block
-      für dieses Setup, für ein anderes Gerät oder einen anderen Browser.</p>
+
   </div>
 </section>
 
@@ -450,7 +454,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 26;
+const VERSION = 27;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -575,10 +579,20 @@ function tableRake(cap, pct){
   const perHand = r*meanPot*ncdf(z-sig)+cap*pCap;
   return { r100: perHand*(S.flop/100)*100, pCap, perHand, capPot: cap/r, meanPot };
 }
-function capFor(target){
-  let lo=0.01, hi=25;
-  for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(tableRake(m,S.pct).r100<target) lo=m; else hi=m; }
-  return Math.round((lo+hi)/2*100)/100;
+/* Welcher Cap bringt den Tisch auf "target" bb/100? Mit festem Rake-Prozentsatz
+   gibt es eine Obergrenze: ohne jeden Cap ist bei pct% x Durchschnittspot Schluss.
+   Vorher lief die Suche stumm gegen 25 bb und log dann. */
+function needFor(target){
+  const big = tableRake(1e7, S.pct).r100;          // praktisch ohne Cap
+  if(!(target > 0)) return { ok:true, cap:0.01, none:true };
+  if(target > big + 1e-9)
+    return { ok:false, maxR100:big, pct:S.pct*target/big };
+  let lo = 0.001, hi = 1e7;
+  for(let i=0;i<90;i++){
+    const m = (lo+hi)/2;
+    if(tableRake(m, S.pct).r100 < target) lo = m; else hi = m;
+  }
+  return { ok:true, cap:Math.round((lo+hi)/2*100)/100 };
 }
 
 function model(rebateRate){
@@ -690,7 +704,7 @@ function model(rebateRate){
   // Alles, was rausgeht, gehört ins Ergebnis: Boni UND Rewards (Rakeback + Rebate)
   const result = rakeTotal - bonusCost - rewardCost;
 
-  return { t, rows, regs, fish, whale, over, maxRegNet, minR, useInv, invCount, playersPerPot,
+  return { t, rows, regs, fish, whale, over, maxRegNet, minR, useInv, invCount, playersPerPot, vSum,
     grossWin, grossLoss, grossSum,
     potAll, opNet100, paidOut, rakeTableH, handsDepth,
     bonused, bonusSum, bonusCost, bonusBack, H, rakeTotal, rewardCost, result };
@@ -935,7 +949,7 @@ function flash(msg, bad){
   clearTimeout(flash._t);
   flash._t = setTimeout(()=>{ f.textContent=""; }, 2600);
 }
-/* Ein Szenario laden — von der Auswahlliste und von den Knöpfen darüber */
+/* Ein Szenario laden — über die Knöpfe im Tisch-Block */
 function loadScen(name){
   const all = scenAll();
   if(!all[name]) return;
@@ -944,7 +958,6 @@ function loadScen(name){
   pickSig = ""; blockSig = "";
   buildRows();
   $("scenName").value = name;
-  $("scenSel").value = name;
   render();
   flash('"'+name+'" geladen.');
 }
@@ -963,14 +976,6 @@ function scenRefresh(){
                '" data-scen="'+n.replace(/"/g,"&quot;")+'">'+n+'</button>';
       }).join("")
     : '<span class="unit">noch kein Szenario gespeichert</span>';
-  const sel = $("scenSel"), keep = sel.value;
-  sel.innerHTML = '<option value="">— gespeichertes Szenario laden —</option>';
-  names.forEach(n=>{
-    const o = document.createElement("option");
-    o.value = n; o.textContent = n;
-    sel.appendChild(o);
-  });
-  if (names.indexOf(keep) >= 0) sel.value = keep;
 }
 $("scenSave").addEventListener("click", ()=>{
   const name = $("scenName").value.trim();
@@ -982,14 +987,10 @@ $("scenSave").addEventListener("click", ()=>{
   if(scenWrite(all)){
     scenSig = "";
     scenRefresh();
-    $("scenSel").value = name;
     flash(exists ? '"'+name+'" überschrieben.' : '"'+name+'" gespeichert.');
   } else {
     flash("Speichern nicht möglich — Browser blockiert den Speicher.", true);
   }
-});
-$("scenSel").addEventListener("change", e=>{
-  if(e.target.value) loadScen(e.target.value);
 });
 $("scenBtns").addEventListener("click", function(e){
   const b = e.target.closest("button");
@@ -1002,21 +1003,21 @@ $("scenDelAll").addEventListener("click", ()=>{
   if(!confirm("Alle "+n+" Szenarien löschen? Das lässt sich nicht rückgängig machen.")) return;
   if(scenWrite({})){
     scenSig = "";
-    $("scenSel").value = ""; $("scenName").value = "";
+    $("scenName").value = "";
     scenRefresh();
     flash(n+(n===1?" Szenario":" Szenarien")+" gelöscht.");
   } else flash("Löschen nicht möglich — Browser blockiert den Speicher.", true);
 });
 $("scenDel").addEventListener("click", ()=>{
-  const name = $("scenSel").value || $("scenName").value.trim();
-  if(!name){ flash("Kein Szenario ausgewählt.", true); return; }
+  const name = $("scenName").value.trim();
+  if(!name){ flash("Erst den Namen eintragen oder den Tisch antippen.", true); return; }
   const all = scenAll();
   if(!all[name]){ flash('"'+name+'" gibt es nicht.', true); return; }
   if(!confirm('"'+name+'" wirklich löschen?')) return;
   delete all[name];
   scenWrite(all);
   scenSig = "";
-  $("scenSel").value = "";
+  $("scenName").value = "";
   scenRefresh();
   flash('"'+name+'" gelöscht.');
 });
@@ -1215,7 +1216,11 @@ $("ioLoad").addEventListener("click", function(){
     (name ? " · Name „"+name+"“ steht im Szenario-Feld" : ""));
 });
 
-$("minCapBtn").addEventListener("click", ()=>{ S.cap = capFor(model(S.rebate).minR); render(); });
+$("minCapBtn").addEventListener("click", ()=>{
+  const need = needFor(model(S.rebate).minR);
+  if(need.ok) S.cap = need.cap;
+  render();
+});
 $("hintBtn").addEventListener("click", function(){
   if(S.pctHint > 0) S.pct = S.pctHint;
   if(S.capHint > 0) S.cap = S.capHint;
@@ -1399,24 +1404,43 @@ function draw(){
   $("maxReg").style.color = m.over.length?"var(--rake)":"var(--reg)";
   $("ceilNote").innerHTML = "bester Reg"+(bestReg?" ("+bestReg.name+")":"")+"<br>"+
     (m.over.length ? m.over.length+" über der Grenze" : "alle unter der Grenze");
-  const showMin = m.over.length>0 && m.minR>0;
+  const need = needFor(m.minR);
+  const showMin = m.minR>0 && need.ok && Math.abs(need.cap-S.cap) > 0.005;
   $("minCapWrap").style.display = showMin?"":"none";
-  if(showMin) $("minCapBtn").textContent = "Cap auf "+capFor(m.minR).toFixed(2)+" bb setzen";
-  $("ceilHint").innerHTML = "Die Grenze legt einen <b>Mindest</b>-Rake fest: mindestens "+
-    fx(m.minR,1)+" bb/100 am Tisch. Nach unten ist alles offen — mehr Rake drückt die Regs weiter, "+
-    "und den Überschuss kannst du per Rebate an "+W+" zurückgeben.";
+  if(showMin) $("minCapBtn").textContent = "Cap auf "+fx(need.cap,2)+" bb setzen";
+  $("ceilHint").innerHTML =
+    "Die Grenze legt einen <b>Mindest</b>-Rake fest: mindestens <b>"+fx(m.minR,1)+
+    " bb/100</b> am Tisch. "+
+    (m.minR<=0
+      ? "Das ist schon erfüllt. "
+      : need.ok
+        ? "Bei "+fx(S.pct,2)+" % brauchst du dafür <b>Cap "+fx(need.cap,2)+" bb</b>"+
+          (need.cap>30 ? " — das ist praktisch ohne Cap" : "")+
+          ", eingetragen ist "+fx(S.cap,2)+" bb. "
+        : "<b style=\'color:var(--rake)\'>Mit "+fx(S.pct,2)+" % ist das nicht erreichbar</b> — "+
+          "selbst ohne jeden Cap gibt der Tisch nur "+fx(need.maxR100,1)+" bb/100. Dafür müsste "+
+          "der Rake auf <b>"+fx(need.pct,2)+" %</b> steigen; am Cap allein liegt es nicht. ")+
+    "Nach unten ist alles offen — mehr Rake drückt die Regs weiter, und den Überschuss kannst "+
+    "du per Rebate an "+W+" zurückgeben.";
 
   /* Rewards */
   $("rbRegV").textContent = S.rbReg+"%";
   $("rbFishV").textContent = S.rbFish+"%";
   $("rebateV").textContent = S.rebate+"%";
+  const L2 = function(a,b){ return String(a).padEnd(18)+b; };
+  const wKey = m.useInv ? m.whale.inv : m.whale.vpip;
+  const wPct = fx(m.whale.share*100,1)+" %";
   $("rebFormula").textContent =
-    "Rake gezahlt  = "+m.t.r100.toFixed(1)+" × Anteil\n"+
-    "Netto n. Rake = Brutto − Rake gezahlt\n"+
-    "Rakeback      = Rake gezahlt × Satz\n"+
-    "Rebate-Basis  = "+(S.rebBase==="gross"?"Brutto-Verlust (vor Rake)":"Netto nach Rake + Rakeback")+"\n"+
-    "Rebate        = −Basis × "+S.rebate+"%   (nur Fische, nur wenn negativ)\n\n"+
-    W+": "+fx(m.whale.gross,1)+" − "+fx(m.whale.rakePaid,1)+
+    L2("Rake am Tisch", m.t.r100.toFixed(1)+" bb/100")+"\n"+
+    L2("Schlüssel", (m.useInv ? "Invested bb/Hand" : "VPIP")+
+       ", Summe aller "+m.rows.length+": "+fx(m.vSum,2))+"\n"+
+    L2("Anteil "+W, fx(wKey,2)+" von "+fx(m.vSum,2)+" = "+wPct)+"\n"+
+    L2("Rake gezahlt", m.t.r100.toFixed(1)+" × "+wPct+" = "+fx(m.whale.rakePaid,1))+"\n"+
+    L2("Netto n. Rake", "Brutto − Rake gezahlt")+"\n"+
+    L2("Rakeback", "Rake gezahlt × Satz")+"\n"+
+    L2("Rebate-Basis", (S.rebBase==="gross"?"Brutto-Verlust (vor Rake)":"Netto nach Rake + Rakeback"))+"\n"+
+    L2("Rebate", "−Basis × "+S.rebate+" %   (nur Fische, nur wenn negativ)")+"\n\n"+
+    W+": "+sbb(m.whale.gross)+" − "+fx(m.whale.rakePaid,1)+
     " + "+fx(m.whale.rewards,1)+" = "+sbb(m.whale.net)+" bb/100";
 
   /* Verlust und Rebate in Geld — freie Handzahl, unabhängig von den Bonusblöcken.
