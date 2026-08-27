@@ -174,8 +174,9 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- SZENARIEN -->
 <section>
-  <span class="lab">Szenarien</span>
+  <span class="lab">Szenarien · antippen lädt den Tisch</span>
   <div class="panel">
+    <div class="btns" id="scenBtns" style="margin-bottom:12px"></div>
     <select id="scenSel"><option value="">— gespeichertes Szenario laden —</option></select>
     <div class="savebar">
       <input type="text" id="scenName" placeholder="Name, z. B. Ferry Bonus 15k">
@@ -445,7 +446,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 24;
+const VERSION = 25;
 const VDATE   = "25.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -930,13 +931,34 @@ function flash(msg, bad){
   clearTimeout(flash._t);
   flash._t = setTimeout(()=>{ f.textContent=""; }, 2600);
 }
+/* Ein Szenario laden — von der Auswahlliste und von den Knöpfen darüber */
+function loadScen(name){
+  const all = scenAll();
+  if(!all[name]) return;
+  S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)),
+                             JSON.parse(JSON.stringify(all[name]))));
+  pickSig = ""; blockSig = "";
+  buildRows();
+  $("scenName").value = name;
+  $("scenSel").value = name;
+  render();
+  flash('"'+name+'" geladen.');
+}
+
 let scenSig = "";
 function scenRefresh(){
   const all = scenAll();
   const names = Object.keys(all).sort((a,b)=>a.localeCompare(b,"de"));
-  const sig = names.join("|");
+  const sig = names.join("|")+"|"+(S.src||"");
   if (sig === scenSig) return;
   scenSig = sig;
+  const bw = $("scenBtns");
+  if(bw) bw.innerHTML = names.length
+    ? names.map(function(n){
+        return '<button class="btn'+(S.src && S.src.indexOf(n)===0 ? " on" : "")+
+               '" data-scen="'+n.replace(/"/g,"&quot;")+'">'+n+'</button>';
+      }).join("")
+    : '<span class="unit">noch kein Szenario gespeichert</span>';
   const sel = $("scenSel"), keep = sel.value;
   sel.innerHTML = '<option value="">— gespeichertes Szenario laden —</option>';
   names.forEach(n=>{
@@ -963,14 +985,11 @@ $("scenSave").addEventListener("click", ()=>{
   }
 });
 $("scenSel").addEventListener("change", e=>{
-  const name = e.target.value;
-  if(!name) return;
-  const all = scenAll();
-  if(!all[name]) return;
-  S = Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), JSON.parse(JSON.stringify(all[name])));
-  $("scenName").value = name;
-  render();
-  flash('"'+name+'" geladen.');
+  if(e.target.value) loadScen(e.target.value);
+});
+$("scenBtns").addEventListener("click", function(e){
+  const b = e.target.closest("button");
+  if(b && b.dataset.scen !== undefined) loadScen(b.dataset.scen);
 });
 $("scenDel").addEventListener("click", ()=>{
   const name = $("scenSel").value || $("scenName").value.trim();
@@ -1125,8 +1144,8 @@ $("ioLoad").addEventListener("click", function(){
     });
     if(scenWrite(all)){
       scenSig = ""; scenRefresh();
-      extra = " · "+saved.length+" Tische als Szenarien gespeichert: "+saved.join(" · ")+
-              " — oben im Menü umschalten";
+      extra = " · "+saved.length+" Tische angelegt — die Knöpfe im Block „Szenarien“ "+
+              "direkt darüber schalten zwischen ihnen um";
     } else {
       extra = " · Szenarien konnten nicht gespeichert werden (Browser blockiert den Speicher)";
     }
