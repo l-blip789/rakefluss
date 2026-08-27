@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -153,21 +153,21 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- TISCH · alles, was einen Tisch definiert, an einer Stelle -->
 <section>
-  <span class="lab">Tisch</span>
+  <span class="lab">Table</span>
   <div class="panel">
 
-    <span class="sname">Stakes und Spielart</span>
+    <span class="sname">Stakes and game</span>
     <div class="fields" style="margin-top:8px">
-      <div class="field"><label for="sb">Small Blind €</label>
+      <div class="field"><label for="sb">Small blind €</label>
         <input type="text" inputmode="decimal" id="sb"></div>
-      <div class="field"><label for="bb">Big Blind €</label>
+      <div class="field"><label for="bb">Big blind €</label>
         <input type="text" inputmode="decimal" id="bb"></div>
-      <div class="field"><label for="gameTxt">Spielart</label>
+      <div class="field"><label for="gameTxt">Game</label>
         <input type="text" id="gameTxt" class="nm" placeholder="PLO5"></div>
     </div>
 
     <div class="part">
-      <span class="sname">Tischgröße</span>
+      <span class="sname">Table size</span>
       <div class="btns" style="margin-top:8px">
         <button class="btn" data-grp="seats" data-val="2">2-max · HU</button>
         <button class="btn" data-grp="seats" data-val="3">3-max</button>
@@ -179,43 +179,43 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
     </div>
 
     <div class="part">
-      <span class="sname">Gespeicherte Tische · antippen lädt</span>
+      <span class="sname">Saved tables · tap to load</span>
       <div class="btns" id="scenBtns" style="margin-top:8px"></div>
       <div class="savebar">
-        <input type="text" id="scenName" placeholder="Name, z. B. Ferry Bonus 15k">
-        <button class="btn" id="scenSave">Speichern</button>
-        <button class="btn" id="scenDel">Löschen</button>
-        <button class="btn" id="scenDelAll">Alle löschen</button>
+        <input type="text" id="scenName" placeholder="Name, e.g. Ferry bonus 15k">
+        <button class="btn" id="scenSave">Save</button>
+        <button class="btn" id="scenDel">Delete</button>
+        <button class="btn" id="scenDelAll">Delete all</button>
       </div>
       <div class="flash" id="scenFlash"></div>
     </div>
 
     <div class="part">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">
-        <span class="sname">Daten übernehmen · aus Handdaten gerechnet</span>
-        <button class="btn" id="ioToggle">öffnen</button>
+        <span class="sname">Import data · computed from hand histories</span>
+        <button class="btn" id="ioToggle">open</button>
       </div>
       <div id="ioPanel" style="display:none;margin-top:12px">
         <div class="field" style="margin-bottom:12px">
-          <label for="srcTxt">Quelle / Notiz</label>
+          <label for="srcTxt">Source / note</label>
           <input type="text" id="srcTxt" class="nm" style="width:100%;max-width:none"
-            placeholder="z. B. 25/50 PLO5, 17.–23.08., 36.863 Hände">
+            placeholder="e.g. 25/50 PLO5, Aug 17–23, 36,863 hands">
         </div>
-        <textarea id="ioBox" rows="4" placeholder="JSON-Block hier einfügen und auf Einlesen tippen"></textarea>
+        <textarea id="ioBox" rows="4" placeholder="paste a JSON block here, then tap Import"></textarea>
         <div class="savebar">
-          <button class="btn" id="ioLoad">Einlesen</button>
-          <button class="btn" id="ioDump">Aktuelles kopieren</button>
-          <button class="btn" id="ioClear">Feld leeren</button>
+          <button class="btn" id="ioLoad">Import</button>
+          <button class="btn" id="ioDump">Copy current</button>
+          <button class="btn" id="ioClear">Clear field</button>
         </div>
         <div class="btns" style="margin-top:8px">
           <button class="btn" id="ioRakeBtn"></button>
         </div>
         <div class="flash" id="ioFlash"></div>
-        <p class="note" id="ioNote"><b>Rake % und Cap werden beim Einlesen nicht angefasst.</b>
-          Sie sind deine Setzung, keine Messung — ein Block kann sie nicht überschreiben,
-          solange der Knopf darüber auf „aus“ steht. Alles andere wird überschrieben, also
-          vorher bei Bedarf als Szenario speichern. „Aktuelles kopieren“ gibt dir den Block
-          für dieses Setup, für ein anderes Gerät oder einen anderen Browser.</p>
+        <p class="note" id="ioNote"><b>Rake % and cap are never touched on import.</b>
+          They are your setting, not a measurement — a block cannot overwrite them while the
+          button above reads "off". Everything else is overwritten, so save the current table
+          first if you need it. "Copy current" hands you the block for this setup, to move it
+          to another device or browser.</p>
       </div>
     </div>
 
@@ -224,13 +224,13 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- STRUKTUR -->
 <section>
-  <span class="lab">Rakestruktur</span>
+  <span class="lab">Rake structure</span>
   <div class="panel">
     <div class="fields">
       <div class="field"><label for="pct">Rake %</label><input type="text" inputmode="decimal" id="pct"></div>
       <div class="field"><label for="cap">Cap in bb</label><input type="text" inputmode="decimal" id="cap"></div>
-      <div class="field"><label for="flop">Flop gesehen %</label><input type="text" inputmode="decimal" id="flop"></div>
-      <div class="field"><label for="median">Median-Pot bb</label><input type="text" inputmode="decimal" id="median"></div>
+      <div class="field"><label for="flop">Saw flop %</label><input type="text" inputmode="decimal" id="flop"></div>
+      <div class="field"><label for="median">Median pot bb</label><input type="text" inputmode="decimal" id="median"></div>
     </div>
     <div class="out">
       <span class="big" id="r100">–</span>
@@ -245,12 +245,12 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- SPIELER -->
 <section>
-  <span class="lab">Spieler · roter Punkt = über der Obergrenze</span>
+  <span class="lab">Players · red dot = above the ceiling</span>
   <div class="scroll">
     <table>
       <thead><tr>
-        <th>Spieler</th><th>Brutto</th><th>VPIP</th><th>Inv bb/H</th><th>Rolle</th>
-        <th>Rake</th><th>Nach Rake</th><th>Rewards</th><th>Netto</th>
+        <th>Player</th><th>Gross</th><th>VPIP</th><th>Inv bb/h</th><th>Role</th>
+        <th>Rake</th><th>After rake</th><th>Rewards</th><th>Net</th>
       </tr></thead>
       <tbody id="rows"></tbody>
     </table>
@@ -261,10 +261,10 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- OBERGRENZE -->
 <section>
-  <span class="lab">Obergrenze Regs · netto nach Rake, ohne Rakeback</span>
+  <span class="lab">Reg ceiling · net after rake, before rakeback</span>
   <div class="panel">
     <div class="fields one">
-      <div class="field"><label for="ceiling">kein Reg über bb/100</label>
+      <div class="field"><label for="ceiling">no reg above bb/100</label>
         <input type="text" inputmode="decimal" id="ceiling"></div>
     </div>
     <div class="out">
@@ -283,23 +283,23 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
   <span class="lab">Rewards</span>
   <div class="panel">
     <div class="slide">
-      <div class="srow"><span class="sname">Rakeback Regs</span><span class="sval" id="rbRegV" style="color:var(--reg)">0%</span></div>
+      <div class="srow"><span class="sname">Rakeback regs</span><span class="sval" id="rbRegV" style="color:var(--reg)">0%</span></div>
       <input type="range" id="rbReg" min="0" max="100" step="5" style="accent-color:var(--reg)">
     </div>
     <div class="slide">
-      <div class="srow"><span class="sname">Rakeback Fische</span><span class="sval" id="rbFishV" style="color:var(--fish)">0%</span></div>
+      <div class="srow"><span class="sname">Rakeback fish</span><span class="sval" id="rbFishV" style="color:var(--fish)">0%</span></div>
       <input type="range" id="rbFish" min="0" max="100" step="5" style="accent-color:var(--fish)">
     </div>
-    <p class="note" style="margin-top:2px">Rakeback ist immer Rake × Satz — unabhängig von der Basis-Wahl unten. Die betrifft nur den Verlust-Rebate direkt darunter.</p>
+    <p class="note" style="margin-top:2px">Rakeback is always rake × rate — independent of the base picked below. That base only applies to the loss rebate underneath.</p>
 
     <div class="slide" style="border-top:1px solid var(--line);margin-top:16px;padding-top:16px">
-      <div class="srow"><span class="sname">Verlust-Rebate Fische</span><span class="sval" id="rebateV" style="color:var(--rake)">0%</span></div>
+      <div class="srow"><span class="sname">Loss rebate fish</span><span class="sval" id="rebateV" style="color:var(--rake)">0%</span></div>
       <input type="range" id="rebate" min="0" max="100" step="1" style="accent-color:var(--rake)">
     </div>
-    <span class="sname" style="display:block;margin-top:12px">Rebate-Basis — gilt nur für diesen Verlust-Rebate</span>
+    <span class="sname" style="display:block;margin-top:12px">Rebate base — applies to this loss rebate only</span>
     <div class="btns" style="margin-top:8px">
-      <button class="btn on" data-grp="rebBase" data-val="net">Verlust nach Rake</button>
-      <button class="btn" data-grp="rebBase" data-val="gross">Verlust vor Rake</button>
+      <button class="btn on" data-grp="rebBase" data-val="net">Loss after rake</button>
+      <button class="btn" data-grp="rebBase" data-val="gross">Loss before rake</button>
     </div>
     <div class="formula" id="rebFormula"></div>
   </div>
@@ -307,10 +307,10 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- REBATE IN GELD -->
 <section>
-  <span class="lab">Verlust und Rebate in Geld</span>
+  <span class="lab">Loss and rebate in money</span>
   <div class="panel">
     <div class="fields one">
-      <div class="field"><label for="rebH">Hände gespielt</label>
+      <div class="field"><label for="rebH">Hands played</label>
         <input type="text" inputmode="decimal" id="rebH"></div>
     </div>
     <div id="rebMoney"></div>
@@ -319,23 +319,23 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- BONUS -->
 <section>
-  <span class="lab">Bonus · wer bekommt einen?</span>
+  <span class="lab">Bonus · who gets one?</span>
   <div class="panel">
     <div class="btns" id="bonusPick"></div>
 
     <div style="margin-top:16px">
-      <span class="sname">Umsatzziel bezieht sich auf</span>
+      <span class="sname">Wagering requirement applies to</span>
       <div class="btns" style="margin-top:8px">
-        <button class="btn on" data-grp="wagerBase" data-val="both">Einzahlung + Bonus</button>
-        <button class="btn" data-grp="wagerBase" data-val="bonus">Nur den Bonus</button>
+        <button class="btn on" data-grp="wagerBase" data-val="both">Deposit + bonus</button>
+        <button class="btn" data-grp="wagerBase" data-val="bonus">Bonus only</button>
       </div>
     </div>
 
     <div style="margin-top:16px">
-      <span class="sname">Was ist gesperrt, bis das Ziel erreicht ist</span>
+      <span class="sname">What stays locked until it is cleared</span>
       <div class="btns" style="margin-top:8px">
-        <button class="btn on" data-grp="lockMode" data-val="both">Beides — Einzahlung und Bonus</button>
-        <button class="btn" data-grp="lockMode" data-val="bonusOnly">Nur der Bonus</button>
+        <button class="btn on" data-grp="lockMode" data-val="both">Both — deposit and bonus</button>
+        <button class="btn" data-grp="lockMode" data-val="bonusOnly">Bonus only</button>
       </div>
     </div>
     <p class="note" id="payoutNote"></p>
@@ -345,17 +345,17 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- RÜCKWÄRTS -->
 <section>
-  <span class="lab">Rückwärts rechnen · Ziel vorgeben, Parameter ableiten</span>
+  <span class="lab">Solve backwards · set a target, derive the parameter</span>
   <div class="panel">
     <div class="btns" id="goalPick" style="margin-bottom:10px"></div>
     <div class="btns">
-      <button class="btn on" data-grp="goalMode" data-val="ferry">Bonus lösen</button>
-      <button class="btn" data-grp="goalMode" data-val="you">Bonus lösen (dein Erg.)</button>
-      <button class="btn" data-grp="goalMode" data-val="handsneeded">Hände nötig</button>
+      <button class="btn on" data-grp="goalMode" data-val="ferry">Bonus for target result</button>
+      <button class="btn" data-grp="goalMode" data-val="bonus4h">Bonus for target hands</button>
+      <button class="btn" data-grp="goalMode" data-val="handsneeded">Hands needed</button>
     </div>
     <p class="note" id="goalModeHint" style="margin-top:10px"></p>
     <div class="fields one" style="margin-top:14px">
-      <div class="field"><label for="goalVal" id="goalLab">Zielwert in €</label>
+      <div class="field"><label for="goalVal" id="goalLab">Target in €</label>
         <span class="sgn"><button class="sign neg" id="goalSign">−</button>
         <input type="text" inputmode="decimal" id="goalVal" class="wide"></span></div>
     </div>
@@ -368,7 +368,7 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
       <span class="unit" id="goalExp2"></span>
     </div>
     <div class="btns" id="applyWrap" style="display:none">
-      <button class="btn" id="applyBtn">Übernehmen</button>
+      <button class="btn" id="applyBtn">Apply</button>
     </div>
     <p class="note" id="goalNote"></p>
   </div>
@@ -377,21 +377,21 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 <!-- ERGEBNIS -->
 <section>
   <div class="warn" id="staleHandsNote" style="display:none;margin-bottom:14px"></div>
-  <span class="lab">Ergebnis je Bonus</span>
+  <span class="lab">Result per bonus</span>
   <div id="bonusResults"></div>
   <div class="kpis six" style="margin-top:16px">
-    <div class="kpi"><span class="kl">Tischdauer</span>
+    <div class="kpi"><span class="kl">Session length</span>
       <span class="kv" id="kH">–</span><span class="kn" id="kHn"></span></div>
-    <div class="kpi"><span class="kl">Rake gesamt</span>
+    <div class="kpi"><span class="kl">Total rake</span>
       <span class="kv" id="kR">–</span><span class="kn" id="kRn"></span></div>
-    <div class="kpi"><span class="kl">Rewards gesamt</span>
+    <div class="kpi"><span class="kl">Total rewards</span>
       <span class="kv" id="kW">–</span><span class="kn" id="kWn"></span></div>
-    <div class="kpi"><span class="kl">Rake netto</span>
-      <span class="kv" id="kN">–</span><span class="kn">Rake minus Rewards</span></div>
-    <div class="kpi"><span class="kl">Boni gesamt</span>
+    <div class="kpi"><span class="kl">Net rake</span>
+      <span class="kv" id="kN">–</span><span class="kn">rake minus rewards</span></div>
+    <div class="kpi"><span class="kl">Total bonuses</span>
       <span class="kv" id="kB">–</span><span class="kn" id="kBn"></span></div>
-    <div class="kpi"><span class="kl">Dein Ergebnis</span>
-      <span class="kv" id="kE">–</span><span class="kn">Rake − Rewards − Boni</span></div>
+    <div class="kpi"><span class="kl">Your result</span>
+      <span class="kv" id="kE">–</span><span class="kn">rake − rewards − bonuses</span></div>
   </div>
   <div id="rewSplit"></div>
   <p class="note" id="resNote"></p>
@@ -399,7 +399,7 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- KURVE -->
 <section>
-  <span class="lab" id="curveLab">Hände über Rebate-Satz</span>
+  <span class="lab" id="curveLab">Your result over hands played</span>
   <div class="curve">
     <svg viewBox="0 0 600 155" width="100%" style="display:block" id="svg">
       <line x1="26" x2="574" y1="129" y2="129" stroke="#2A313D"></line>
@@ -411,7 +411,7 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
       <circle id="cdot" r="4" fill="#E6E2D8"></circle>
       <line id="czero" x1="26" x2="574" stroke="#828C9D" stroke-dasharray="2 4"></line>
       <line id="cfree" y1="16" y2="129" stroke="#C9354A" stroke-dasharray="4 3"></line>
-      <text x="26" y="148" fill="#828C9D" font-size="10" font-family="monospace">0 Hände</text>
+      <text x="26" y="148" fill="#828C9D" font-size="10" font-family="monospace">0 hands</text>
       <text x="574" y="148" text-anchor="end" fill="#828C9D" font-size="10" font-family="monospace" id="cend"></text>
       <text x="26" y="14" fill="#828C9D" font-size="10" font-family="monospace" id="cmax"></text>
       <text x="574" y="14" text-anchor="end" fill="#C9354A" font-size="10" font-family="monospace" id="cfreetxt"></text>
@@ -421,11 +421,11 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- SONSTIGES -->
 <section>
-  <span class="lab">Whale-Tiefe</span>
+  <span class="lab">Whale depth</span>
   <div class="panel">
     <div class="fields two">
-      <div class="field"><label for="depth">Tiefe in bb</label><input type="text" inputmode="decimal" id="depth"></div>
-      <div class="field"><label for="hph">Hände je Stunde</label><input type="text" inputmode="decimal" id="hph"></div>
+      <div class="field"><label for="depth">Depth in bb</label><input type="text" inputmode="decimal" id="depth"></div>
+      <div class="field"><label for="hph">Hands per hour</label><input type="text" inputmode="decimal" id="hph"></div>
     </div>
   </div>
 </section>
@@ -434,8 +434,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <div class="foot">
   <span id="verFoot"></span><br>
-  Eingaben werden auf diesem Gerät gespeichert
-  <div class="btns" style="justify-content:center"><button class="btn" id="reset">Auf Startwerte zurücksetzen</button></div>
+  Inputs are saved on this device
+  <div class="btns" style="justify-content:center"><button class="btn" id="reset">Reset to defaults</button></div>
 </div>
 
 </div>
@@ -444,8 +444,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 window.addEventListener("error", function(e){
   var b = document.getElementById("boot");
   if(b){ b.style.display="block";
-    b.textContent = "Startfehler: " + (e.message||e) +
-      (e.filename?"\nZeile " + e.lineno + ", Spalte " + e.colno : ""); }
+    b.textContent = "Startup error: " + (e.message||e) +
+      (e.filename?"\nline " + e.lineno + ", column " + e.colno : ""); }
 });
 </script>
 <script>
@@ -454,8 +454,8 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 27;
-const VDATE   = "25.08.2026";
+const VERSION = 28;
+const VDATE   = "27.08.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
    Kommt aus den Eingaben und wird in sanitize() und model() neu gesetzt. */
@@ -484,7 +484,7 @@ function seated(){ return S.players.slice(0, S.seats); }
 /* Ein leerer Platz: keine Winrate, kein Invested — nichts, was man für gemessen
    halten könnte. VPIP 40 nur, damit der Rakeschlüssel nicht durch 0 teilt. */
 function neutralPlayer(i){
-  return { name:"Spieler "+(i+1), gross:0, vpip:40, inv:0, reg:true, bon:false,
+  return { name:"Player "+(i+1), gross:0, vpip:40, inv:0, reg:true, bon:false,
            dep:0, amt:0, wx:4, hands:1000 };
 }
 /* Tisch größer als die Spielerliste? Dann Plätze anlegen statt die Auswahl zu
@@ -509,7 +509,8 @@ function sanitize(o){
   if(o.rebBase !== "gross") o.rebBase = "net";
   if(o.wagerBase !== "bonus") o.wagerBase = "both";
   if(o.lockMode !== "bonusOnly") o.lockMode = "both";
-  if(["ferry","you","handsneeded"].indexOf(o.goalMode) < 0) o.goalMode = "ferry";
+  if(o.goalMode === "you") o.goalMode = "ferry";        // alter Modus, entfallen
+  if(["ferry","bonus4h","handsneeded"].indexOf(o.goalMode) < 0) o.goalMode = "ferry";
   if(!Array.isArray(o.players) || o.players.length === 0)
     o.players = JSON.parse(JSON.stringify(d.players));
   o.players = o.players.map((p,i)=>{
@@ -529,7 +530,7 @@ function sanitize(o){
   // An wie vielen Plätzen die eingelesenen Daten gemessen wurden. 0 = keine Daten.
   o.dataSeats = Math.max(0, Math.min(6, Math.round(toNum(o.dataSeats, 0))));
   // Aus den Handdaten gemessene Rakestruktur. Nur Hinweis, wird nie angewendet —
-  // erst wenn Leo im Block „Rakestruktur“ auf Übernehmen tippt.
+  // erst wenn Leo im Block "Rakestruktur" auf Übernehmen tippt.
   o.pctHint = toNum(o.pctHint, 0);
   o.capHint = toNum(o.capHint, 0);
   // Stakes: der Big Blind ist der Umrechnungskurs, er darf nie 0 werden
@@ -542,7 +543,7 @@ function sanitize(o){
   o.seats = Math.max(2, Math.min(6, o.seats));
   // Fehlt für einen Platz eine Zeile, wird sie angelegt — nicht der Tisch gekürzt
   while(o.players.length < o.seats)
-    o.players.push({ name:"Spieler "+(o.players.length+1), gross:0, vpip:40, inv:0,
+    o.players.push({ name:"Player "+(o.players.length+1), gross:0, vpip:40, inv:0,
                      reg:true, bon:false, dep:0, amt:0, wx:4, hands:1000 });
   o.goalWho = Number.isFinite(Number(o.goalWho))
     ? Math.max(0, Math.min(o.seats-1, Math.round(Number(o.goalWho)))) : 0;
@@ -711,17 +712,17 @@ function model(rebateRate){
 }
 
 /* ── Formatierung ────────────────────────────────────────── */
-const eur = n => Number.isFinite(n) ? (n<0?"−":"")+"€"+Math.abs(Math.round(n)).toLocaleString("de-DE") : "–";
+const eur = n => Number.isFinite(n) ? (n<0?"−":"")+"€"+Math.abs(Math.round(n)).toLocaleString("en-US") : "–";
 const eur2 = n => Number.isFinite(n)
-  ? (n<0?"−":"")+"€"+Math.abs(n).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2}) : "–";
+  ? (n<0?"−":"")+"€"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : "–";
 const sbb = n => Number.isFinite(n) ? (n>=0?"+":"−")+Math.abs(n).toFixed(1) : "–";
-const kh  = n => !isFinite(n) ? "∞" : (n>=10000 ? (n/1000).toFixed(1)+"k" : Math.round(n).toLocaleString("de-DE"));
+const kh  = n => !isFinite(n) ? "∞" : (n>=10000 ? (n/1000).toFixed(1)+"k" : Math.round(n).toLocaleString("en-US"));
 const parseNum = v => { const n = parseFloat(String(v).replace("−","-").replace(",",".")); return Number.isFinite(n)?n:0; };
 const fx = (n,d) => Number.isFinite(n) ? n.toFixed(d) : "–";
 /* Stakes lesbar: 0,25 bleibt 0,25 — 2000 wird nicht zu 2000,00 */
 const fmtStake = n => Number.isFinite(n)
-  ? (Math.abs(n%1)<1e-9 ? n.toLocaleString("de-DE")
-                        : n.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2}))
+  ? (Math.abs(n%1)<1e-9 ? n.toLocaleString("en-US")
+                        : n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}))
   : "–";
 
 /* ── Spielertabelle einmalig bauen ───────────────────────── */
@@ -764,7 +765,7 @@ function fillInputs(){
     document.querySelectorAll('[data-p="'+i+'"]').forEach(el=>{
       const f = el.dataset.f;
       if (f && document.activeElement!==el) el.value = p[f];
-      if (el.dataset.role) { el.textContent = p.reg?"Reg":"Fisch"; el.classList.toggle("on",p.reg); }
+      if (el.dataset.role) { el.textContent = p.reg?"Reg":"Fish"; el.classList.toggle("on",p.reg); }
       if (el.dataset.sign) {
         el.textContent = p.gross<0?"−":"+";
         el.classList.toggle("neg", p.gross<0);
@@ -823,7 +824,8 @@ document.querySelectorAll("[data-grp]").forEach(b=>{
       return;
     }
     S[b.dataset.grp]=b.dataset.val;
-    if(b.dataset.grp==="goalMode") S.goalVal = b.dataset.val==="you" ? 10000 : -20000;
+    if(b.dataset.grp==="goalMode")
+      S.goalVal = b.dataset.val==="bonus4h" ? 500 : -20000;
     render();
   });
 });
@@ -871,7 +873,7 @@ document.addEventListener("focusin", function(e){
 
 $("goalSign").addEventListener("click", ()=>{ S.goalVal = -S.goalVal; render(); });
 $("reset").addEventListener("click", ()=>{
-  if(confirm("Alle Eingaben auf die Startwerte zurücksetzen?")){
+  if(confirm("Reset every input to defaults?")){
     S = JSON.parse(JSON.stringify(DEFAULTS)); render();
   }
 });
@@ -890,7 +892,7 @@ function pickRefresh(){
   if(gp) gp.innerHTML = seated().filter(function(p){return p.bon;}).map(function(p){
     const i = S.players.indexOf(p);
     return '<button class="btn'+(S.goalWho===i?" on":"")+'" data-goalwho="'+i+'">'+p.name+'</button>';
-  }).join("") || '<span class="unit">kein Spieler mit Bonus ausgewählt</span>';
+  }).join("") || '<span class="unit">no player has a bonus selected</span>';
 }
 function blocksRefresh(){
   const on = seated().map(function(p,i){ return p.bon?i:-1; }).filter(function(i){ return i>=0; });
@@ -899,34 +901,34 @@ function blocksRefresh(){
   blockSig = sig;
   const wrap = $("bonusBlocks");
   if(!wrap) return;
-  if(!on.length){ wrap.innerHTML = '<p class="note">Tipp oben einen Namen an, um ihm einen Bonus zu geben.</p>'; return; }
+  if(!on.length){ wrap.innerHTML = '<p class="note">Tap a name above to give that player a bonus.</p>'; return; }
   wrap.innerHTML = on.map(function(i){
     const p = S.players[i];
-    return '<span class="lab" style="margin-top:20px">Bonus für '+p.name+'</span>'+
+    return '<span class="lab" style="margin-top:20px">Bonus for '+p.name+'</span>'+
       '<div class="panel">'+
         '<div class="fields">'+
-          '<div class="field" id="fld-'+i+'-dep"><label>Einzahlung €'+
-            '<span class="tag calc">Ergebnis</span></label>'+
+          '<div class="field" id="fld-'+i+'-dep"><label>Deposit €'+
+            '<span class="tag calc">solved</span></label>'+
             '<input type="text" inputmode="decimal" data-b="'+i+'" data-bf="dep"></div>'+
           '<div class="field" id="fld-'+i+'-amt"><label>Bonus €'+
-            '<span class="tag calc">Ergebnis</span></label>'+
+            '<span class="tag calc">solved</span></label>'+
             '<input type="text" inputmode="decimal" data-b="'+i+'" data-bf="amt"></div>'+
-          '<div class="field" id="fld-'+i+'-wx"><label>Wager-Multiplikator'+
-            '<span class="tag calc">Ergebnis</span></label>'+
+          '<div class="field" id="fld-'+i+'-wx"><label>Wager multiplier'+
+            '<span class="tag calc">solved</span></label>'+
             '<input type="text" inputmode="decimal" data-b="'+i+'" data-bf="wx"></div>'+
-          '<div class="field" id="fld-'+i+'-inv"><label>Invested bb/Hand'+
-            '<span class="tag calc">Ergebnis</span></label>'+
+          '<div class="field" id="fld-'+i+'-inv"><label>Inv bb/hand'+
+            '<span class="tag calc">solved</span></label>'+
             '<input type="text" inputmode="decimal" data-b="'+i+'" data-bf="inv"></div>'+
-          '<div class="field" id="fld-'+i+'-hands"><label>Hände die er spielt'+
-            '<span class="tag calc">Ergebnis</span></label>'+
+          '<div class="field" id="fld-'+i+'-hands"><label>Hands he plays'+
+            '<span class="tag calc">solved</span></label>'+
             '<input type="text" inputmode="decimal" data-b="'+i+'" data-bf="hands"></div>'+
         '</div>'+
         '<div class="slide" style="margin-top:16px">'+
-          '<div class="srow"><span class="sname">Multiplikator</span>'+
+          '<div class="srow"><span class="sname">Multiplier</span>'+
             '<span class="sval" data-bo="wx'+i+'">–</span></div>'+
           '<input type="range" min="0.5" max="16" step="0.05" data-brange="'+i+'">'+
           '<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px">'+
-            '<span>0,5×</span><span data-bo="win'+i+'"></span><span>16×</span></div>'+
+            '<span>0.5×</span><span data-bo="win'+i+'"></span><span>16×</span></div>'+
         '</div>'+
 
         '<div class="formula" data-bo="f'+i+'"></div>'+
@@ -959,13 +961,13 @@ function loadScen(name){
   buildRows();
   $("scenName").value = name;
   render();
-  flash('"'+name+'" geladen.');
+  flash('"'+name+'" loaded.');
 }
 
 let scenSig = "";
 function scenRefresh(){
   const all = scenAll();
-  const names = Object.keys(all).sort((a,b)=>a.localeCompare(b,"de"));
+  const names = Object.keys(all).sort((a,b)=>a.localeCompare(b,"en"));
   const sig = names.join("|")+"|"+(S.src||"");
   if (sig === scenSig) return;
   scenSig = sig;
@@ -975,21 +977,21 @@ function scenRefresh(){
         return '<button class="btn'+(S.src && S.src.indexOf(n)===0 ? " on" : "")+
                '" data-scen="'+n.replace(/"/g,"&quot;")+'">'+n+'</button>';
       }).join("")
-    : '<span class="unit">noch kein Szenario gespeichert</span>';
+    : '<span class="unit">no tables saved yet</span>';
 }
 $("scenSave").addEventListener("click", ()=>{
   const name = $("scenName").value.trim();
-  if(!name){ flash("Erst einen Namen eingeben.", true); return; }
+  if(!name){ flash("Enter a name first.", true); return; }
   const all = scenAll();
   const exists = Object.prototype.hasOwnProperty.call(all, name);
-  if(exists && !confirm('"'+name+'" überschreiben?')) return;
+  if(exists && !confirm('Overwrite "'+name+'"?')) return;
   all[name] = JSON.parse(JSON.stringify(S));
   if(scenWrite(all)){
     scenSig = "";
     scenRefresh();
-    flash(exists ? '"'+name+'" überschrieben.' : '"'+name+'" gespeichert.');
+    flash(exists ? '"'+name+'" overwritten.' : '"'+name+'" saved.');
   } else {
-    flash("Speichern nicht möglich — Browser blockiert den Speicher.", true);
+    flash("Cannot save — the browser is blocking storage.", true);
   }
 });
 $("scenBtns").addEventListener("click", function(e){
@@ -999,27 +1001,27 @@ $("scenBtns").addEventListener("click", function(e){
 $("scenDelAll").addEventListener("click", ()=>{
   const all = scenAll();
   const n = Object.keys(all).length;
-  if(!n){ flash("Es gibt keine Szenarien.", true); return; }
-  if(!confirm("Alle "+n+" Szenarien löschen? Das lässt sich nicht rückgängig machen.")) return;
+  if(!n){ flash("There are no saved tables.", true); return; }
+  if(!confirm("Delete all "+n+" saved tables? This cannot be undone.")) return;
   if(scenWrite({})){
     scenSig = "";
     $("scenName").value = "";
     scenRefresh();
-    flash(n+(n===1?" Szenario":" Szenarien")+" gelöscht.");
-  } else flash("Löschen nicht möglich — Browser blockiert den Speicher.", true);
+    flash(n+(n===1?" table":" tables")+" deleted.");
+  } else flash("Cannot delete — the browser is blocking storage.", true);
 });
 $("scenDel").addEventListener("click", ()=>{
   const name = $("scenName").value.trim();
-  if(!name){ flash("Erst den Namen eintragen oder den Tisch antippen.", true); return; }
+  if(!name){ flash("Type the name first, or tap the table above.", true); return; }
   const all = scenAll();
-  if(!all[name]){ flash('"'+name+'" gibt es nicht.', true); return; }
-  if(!confirm('"'+name+'" wirklich löschen?')) return;
+  if(!all[name]){ flash('"'+name+'" does not exist.', true); return; }
+  if(!confirm('Really delete "'+name+'"?')) return;
   delete all[name];
   scenWrite(all);
   scenSig = "";
   $("scenName").value = "";
   scenRefresh();
-  flash('"'+name+'" gelöscht.');
+  flash('"'+name+'" deleted.');
 });
 
 /* ── Daten übernehmen ───────────────────────────────────────
@@ -1041,7 +1043,7 @@ const IOKEY = "rakefluss.ioOpen";
 function ioOpenSet(open){
   const pan = $("ioPanel"), btn = $("ioToggle");
   if(pan) pan.style.display = open ? "" : "none";
-  if(btn){ btn.textContent = open ? "schließen" : "öffnen"; btn.classList.toggle("on", open); }
+  if(btn){ btn.textContent = open ? "close" : "open"; btn.classList.toggle("on", open); }
   try { localStorage.setItem(IOKEY, open ? "1" : "0"); } catch(e){}
 }
 $("ioToggle").addEventListener("click", function(){
@@ -1060,15 +1062,15 @@ let ioTakeRake = false;
 function ioRakeLabel(){
   const b = $("ioRakeBtn");
   if(!b) return;
-  b.textContent = "Rake % und Cap mit einlesen: "+(ioTakeRake?"an":"aus");
+  b.textContent = "Import rake % and cap too: "+(ioTakeRake?"on":"off");
   b.classList.toggle("on", ioTakeRake);
 }
 $("ioRakeBtn").addEventListener("click", function(){
   ioTakeRake = !ioTakeRake;
   ioRakeLabel();
   ioFlash(ioTakeRake
-    ? "Achtung: der nächste Block überschreibt jetzt auch Rake % und Cap."
-    : "Rake % und Cap sind wieder geschützt.");
+    ? "Careful: the next block will now overwrite rake % and cap as well."
+    : "Rake % and cap are protected again.");
 });
 ioRakeLabel();
 
@@ -1086,7 +1088,7 @@ $("ioDump").addEventListener("click", function(){
     try { const pr = navigator.clipboard.writeText(box.value);
           if(pr && pr.catch) pr.catch(function(){}); } catch(e){}
   }
-  ioFlash("Block steht im Feld und ist markiert — kopieren mit Strg+C.");
+  ioFlash("The block is in the field and selected — copy it with Ctrl+C.");
 });
 /* Sucht in einem beliebigen Text alle vollständigen {...}-Objekte. Damit darf man
    auch eine ganze Datei mit Kopfzeilen und mehreren Blöcken einwerfen. Anführungs-
@@ -1143,7 +1145,7 @@ function prepPlayers(st){
 
 $("ioLoad").addEventListener("click", function(){
   const raw = $("ioBox").value.trim();
-  if(!raw){ ioFlash("Erst einen JSON-Block einfügen.", true); return; }
+  if(!raw){ ioFlash("Paste a JSON block first.", true); return; }
   var obj = null, extra = "";
   try { const direct = JSON.parse(raw);
         if(direct && typeof direct === "object" && !Array.isArray(direct)) obj = direct; } catch(e){}
@@ -1159,8 +1161,8 @@ $("ioLoad").addEventListener("click", function(){
   else if(obj && useful(obj)) list = [obj];
   else list = jsonBlocks(raw).filter(useful);
   if(!list.length){
-    ioFlash("Kein verwertbarer Block gefunden — im Text steht kein vollständiges "+
-            "{…} mit bekannten Feldern.", true); return;
+    ioFlash("No usable block found — the text holds no complete {…} with fields "+
+            "this app knows.", true); return;
   }
   obj = list[0];
   if(list.length > 1){
@@ -1180,10 +1182,10 @@ $("ioLoad").addEventListener("click", function(){
     });
     if(scenWrite(all)){
       scenSig = ""; scenRefresh();
-      extra = " · "+saved.length+" Tische angelegt — die Knöpfe im Block „Szenarien“ "+
-              "direkt darüber schalten zwischen ihnen um";
+      extra = " · "+saved.length+" tables created — the buttons under 'Saved tables' "+
+              "right above switch between them";
     } else {
-      extra = " · Szenarien konnten nicht gespeichert werden (Browser blockiert den Speicher)";
+      extra = " · could not save the tables (the browser is blocking storage)";
     }
   }
   const name = typeof obj.name === "string" ? obj.name : "";
@@ -1191,17 +1193,17 @@ $("ioLoad").addEventListener("click", function(){
   const known = Object.keys(DEFAULTS);
   const used = known.filter(function(k){ return state[k] !== undefined; });
   const unknown = Object.keys(state).filter(function(k){ return known.indexOf(k) < 0; });
-  if(!used.length){ ioFlash("Keine bekannten Felder im Block gefunden.", true); return; }
+  if(!used.length){ ioFlash("No known fields in that block.", true); return; }
   const keepRake = { pct:S.pct, cap:S.cap };
   S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), prepPlayers(state)));
   var rakeMsg = "";
   if(!ioTakeRake){
     S.pct = keepRake.pct; S.cap = keepRake.cap;
     const hadRake = state.pct !== undefined || state.cap !== undefined;
-    rakeMsg = " · Rake "+fx(S.pct,2)+" % / Cap "+fx(S.cap,2)+" bb unverändert"+
-              (hadRake ? " (im Block standen andere Werte, ignoriert)" : "");
+    rakeMsg = " · rake "+fx(S.pct,2)+" % / cap "+fx(S.cap,2)+" bb unchanged"+
+              (hadRake ? " (the block held other values, ignored)" : "");
   } else {
-    rakeMsg = " · Rake und Cap mit übernommen";
+    rakeMsg = " · rake and cap taken from the block";
   }
   // Die Tischgröße, für die diese Messwerte gelten — Invested, Median-Pot und
   // Flop-Anteil sind an einem Tisch dieser Größe entstanden.
@@ -1211,9 +1213,9 @@ $("ioLoad").addEventListener("click", function(){
   buildRows();
   render();
   if(name) $("scenName").value = name;
-  ioFlash("Eingelesen: "+used.length+" Felder, "+S.seats+" Plätze"+rakeMsg+extra+
-    (unknown.length ? " · ignoriert: "+unknown.join(", ") : "")+
-    (name ? " · Name „"+name+"“ steht im Szenario-Feld" : ""));
+  ioFlash("Imported: "+used.length+" fields, "+S.seats+" seats"+rakeMsg+extra+
+    (unknown.length ? " · ignored: "+unknown.join(", ") : "")+
+    (name ? " · name '"+name+"' is in the save field" : ""));
 });
 
 $("minCapBtn").addEventListener("click", ()=>{
@@ -1232,9 +1234,9 @@ function render(){
   try { draw(); }
   catch(err){
     const v = $("verdict");
-    v.innerHTML = '<div class="warn"><b>Fehler beim Berechnen.</b> '+
+    v.innerHTML = '<div class="warn"><b>Calculation error.</b> '+
       String(err && err.message || err)+
-      ' — tipp unten auf „Auf Startwerte zurücksetzen".</div>';
+      ' — tap "Reset to defaults" at the bottom.</div>';
     if(window.console) console.error(err);
   }
 }
@@ -1267,25 +1269,24 @@ function draw(){
     if(!n) return;
     const noFish = m.fish.length === 0;
     const mismatch = S.dataSeats && S.dataSeats !== S.seats;
+    const sz = function(k){ return k===2 ? "heads-up" : k+"-max"; };
     n.innerHTML =
       (mismatch
-        ? "<b style='color:var(--rake)'>Daten passen nicht zur Tischgröße.</b> Invested bb/Hand, "+
-          "Median-Pot und Flop-Anteil sind an einem <b>"+
-          (S.dataSeats===2 ? "Heads-up" : S.dataSeats+"-max")+"</b>-Tisch gemessen, "+
-          "du rechnest gerade "+(S.seats===2 ? "Heads-up" : S.seats+"-max")+". "+
-          "Am kurzen Tisch schiebt jeder mehr Geld pro Hand rein — lies den Block für "+
-          (S.seats===2 ? "Heads-up" : S.seats+"-max")+" ein, statt hier Plätze aufzumachen.<br>"
+        ? "<b style='color:var(--rake)'>This data is from a different table size.</b> Inv bb/hand, "+
+          "median pot and saw-flop % were measured <b>"+sz(S.dataSeats)+"</b>, you are running "+
+          sz(S.seats)+". Shorthanded, everyone puts more money in per hand — import the "+
+          sz(S.seats)+" block instead of opening seats here.<br>"
         : "")+
       (S.seats===2
-        ? "<b>Heads-up.</b> Es zählen die ersten zwei Zeilen. "
-        : "Es zählen die ersten <b>"+S.seats+"</b> Zeilen. ")+
+        ? "<b>Heads-up.</b> The first two rows are at the table. "
+        : "The first <b>"+S.seats+"</b> rows are at the table. ")+
       (S.seats < S.players.length
-        ? "Die übrigen "+(S.players.length-S.seats)+" bleiben gespeichert und kommen zurück, "+
-          "wenn du den Tisch wieder aufmachst. "
+        ? "The other "+(S.players.length-S.seats)+" stay stored and come back when you open the "+
+          "table up again. "
         : "")+
       (noFish
-        ? "<b style='color:var(--rake)'>Kein Fisch am Tisch</b> — Rebate greift nur bei Fischen. "+
-          "Tipp in der Spalte Rolle auf „Reg“, um jemanden zum Fisch zu machen."
+        ? "<b style='color:var(--rake)'>No fish at the table</b> — the rebate only applies to fish. "+
+          "Tap 'Reg' in the Role column to turn someone into a fish."
         : "");
   })();
 
@@ -1306,15 +1307,16 @@ function draw(){
   });
 
   $("keyNote").innerHTML =
-    "Rake wird nach <b>"+(m.useInv?"gemessenem Invested-Anteil":"VPIP")+"</b> verteilt. "+
+    "Rake is split by <b>"+(m.useInv?"measured inv share":"VPIP")+"</b>. "+
     (!m.useInv && m.invCount>0
-      ? "<b style='color:var(--fish)'>"+m.invCount+" von "+m.rows.length+" eingetragen</b> — der Invested-Schlüssel greift erst, wenn alle einen Wert haben. "
+      ? "<b style='color:var(--fish)'>"+m.invCount+" of "+m.rows.length+" filled in</b> — the inv "+
+        "key only kicks in once every seat has a value. "
       : "")+
-    (!m.useInv ? "VPIP misst nur, wie oft jemand einsteigt, nicht wie viel Geld er reinschiebt. " : "")+
-    "Die VPIPs ergeben <b>"+fx(m.playersPerPot,2)+" Spieler pro Pot</b>"+
+    (!m.useInv ? "VPIP only counts how often someone enters, not how much money he puts in. " : "")+
+    "These VPIPs come to <b>"+fx(m.playersPerPot,2)+" players per pot</b>"+
     (m.playersPerPot>2.5
-      ? " — stark multiway. Ein Median-Pot von "+S.median+" bb ist dafür vermutlich zu niedrig."
-      : ", das passt zum Median-Pot von "+S.median+" bb.");
+      ? " — heavily multiway. A median pot of "+S.median+" bb is probably too low for that."
+      : ", which fits a median pot of "+S.median+" bb.");
 
   /* Brutto-Bilanz — Winrates am Tisch müssen sich vor Rake auf null summieren.
      Sonst zahlt jemand einen Verlust, den keiner gewinnt (oder umgekehrt), und
@@ -1326,15 +1328,15 @@ function draw(){
     const sum = m.grossSum, win = m.grossWin, los = m.grossLoss;
     box.style.display = "";
     // Sonderfall Import: Winrates absichtlich nicht übernommen (zu varianzbehaftet).
-    // Dann ist die Bilanz trivial null — das darf nicht als „alles gut“ dastehen.
+    // Dann ist die Bilanz trivial null — das darf nicht als "alles gut" dastehen.
     if(m.rows.every(function(r){ return Math.abs(r.gross) < 0.005; })){
       box.dataset.key = "";
       box.className = "warn";
-      box.innerHTML = "<b>Keine Winrates eingetragen.</b> Die Rakeverteilung stimmt trotzdem — "+
-        "sie läuft über Invested bb/Hand, und das ist gemessen. Alles, was auf Verlust aufbaut, "+
-        "bleibt aber leer: Netto, Rebate, Hände bis Bust, dein Ergebnis. Trag in der Spalte "+
-        "<b>Brutto</b> deine Annahme ein — aus Handdaten kommen Winrates absichtlich nicht, "+
-        "sie brauchen zehntausende Hände, um etwas zu bedeuten.";
+      box.innerHTML = "<b>No winrates entered.</b> The rake split still holds — it runs on inv "+
+        "bb/hand, which is measured. But everything built on losses stays empty: net, rebate, "+
+        "hands to bust, your result. Put your own assumption in the <b>Gross</b> column — "+
+        "winrates are deliberately never imported from hand histories, they need tens of "+
+        "thousands of hands to mean anything.";
       if(rowsEl) rowsEl.querySelectorAll('[data-f="gross"]').forEach(function(el){
         el.classList.remove("bad");
       });
@@ -1348,8 +1350,8 @@ function draw(){
     if(!off){
       box.dataset.key = "";
       box.className = "ok";
-      box.innerHTML = "<b>Brutto geht auf.</b> Gewinner "+sbb(win)+", Verlierer "+sbb(los)+
-        ", Summe "+sbb(sum)+" bb/100.";
+      box.innerHTML = "<b>Gross balances.</b> Winners "+sbb(win)+", losers "+sbb(los)+
+        ", sum "+sbb(sum)+" bb/100.";
       return;
     }
     // Neu aufleuchten lassen, sobald sich die Differenz ändert — sonst läuft die
@@ -1361,22 +1363,23 @@ function draw(){
       void box.offsetWidth;          // Reflow erzwingen, damit die Animation neu startet
     }
     box.className = "alert";
-    box.innerHTML = "<b>Brutto geht nicht auf: "+sbb(sum)+" bb/100.</b> Gewinner "+sbb(win)+
-      ", Verlierer "+sbb(los)+" — am Tisch muss die Summe vor Rake null sein. "+
+    box.innerHTML = "<b>Gross does not balance: "+sbb(sum)+" bb/100.</b> Winners "+sbb(win)+
+      ", losers "+sbb(los)+" — at one table the sum before rake has to be zero. "+
       (sum<0
-        ? fx(-sum,1)+" bb/100 Verlust hat keinen Gewinner: entweder verlieren die Verlierer weniger, "+
-          "oder die Gewinner gewinnen mehr, als hier steht."
-        : fx(sum,1)+" bb/100 Gewinn hat keinen Zahler: entweder gewinnen die Gewinner weniger, "+
-          "oder die Verlierer verlieren mehr, als hier steht.")+
-      " Es ginge auf mit "+W+" bei <b>"+sbb(m.whale.gross-sum)+"</b> oder den Gewinnern zusammen bei <b>"+
-      sbb(win-sum)+"</b>. Auf den Rake wirkt sich das nicht aus, aber auf "+W+"s Verlust je Hand — "+
-      "und damit auf Hände bis Bust, Rake gesamt und das Freispielen.";
+        ? fx(-sum,1)+" bb/100 of losses has nobody winning it: either the losers lose less, or the "+
+          "winners win more than what is entered here."
+        : fx(sum,1)+" bb/100 of winnings has nobody paying for it: either the winners win less, or "+
+          "the losers lose more than what is entered here.")+
+      " It would balance with "+W+" at <b>"+sbb(m.whale.gross-sum)+"</b>, or the winners together "+
+      "at <b>"+sbb(win-sum)+"</b>. Rake is unaffected, but "+W+"'s loss per hand is not — and with "+
+      "it hands to bust, total rake and whether the bonus clears.";
   })();
 
   /* Struktur */
   $("r100").textContent = m.t.r100.toFixed(1);
-  $("r100note").innerHTML = "bb/100 brutto am Tisch<br>Cap greift ab "+fx(m.t.capPot,0)+
-    " bb (€"+Math.round(m.t.capPot*BB).toLocaleString("de-DE")+") · in "+(m.t.pCap*100).toFixed(0)+"% der Hände";
+  $("r100note").innerHTML = "bb/100 gross at the table<br>cap binds from "+fx(m.t.capPot,0)+
+    " bb (€"+Math.round(m.t.capPot*BB).toLocaleString("en-US")+") · in "+
+    (m.t.pCap*100).toFixed(0)+"% of hands";
 
   /* Gemessene Rakestruktur als Angebot — nie automatisch angewendet */
   (function(){
@@ -1388,40 +1391,39 @@ function draw(){
     const txt = (hp>0 ? fx(hp,2)+" %" : "—")+" / Cap "+(hc>0 ? fx(hc,2)+" bb" : "—");
     if(same){
       w.style.display = "none";
-      n.innerHTML = "<b style='color:var(--reg)'>Deine Struktur entspricht den Daten</b> ("+txt+").";
+      n.innerHTML = "<b style='color:var(--reg)'>Your structure matches the data</b> ("+txt+").";
       return;
     }
     w.style.display = "";
-    b.textContent = "Auf "+txt+" setzen";
-    n.innerHTML = "Aus den Handdaten gemessen: <b>"+txt+"</b>. Eingetragen ist "+
-      fx(S.pct,2)+" % / Cap "+fx(S.cap,2)+" bb. Der Knopf übernimmt die gemessenen Werte — "+
-      "sonst bleibt deine Setzung stehen.";
+    b.textContent = "Set to "+txt;
+    n.innerHTML = "Measured from the hand histories: <b>"+txt+"</b>. Entered is "+
+      fx(S.pct,2)+" % / cap "+fx(S.cap,2)+" bb. The button applies the measured values — "+
+      "otherwise your setting stands.";
   })();
 
   /* Obergrenze */
   const bestReg = m.regs.length ? m.regs.reduce((a,b)=>a.netRaw>b.netRaw?a:b) : null;
   $("maxReg").textContent = fx(m.maxRegNet,1);
   $("maxReg").style.color = m.over.length?"var(--rake)":"var(--reg)";
-  $("ceilNote").innerHTML = "bester Reg"+(bestReg?" ("+bestReg.name+")":"")+"<br>"+
-    (m.over.length ? m.over.length+" über der Grenze" : "alle unter der Grenze");
+  $("ceilNote").innerHTML = "best reg"+(bestReg?" ("+bestReg.name+")":"")+"<br>"+
+    (m.over.length ? m.over.length+" above the ceiling" : "all below the ceiling");
   const need = needFor(m.minR);
   const showMin = m.minR>0 && need.ok && Math.abs(need.cap-S.cap) > 0.005;
   $("minCapWrap").style.display = showMin?"":"none";
-  if(showMin) $("minCapBtn").textContent = "Cap auf "+fx(need.cap,2)+" bb setzen";
+  if(showMin) $("minCapBtn").textContent = "Set cap to "+fx(need.cap,2)+" bb";
   $("ceilHint").innerHTML =
-    "Die Grenze legt einen <b>Mindest</b>-Rake fest: mindestens <b>"+fx(m.minR,1)+
-    " bb/100</b> am Tisch. "+
+    "The ceiling sets a <b>minimum</b> rake: at least <b>"+fx(m.minR,1)+" bb/100</b> at the table. "+
     (m.minR<=0
-      ? "Das ist schon erfüllt. "
+      ? "Already met. "
       : need.ok
-        ? "Bei "+fx(S.pct,2)+" % brauchst du dafür <b>Cap "+fx(need.cap,2)+" bb</b>"+
-          (need.cap>30 ? " — das ist praktisch ohne Cap" : "")+
-          ", eingetragen ist "+fx(S.cap,2)+" bb. "
-        : "<b style=\'color:var(--rake)\'>Mit "+fx(S.pct,2)+" % ist das nicht erreichbar</b> — "+
-          "selbst ohne jeden Cap gibt der Tisch nur "+fx(need.maxR100,1)+" bb/100. Dafür müsste "+
-          "der Rake auf <b>"+fx(need.pct,2)+" %</b> steigen; am Cap allein liegt es nicht. ")+
-    "Nach unten ist alles offen — mehr Rake drückt die Regs weiter, und den Überschuss kannst "+
-    "du per Rebate an "+W+" zurückgeben.";
+        ? "At "+fx(S.pct,2)+" % that needs <b>cap "+fx(need.cap,2)+" bb</b>"+
+          (need.cap>30 ? " — effectively uncapped" : "")+
+          ", entered is "+fx(S.cap,2)+" bb. "
+        : "<b style='color:var(--rake)'>Not reachable at "+fx(S.pct,2)+" %</b> — even with no cap "+
+          "at all the table only yields "+fx(need.maxR100,1)+" bb/100. That would take a rake of "+
+          "<b>"+fx(need.pct,2)+" %</b>; the cap is not what is holding it back. ")+
+    "Downward there is no limit — more rake squeezes the regs further, and you can hand the "+
+    "surplus back to "+W+" as a rebate.";
 
   /* Rewards */
   $("rbRegV").textContent = S.rbReg+"%";
@@ -1431,15 +1433,15 @@ function draw(){
   const wKey = m.useInv ? m.whale.inv : m.whale.vpip;
   const wPct = fx(m.whale.share*100,1)+" %";
   $("rebFormula").textContent =
-    L2("Rake am Tisch", m.t.r100.toFixed(1)+" bb/100")+"\n"+
-    L2("Schlüssel", (m.useInv ? "Invested bb/Hand" : "VPIP")+
-       ", Summe aller "+m.rows.length+": "+fx(m.vSum,2))+"\n"+
-    L2("Anteil "+W, fx(wKey,2)+" von "+fx(m.vSum,2)+" = "+wPct)+"\n"+
-    L2("Rake gezahlt", m.t.r100.toFixed(1)+" × "+wPct+" = "+fx(m.whale.rakePaid,1))+"\n"+
-    L2("Netto n. Rake", "Brutto − Rake gezahlt")+"\n"+
-    L2("Rakeback", "Rake gezahlt × Satz")+"\n"+
-    L2("Rebate-Basis", (S.rebBase==="gross"?"Brutto-Verlust (vor Rake)":"Netto nach Rake + Rakeback"))+"\n"+
-    L2("Rebate", "−Basis × "+S.rebate+" %   (nur Fische, nur wenn negativ)")+"\n\n"+
+    L2("Rake at table", m.t.r100.toFixed(1)+" bb/100")+"\n"+
+    L2("Split key", (m.useInv ? "inv bb/hand" : "VPIP")+
+       ", sum of all "+m.rows.length+": "+fx(m.vSum,2))+"\n"+
+    L2("Share "+W, fx(wKey,2)+" of "+fx(m.vSum,2)+" = "+wPct)+"\n"+
+    L2("Rake paid", m.t.r100.toFixed(1)+" × "+wPct+" = "+fx(m.whale.rakePaid,1))+"\n"+
+    L2("Net after rake", "gross − rake paid")+"\n"+
+    L2("Rakeback", "rake paid × rate")+"\n"+
+    L2("Rebate base", (S.rebBase==="gross"?"gross loss (before rake)":"net after rake + rakeback"))+"\n"+
+    L2("Rebate", "−base × "+S.rebate+" %   (fish only, only when negative)")+"\n\n"+
     W+": "+sbb(m.whale.gross)+" − "+fx(m.whale.rakePaid,1)+
     " + "+fx(m.whale.rewards,1)+" = "+sbb(m.whale.net)+" bb/100";
 
@@ -1452,39 +1454,39 @@ function draw(){
     const N = Math.max(Math.round(S.rebH), 0);
     const fishRows = m.rows.filter(function(r){ return !r.reg; });
     if(!fishRows.length){
-      box.innerHTML = '<p class="note">Kein Spieler ist als Fisch markiert — Rebate greift nur bei Fischen.</p>';
+      box.innerHTML = '<p class="note">No player is marked as fish — the rebate only applies to fish.</p>';
       return;
     }
-    if(!N){ box.innerHTML = '<p class="note">Handzahl eintragen.</p>'; return; }
+    if(!N){ box.innerHTML = '<p class="note">Enter a hand count.</p>'; return; }
     const L = function(a,b,c){
       return String(a).padEnd(22)+String(b).padStart(11)+(c?"   "+c:"");
     };
     box.innerHTML = fishRows.map(function(r){
-      const e = function(bb){ return (bb/100)*BB*N; };        // bb/100 über N Hände in €
+      const e = function(bb){ return (bb/100)*BB*N; };        // bb/100 over N hands in €
       const afterRakeBB = r.gross - r.rakePaid;
       const baseBB = S.rebBase==="gross" ? r.gross : (afterRakeBB + r.back);
-      const baseName = S.rebBase==="gross" ? "Verlust vor Rake" : "Verlust nach Rake";
+      const baseName = S.rebBase==="gross" ? "loss before rake" : "loss after rake";
       const rebNow = baseBB<0 ? -e(baseBB)*(S.rebate/100) : 0;
       const lines = [
-        r.name+" · "+N.toLocaleString("de-DE")+" Hände · 1 bb = €"+fmtStake(BB),
+        r.name+" · "+N.toLocaleString("en-US")+" hands · 1 bb = €"+fmtStake(BB),
         "",
-        L("Brutto verloren",  eur(e(r.gross)),   sbb(r.gross)+" bb/100"),
-        L("Rake gezahlt",     eur(-e(r.rakePaid)), "−"+fx(r.rakePaid,1)+" bb/100"),
-        L("Verlust nach Rake", eur(e(afterRakeBB)), "← so weit ist er down"),
-        L("davon je Hand",    eur2(e(afterRakeBB)/N), ""),
+        L("Gross lost",       eur(e(r.gross)),   sbb(r.gross)+" bb/100"),
+        L("Rake paid",        eur(-e(r.rakePaid)), "−"+fx(r.rakePaid,1)+" bb/100"),
+        L("Loss after rake",  eur(e(afterRakeBB)), "← this is how far he is down"),
+        L("per hand",         eur2(e(afterRakeBB)/N), ""),
         ""
       ];
-      if(S.rbFish>0) lines.push(L("Rakeback "+S.rbFish+"%", eur(e(r.back)), "auf seinen Rake"));
+      if(S.rbFish>0) lines.push(L("Rakeback "+S.rbFish+"%", eur(e(r.back)), "on his rake"));
       if(baseBB<0){
-        lines.push(L("Rebate "+S.rebate+"%", eur(rebNow), "auf "+baseName+" "+eur(e(baseBB))));
-        lines.push(L("bleibt sein Verlust", eur(e(r.net)), ""));
-        lines.push(L("kostet dich", eur(e(r.back)+rebNow), "Rakeback + Rebate"));
+        lines.push(L("Rebate "+S.rebate+"%", eur(rebNow), "on "+baseName+" "+eur(e(baseBB))));
+        lines.push(L("his loss after all", eur(e(r.net)), ""));
+        lines.push(L("costs you", eur(e(r.back)+rebNow), "rakeback + rebate"));
         lines.push("");
-        lines.push("bei anderen Sätzen    "+[10,20,30,40,50].map(function(q){
+        lines.push("at other rates        "+[10,20,30,40,50].map(function(q){
           return q+"% "+eur(-e(baseBB)*q/100);
         }).join("  ·  "));
       } else {
-        lines.push(L("Rebate "+S.rebate+"%", eur(0), "er ist auf dieser Basis nicht im Minus"));
+        lines.push(L("Rebate "+S.rebate+"%", eur(0), "he is not down on this base"));
       }
       return '<div class="formula" style="margin-top:14px">'+lines.join("\n")+'</div>';
     }).join("");
@@ -1505,31 +1507,31 @@ function draw(){
     if(rg) rg.style.accentColor = bad?"var(--rake)":"var(--reg)";
     const wn = document.querySelector('[data-bo="win'+i+'"]');
     if(wn) wn.textContent = r.xFree>0
-      ? (bad ? "zu hoch — spielt frei bis " : "spielt frei bis ")+fx(r.xFree,2)+"×"
-      : "kein Freispielen möglich";
+      ? (bad ? "too high — clears up to " : "clears up to ")+fx(r.xFree,2)+"×"
+      : "cannot clear at all";
     const f = document.querySelector('[data-bo="f'+i+'"]');
     if(f) f.textContent =
-      "Invested je Hand  "+fx(r.stakeBB,2)+" bb = "+fx(r.stakeH,0)+" €  "+
-        (r.measured?"(eingetragen)":"(geschätzt aus Pot × Anteil)")+"\n"+
-      "Verlust je Hand   "+fx(r.lossH/BB,2)+" bb = "+fx(r.lossH,0)+" €\n"+
-      "Verhältnis        "+fx(r.ratio,2)+"   (Grenze, ab der er vor dem Bust nie freispielt)\n"+
-      "spielt frei bis   "+fx(r.xFree,2)+"×   bei "+kh(r.hPlay)+" Händen\n"+
-      "Umsatzziel        "+eur(r.wx*r.wBase)+"\n"+
-      "Hände zum Freispielen "+kh(r.hFree)+"\n"+
-      "Hände bis Bust        "+kh(r.hBust)+"\n"+
-      "sitzt tatsächlich     "+kh(r.hPlay)+
-        (r.overBust ? "   (deine "+kh(r.hands)+" gehen nicht — vorher pleite)" : "")+"\n"+
-      "Bonus freigespielt    "+(r.freed?"ja":"NEIN")+"\n\n"+
-      "gewagert bis dahin    "+eur(r.wagered)+"\n"+
-      "Chips am Tisch        "+eur(r.balance)+"\n"+
-      "fällt an dich zurück  "+eur(r.leftover)+"   (Bonus kostet dich "+eur(r.bonusCost)+")\n"+
-      "davon auszahlbar      "+eur(r.cashOut)+
-        (r.freed ? "   (Bedingung erfüllt — alles frei)"
+      "Inv per hand       "+fx(r.stakeBB,2)+" bb = "+fx(r.stakeH,0)+" €  "+
+        (r.measured?"(entered)":"(estimated from pot × share)")+"\n"+
+      "Loss per hand      "+fx(r.lossH/BB,2)+" bb = "+fx(r.lossH,0)+" €\n"+
+      "Ratio              "+fx(r.ratio,2)+"   (below this he never clears before busting)\n"+
+      "Clears up to       "+fx(r.xFree,2)+"×   over "+kh(r.hPlay)+" hands\n"+
+      "Wagering required  "+eur(r.wx*r.wBase)+"\n"+
+      "Hands to clear     "+kh(r.hFree)+"\n"+
+      "Hands to bust      "+kh(r.hBust)+"\n"+
+      "Actually seated    "+kh(r.hPlay)+
+        (r.overBust ? "   (your "+kh(r.hands)+" is impossible — broke before that)" : "")+"\n"+
+      "Bonus cleared      "+(r.freed?"yes":"NO")+"\n\n"+
+      "Wagered by then    "+eur(r.wagered)+"\n"+
+      "Chips at the table "+eur(r.balance)+"\n"+
+      "Comes back to you  "+eur(r.leftover)+"   (bonus costs you "+eur(r.bonusCost)+")\n"+
+      "Withdrawable       "+eur(r.cashOut)+
+        (r.freed ? "   (requirement met — all unlocked)"
                  : (S.lockMode==="bonusOnly"
                      ? (r.depFreed
-                         ? "   (Einzahlung 1× umgesetzt — sie ist frei, Bonus noch gesperrt)"
-                         : "   (Einzahlung noch keine 1× umgesetzt, ab "+kh(r.hDepFree)+" Händen frei)")
-                     : "   (nichts frei vor der vollen Bedingung bei "+kh(r.hFree)+" Händen)"));
+                         ? "   (deposit wagered 1× — it is free, bonus still locked)"
+                         : "   (deposit not yet wagered 1×, unlocks after "+kh(r.hDepFree)+" hands)")
+                     : "   (nothing unlocks before the full requirement at "+kh(r.hFree)+" hands)"));
   });
 
   /* Rückwärts */
@@ -1541,7 +1543,7 @@ function draw(){
   // für diesen Modus und bleiben unverändert. Andere Bonusblöcke bleiben normal.
   (function(){
     const ALL = ["dep","amt","wx","inv","hands"];
-    const OUT_BY_MODE = { ferry:["amt","wx"], you:["amt","wx"], handsneeded:["hands"] };
+    const OUT_BY_MODE = { ferry:["amt","wx"], bonus4h:["amt","wx"], handsneeded:["hands"] };
     const outIdx = who ? m.rows.indexOf(who) : -1;
     const outKeys = OUT_BY_MODE[S.goalMode] || [];
     S.players.forEach(function(p,i){
@@ -1557,20 +1559,62 @@ function draw(){
     });
   })();
 
-  $("goalLab").textContent = "Zielwert in €";
+  $("goalLab").textContent = S.goalMode==="bonus4h" ? "Target hands" : "Target in €";
+  $("goalSign").style.display = S.goalMode==="bonus4h" ? "none" : "";
   const gmh = $("goalModeHint");
-  if(gmh) gmh.innerHTML = S.goalMode==="you"
-    ? "<b style='color:var(--fish)'>Ignoriert den Bonus, den du oben eingetragen hast</b> — schlägt "+
-      "einen eigenen vor. Normalerweise ein <b>positives</b> Ziel (dein Gewinn). Ein negatives Ziel "+
-      "heißt: du willst absichtlich mehr Bonus zahlen, als der Rake einbringt."
+  if(gmh) gmh.innerHTML = S.goalMode==="bonus4h"
+    ? "<b style='color:var(--fish)'>Ignores the bonus entered above</b> — solves for the bonus that "+
+      "keeps him at the table for this many hands before he busts."
     : S.goalMode==="ferry"
-      ? "<b style='color:var(--fish)'>Ignoriert den Bonus, den du oben eingetragen hast</b> — schlägt "+
-        "einen eigenen vor. Normalerweise ein <b>negatives</b> Ziel (sein Ergebnis nach Rake und Bonus). "+
-        "Steht dein Bonus schon fest? Dann nimm „Hände nötig\u201c statt dieses Modus."
-      : "<b style='color:var(--reg)'>Nutzt Bonus und Multiplikator, die oben stehen</b> — rechnet nur "+
-        "die Handzahl dazu aus.";
+      ? "<b style='color:var(--fish)'>Ignores the bonus entered above</b> — proposes its own. Normally "+
+        "a <b>negative</b> target (his result after rake and bonus). Bonus already fixed? Use "+
+        "'Hands needed' instead."
+      : "<b style='color:var(--reg)'>Uses the bonus and multiplier entered above</b> — only solves "+
+        "the hand count.";
 
-  if(S.goalMode === "handsneeded"){
+  if(S.goalMode === "bonus4h"){
+    const bh = who ? solveBonusForHands(m, who) : null;
+    if(!bh){ $("goalOut").textContent="–"; $("goalExp").textContent="";
+             $("goalOut2Wrap").style.display="none";
+             $("applyWrap").style.display="none"; $("goalNote").textContent=""; }
+    else if(bh.ok){
+      $("goalOut").textContent = eur(bh.value);
+      $("goalOut").style.color = "var(--reg)";
+      $("goalExp").innerHTML = "bonus needed<br>so "+who.name+" lasts "+kh(bh.hands)+" hands";
+      $("goalOut2Wrap").style.display = "";
+      $("goalOut2").textContent = fx(bh.maxX,2)+"×";
+      $("goalExp2").innerHTML = "highest multiplier<br>above this he never clears in "+kh(bh.hands)+" hands";
+      $("applyWrap").style.display = "";
+      $("applyBtn").onclick = function(){
+        who.amtRef.amt   = Math.round(bh.value/100)*100;
+        who.amtRef.wx    = Math.floor(bh.maxX*100)/100;
+        who.amtRef.hands = bh.hands;
+        render();
+      };
+      $("goalNote").innerHTML =
+        "Without a bonus he busts after <b>"+kh(bh.free)+"</b> hands. The bonus buys the difference "+
+        "and is gone at the end, so it costs you the full "+eur(bh.cost)+". Against that he rakes "+
+        "<b>"+eur(bh.rake)+"</b> over those "+kh(bh.hands)+" hands"+
+        (bh.rake > bh.cost
+          ? " — <b style='color:var(--reg)'>"+eur(bh.rake-bh.cost)+" more than the bonus</b>."
+          : " — <b style='color:var(--rake)'>"+eur(bh.cost-bh.rake)+" short of the bonus</b>.")+
+        " Apply writes bonus, multiplier and hand count above.";
+    } else {
+      $("goalOut").textContent = bh.enough ? eur(0) : "not possible";
+      $("goalOut").style.color = bh.enough ? "var(--reg)" : "var(--rake)";
+      $("goalExp").innerHTML = "bonus needed<br>so "+(who?who.name:"he")+" lasts "+
+        kh(Math.max(Math.round(S.goalVal),0))+" hands";
+      $("goalOut2Wrap").style.display = "none";
+      $("applyWrap").style.display = "none";
+      $("goalNote").innerHTML =
+        bh.noTarget ? "Enter a hand count above."
+        : bh.noLoss ? "He is not losing at this table, so he never busts — no bonus needed to keep "+
+                      "him seated. Give him a negative gross winrate first."
+        : bh.enough ? "No bonus needed. His own deposit already lasts <b>"+kh(bh.free)+
+                      "</b> hands at this loss rate."
+        : "";
+    }
+  } else if(S.goalMode === "handsneeded"){
     $("goalOut2Wrap").style.display = "none";
     const hn = who ? solveHandsNeeded(m, who) : null;
     if(!hn){ $("goalOut").textContent="–"; $("goalExp").textContent="";
@@ -1578,30 +1622,30 @@ function draw(){
     else if(hn.ok){
       $("goalOut").textContent = kh(hn.hands);
       $("goalOut").style.color = "var(--reg)";
-      $("goalExp").innerHTML = "nötige Hände<br>bis "+who.name+" real "+eur(S.goalVal)+" verloren hat";
+      $("goalExp").innerHTML = "hands needed<br>until "+who.name+" is really down "+eur(S.goalVal);
       $("applyWrap").style.display = "";
       $("applyBtn").onclick = function(){ who.amtRef.hands = Math.round(hn.hands); render(); };
       const lockInfo = hn.freedAt
-        ? "die volle Bedingung ist zu diesem Zeitpunkt erfüllt — er dürfte "+eur(hn.cashOut)+" abrufen"
+        ? "the full requirement is met by then — he could withdraw "+eur(hn.cashOut)
         : S.lockMode === "bonusOnly"
           ? (hn.depFreedAt
-              ? "seine Einzahlung ist 1× umgesetzt und frei, der Bonus aber noch gesperrt — abrufbar wären "+eur(hn.cashOut)
-              : "noch nicht mal seine Einzahlung ist 1× umgesetzt — abrufbar wäre <b style='color:var(--rake)'>€0</b>")
-          : "vor der vollen Bedingung ist bei diesem Modus <b style='color:var(--rake)'>nichts</b> abrufbar";
+              ? "his deposit is wagered 1× and free, the bonus still locked — withdrawable "+eur(hn.cashOut)
+              : "not even his deposit is wagered 1× — withdrawable would be <b style='color:var(--rake)'>€0</b>")
+          : "in this lock mode <b style='color:var(--rake)'>nothing</b> unlocks before the full requirement";
       $("goalNote").innerHTML =
-        "Das ist sein echter Verlust am Tisch, unabhängig davon, was er auszahlen dürfte. "+
-        "Zu diesem Zeitpunkt gilt: "+lockInfo+". Übernehmen trägt die Handzahl oben ein.";
+        "That is his real loss at the table, regardless of what he would be allowed to cash out. "+
+        "At that point: "+lockInfo+". Apply writes the hand count above.";
     } else {
-      $("goalOut").textContent = "unmöglich";
+      $("goalOut").textContent = "not possible";
       $("goalOut").style.color = "var(--rake)";
-      $("goalExp").innerHTML = "nötige Hände<br>bis "+(who?who.name:"er")+" real "+eur(S.goalVal)+" verloren hat";
+      $("goalExp").innerHTML = "hands needed<br>until "+(who?who.name:"he")+" is really down "+eur(S.goalVal);
       $("applyWrap").style.display = "none";
       $("goalNote").innerHTML = !who ? ""
         : hn.tooHigh
-          ? "Ziel zu hoch. Mehr als seinen vollen Bonus "+eur(who.amt)+" kann "+who.name+" nicht "+
-            "gewinnen — das wäre sein Ergebnis, wenn er keine einzige Hand verlieren würde."
-          : "Nicht erreichbar. Schlechter als "+eur(hn.worst)+" kann "+who.name+" nicht enden — "+
-            "mehr als Einzahlung plus Bonus gibt es nicht zu verlieren.";
+          ? "Target too high. "+who.name+" cannot win more than his full bonus of "+eur(who.amt)+
+            " — that is his result if he never lost a single hand."
+          : "Out of range. "+who.name+" cannot end up worse than "+eur(hn.worst)+" — there is "+
+            "nothing beyond deposit plus bonus to lose.";
     }
   } else {
     const g = who ? solveGoal(m, who) : null;
@@ -1609,13 +1653,13 @@ function draw(){
             $("goalOut2Wrap").style.display="none";
             $("applyWrap").style.display="none"; $("goalNote").textContent=""; }
     else {
-      $("goalOut").textContent = g.ok ? eur(g.value) : "unmöglich";
+      $("goalOut").textContent = g.ok ? eur(g.value) : "not possible";
       $("goalOut").style.color = g.ok?"var(--reg)":"var(--rake)";
-      $("goalExp").innerHTML = "nötiger Bonus<br>damit "+g.label;
+      $("goalExp").innerHTML = "bonus needed<br>so that "+g.label;
       $("goalOut2Wrap").style.display = g.ok ? "" : "none";
       if(g.ok){
         $("goalOut2").textContent = fx(g.maxX,2)+"×";
-        $("goalExp2").innerHTML = "höchster Multiplikator<br>sonst spielt er in "+kh(g.hands)+" Händen nicht frei";
+        $("goalExp2").innerHTML = "highest multiplier<br>above this he never clears in "+kh(g.hands)+" hands";
       }
       $("applyWrap").style.display = g.ok?"":"none";
       $("applyBtn").onclick = function(){
@@ -1624,12 +1668,12 @@ function draw(){
         render();
       };
       $("goalNote").innerHTML = g.ok
-        ? "Übernehmen setzt beide Werte oben ein."
+        ? "Apply writes both values above."
         : g.tooLow
-          ? "Ziel zu niedrig. In "+kh(g.hands)+" Händen verliert "+who.name+" ohne jeden Bonus "+
-            eur(-g.ohneBonus)+" — ein Bonus macht sein Ergebnis nur besser."
-          : "In "+kh(g.hands)+" Händen nicht möglich. Mit diesem Bonus wäre er schon nach "+
-            kh(g.bust)+" Händen pleite. Setz die Handzahl niedriger.";
+          ? "Target too low. Over "+kh(g.hands)+" hands "+who.name+" loses "+eur(-g.ohneBonus)+
+            " with no bonus at all — a bonus only makes his result better."
+          : "Not possible over "+kh(g.hands)+" hands. With that bonus he would be broke after "+
+            kh(g.bust)+" hands. Lower the hand count.";
     }
   }
 
@@ -1645,9 +1689,9 @@ function draw(){
       const cur = Math.round(who.hands);
       if(hn && hn.ok && Math.abs(Math.round(hn.hands) - cur) > 0.5){
         box.style.display = "";
-        box.innerHTML = "<b style='color:var(--fish)'>Noch nicht angeglichen:</b> Die Zahlen unten "+
-          "rechnen weiter mit den eingetragenen <b>"+kh(cur)+" Händen</b>, nicht mit den gerade "+
-          "gelösten <b>"+kh(hn.hands)+"</b>. Drück oben „Übernehmen\u201c, damit beides zusammenpasst.";
+        box.innerHTML = "<b style='color:var(--fish)'>Not applied yet:</b> the numbers below still "+
+          "run on the <b>"+kh(cur)+" hands</b> entered above, not on the <b>"+kh(hn.hands)+"</b> "+
+          "just solved. Tap 'Apply' up there to line them up.";
       } else box.style.display = "none";
     } else if(box) box.style.display = "none";
   })();
@@ -1655,59 +1699,59 @@ function draw(){
   const br = $("bonusResults");
   if(br) br.innerHTML = m.bonused.length ? m.bonused.map(function(r){
     return '<div class="kpis six" style="margin-bottom:10px">'+
-      '<div class="kpi"><span class="kl">'+r.name+' spielt Bonus frei?</span>'+
-        '<span class="kv" style="color:'+(r.freed?"var(--reg)":"var(--rake)")+'">'+(r.freed?"Ja":"Nein")+'</span>'+
-        '<span class="kn">'+(r.freed?"nach "+kh(r.hFree)+" von "+kh(r.hPlay)+" Händen"
-                                     :"bräuchte "+kh(r.hFree)+", sitzt "+kh(r.hPlay))+'</span></div>'+
-      '<div class="kpi"><span class="kl">Auszahlbar</span>'+
+      '<div class="kpi"><span class="kl">'+r.name+' clears the bonus?</span>'+
+        '<span class="kv" style="color:'+(r.freed?"var(--reg)":"var(--rake)")+'">'+(r.freed?"Yes":"No")+'</span>'+
+        '<span class="kn">'+(r.freed?"after "+kh(r.hFree)+" of "+kh(r.hPlay)+" hands"
+                                     :"needs "+kh(r.hFree)+", plays "+kh(r.hPlay))+'</span></div>'+
+      '<div class="kpi"><span class="kl">Withdrawable</span>'+
         '<span class="kv" style="color:'+(r.own>0?"var(--rake)":"var(--fish)")+'">'+eur(r.cashOut)+'</span>'+
-        '<span class="kn">von '+eur(r.balance)+' Chips · Ergebnis '+eur(r.own)+'</span></div>'+
-      '<div class="kpi"><span class="kl">Rake von ihm</span>'+
+        '<span class="kn">of '+eur(r.balance)+' chips · his result '+eur(r.own)+'</span></div>'+
+      '<div class="kpi"><span class="kl">Rake from him</span>'+
         '<span class="kv">'+eur(r.rakeE)+'</span>'+
-        '<span class="kn">gegen '+eur(r.amt)+' Bonus</span></div>'+
-      '<div class="kpi"><span class="kl">Rewards an ihn</span>'+
+        '<span class="kn">against '+eur(r.amt)+' bonus</span></div>'+
+      '<div class="kpi"><span class="kl">Rewards to him</span>'+
         '<span class="kv" style="color:'+(r.rewE>0?"var(--fish)":"")+'">'+eur(r.rewE)+'</span>'+
-        '<span class="kn">Rakeback '+eur(r.backE)+' · Rebate '+eur(r.rebE)+'</span></div>'+
-      '<div class="kpi"><span class="kl">Am Tisch verspielt</span>'+
+        '<span class="kn">rakeback '+eur(r.backE)+' · rebate '+eur(r.rebE)+'</span></div>'+
+      '<div class="kpi"><span class="kl">Lost at the table</span>'+
         '<span class="kv">'+eur(r.dep+r.amt-r.balance)+'</span>'+
-        '<span class="kn">davon '+eur(Math.min(r.amt, r.dep+r.amt-r.balance))+' dein Geld</span></div>'+
-      '<div class="kpi"><span class="kl">Bringt dir netto</span>'+
+        '<span class="kn">'+eur(Math.min(r.amt, r.dep+r.amt-r.balance))+' of it your money</span></div>'+
+      '<div class="kpi"><span class="kl">Net to you</span>'+
         '<span class="kv" style="color:'+(r.netToYou>0?"var(--reg)":"var(--rake)")+'">'+eur(r.netToYou)+'</span>'+
-        '<span class="kn">Rake − Rewards − Bonuskosten</span></div>'+
+        '<span class="kn">rake − rewards − bonus cost</span></div>'+
       '</div>'+
       '<div class="formula" style="margin:0 0 18px">'+
-        "Hände bis Bust · "+r.name+"\n"+
-        "                        ohne Rewards    mit Rewards\n"+
-        "ohne Bonus".padEnd(24)+kh(r.bustNoBonusRaw).padStart(12)+kh(r.bustNoBonusRew).padStart(15)+"\n"+
-        ("mit Bonus "+eur(r.amt)).padEnd(24)+kh(r.bustBonusRaw).padStart(12)+kh(r.bustBonusRew).padStart(15)+"\n\n"+
-        "Verlust je Hand   ohne Rewards "+eur2(r.lossRawH)+"   mit Rewards "+eur2(r.lossH)+"\n"+
-        "sitzt tatsächlich "+kh(r.hPlay)+" Hände"+
-        (r.overBust ? "   (deine "+kh(r.hands)+" gehen nicht — vorher pleite)" : "")+
+        "Hands to bust · "+r.name+"\n"+
+        "                        no rewards      with rewards\n"+
+        "no bonus".padEnd(24)+kh(r.bustNoBonusRaw).padStart(12)+kh(r.bustNoBonusRew).padStart(16)+"\n"+
+        ("bonus "+eur(r.amt)).padEnd(24)+kh(r.bustBonusRaw).padStart(12)+kh(r.bustBonusRew).padStart(16)+"\n\n"+
+        "Loss per hand    no rewards "+eur2(r.lossRawH)+"   with rewards "+eur2(r.lossH)+"\n"+
+        "Actually seated  "+kh(r.hPlay)+" hands"+
+        (r.overBust ? "   (your "+kh(r.hands)+" is impossible — broke before that)" : "")+
       '</div>';
-  }).join("") : '<p class="note">Kein Spieler hat einen Bonus.</p>';
+  }).join("") : '<p class="note">No player has a bonus.</p>';
 
   $("kH").textContent = kh(m.H);
-  $("kHn").textContent = "Hände · "+fx(m.H/S.hph,1)+" Std bei "+S.hph+"/h";
+  $("kHn").textContent = "hands · "+fx(m.H/S.hph,1)+" h at "+S.hph+"/h";
   $("kR").textContent = eur(m.rakeTotal);
-  $("kRn").textContent = "brutto über die ganze Session";
+  $("kRn").textContent = "gross over the whole session";
   $("kW").textContent = eur(m.rewardCost);
   $("kW").style.color = m.rewardCost>0 ? "var(--fish)" : "";
   $("kWn").textContent = m.rewardCost>0
-    ? "Rakeback "+S.rbReg+"% / "+S.rbFish+"% · Rebate "+S.rebate+"%"
-    : "keine Rewards gesetzt";
+    ? "rakeback "+S.rbReg+"% / "+S.rbFish+"% · rebate "+S.rebate+"%"
+    : "no rewards set";
   $("kN").textContent = eur(m.rakeTotal - m.rewardCost);
   $("kB").textContent = eur(m.bonusCost);
   $("kBn").textContent = m.bonusBack>1
-    ? eur(m.bonusSum)+" ausgelegt, "+eur(m.bonusBack)+" zurück"
-    : m.bonused.length+(m.bonused.length===1?" Bonus":" Boni")+", voll verspielt";
+    ? eur(m.bonusSum)+" paid out, "+eur(m.bonusBack)+" came back"
+    : m.bonused.length+(m.bonused.length===1?" bonus":" bonuses")+", fully lost";
   $("kE").textContent = eur(m.result);
   $("kE").style.color = m.result>0?"var(--reg)":"var(--rake)";
   const pn = $("payoutNote");
   if(pn) pn.innerHTML = S.lockMode==="both"
-    ? "Alles-oder-nichts: Vor der vollen Bedingung (Einzahlung+Bonus × Multiplikator) kann er "+
-      "nichts abrufen — auch nicht anteilig. Danach wird alles auf einen Schlag frei."
-    : "Zwei Schwellen: Die Einzahlung wird frei, sobald er sie einfach (1×) umgesetzt hat. Der "+
-      "Bonus bleibt separat gesperrt, bis die volle Bedingung erfüllt ist.";
+    ? "All-or-nothing: before the full requirement (deposit+bonus × multiplier) he can withdraw "+
+      "nothing at all, not even pro rata. After it, everything unlocks at once."
+    : "Two thresholds: the deposit unlocks as soon as he has wagered it once (1×). The bonus "+
+      "stays locked separately until the full requirement is met.";
   /* Wer hat was bekommen — jede Auszahlung namentlich, damit die Summe oben
      nicht als Blackbox dasteht. */
   (function(){
@@ -1719,10 +1763,10 @@ function draw(){
              eur(sum).padStart(W3)+eur(rake).padStart(W3);
     };
     const lines = [
-      "Rewards je Spieler über "+kh(m.H)+" Hände",
+      "Rewards per player over "+kh(m.H)+" hands",
       "",
-      "Spieler".padEnd(10)+"Rakeback".padStart(W2)+"Rebate".padStart(W3)+
-        "Summe".padStart(W3)+"sein Rake".padStart(W3)
+      "Player".padEnd(10)+"Rakeback".padStart(W2)+"Rebate".padStart(W3)+
+        "Total".padStart(W3)+"his rake".padStart(W3)
     ];
     m.rows.forEach(function(r){
       lines.push(rowTxt(r.name, r.backE, r.rebE, r.rewE, r.rakeE));
@@ -1730,15 +1774,16 @@ function draw(){
     const sumBack = m.rows.reduce(function(a,r){ return a+r.backE; },0);
     const sumReb  = m.rows.reduce(function(a,r){ return a+r.rebE;  },0);
     lines.push("");
-    lines.push(rowTxt("gesamt", sumBack, sumReb, m.rewardCost, m.rakeTotal));
-    if(m.bonusCost>0) lines.push("\ndazu Bonuskosten "+eur(m.bonusCost)+
-      " → dein Ergebnis "+eur(m.result));
+    lines.push(rowTxt("total", sumBack, sumReb, m.rewardCost, m.rakeTotal));
+    if(m.bonusCost>0) lines.push("\nplus bonus cost "+eur(m.bonusCost)+
+      " → your result "+eur(m.result));
     box.innerHTML = '<div class="formula" style="margin-top:14px">'+lines.join("\n")+'</div>';
   })();
 
   $("resNote").innerHTML = m.bonused.length>1
-    ? "Bei mehreren Boni läuft der Tisch, bis der letzte durch ist. Wer vorher geht, erzeugt ab dann keinen Rake mehr — das ist eingerechnet."
-    : "Rake zählt nur, solange der Spieler tatsächlich am Tisch sitzt.";
+    ? "With several bonuses the table runs until the last one is done. Whoever leaves earlier stops "+
+      "generating rake from that point — that is accounted for."
+    : "Rake only counts while the player is actually seated.";
 
   /* Kurve: dein Ergebnis über die Handzahl */
   const cw = who || m.bonused[0];
@@ -1770,60 +1815,69 @@ function draw(){
     // Freispiel-Schwelle
     const cf=$("cfree"), cft=$("cfreetxt");
     if(cw.hFree<=maxH){ cf.style.display=""; cf.setAttribute("x1",cx(cw.hFree)); cf.setAttribute("x2",cx(cw.hFree));
-      cft.textContent="Bonus wird seiner ab "+kh(cw.hFree); }
-    else { cf.style.display="none"; cft.textContent="spielt nie frei"; }
+      cft.textContent="bonus becomes his at "+kh(cw.hFree); }
+    else { cf.style.display="none"; cft.textContent="never clears"; }
     // aktuelle Handzahl
     $("cmark").setAttribute("x1",cx(cw.hPlay)); $("cmark").setAttribute("x2",cx(cw.hPlay));
     $("cdot").style.display=""; $("cdot").setAttribute("cx",cx(cw.hPlay)); $("cdot").setAttribute("cy",cy(punkt(cw.hPlay)));
     $("cmax").textContent=eur(vmax)+" max";
-    $("cend").textContent=kh(maxH)+" (Bust)";
+    $("cend").textContent=kh(maxH)+" (bust)";
     // Break-even suchen
     let be=null;
     for(let i2=1;i2<pts.length;i2++){ if(pts[i2-1].v<0 && pts[i2].v>=0){ be=pts[i2].h; break; } }
-    $("curveLab").textContent = "Dein Ergebnis über die Handzahl · "+cw.name
-      + (be!==null ? " · lohnt sich ab "+kh(be)+" Händen" : "");
+    $("curveLab").textContent = "Your result over hands played · "+cw.name
+      + (be!==null ? " · breaks even at "+kh(be)+" hands" : "");
   }
 
   /* Fazit */
   const v = $("verdict");
   if(m.opNet100<=0)
-    v.innerHTML = '<div class="warn"><b>Du zahlst drauf.</b> Rewards '+fx(m.paidOut,1)+
-      ' bb/100 gegen Rake '+m.t.r100.toFixed(1)+' bb/100.</div>';
+    v.innerHTML = '<div class="warn"><b>You are paying out more than you rake.</b> Rewards '+
+      fx(m.paidOut,1)+' bb/100 against rake '+m.t.r100.toFixed(1)+' bb/100.</div>';
   else if(m.over.length)
-    v.innerHTML = '<div class="warn"><b>'+m.over.length+' Reg'+(m.over.length>1?"s":"")+
-      ' über '+S.ceiling+' bb/100.</b> '+m.over.map(r=>r.name).join(", ")+
-      ' — der Button oben setzt den Cap auf den Mindestwert.</div>';
+    v.innerHTML = '<div class="warn"><b>'+m.over.length+' reg'+(m.over.length>1?"s":"")+
+      ' above '+S.ceiling+' bb/100.</b> '+m.over.map(r=>r.name).join(", ")+
+      ' — the button above sets the cap to the minimum that fixes it.</div>';
   else
-    v.innerHTML = '<div class="ok"><b>Kein Reg über '+S.ceiling+' bb/100.</b> '+W+' braucht '+
-      kh(m.handsDepth)+' Hände für seine '+S.depth+' bb, und dir bleiben '+
+    v.innerHTML = '<div class="ok"><b>No reg above '+S.ceiling+' bb/100.</b> '+W+' needs '+
+      kh(m.handsDepth)+' hands to lose his '+S.depth+' bb, and you keep '+
       m.opNet100.toFixed(1)+' bb/100.</div>';
+}
+
+/* Wie viel Bonus braucht er, um H Hände zu überleben?
+   Hände bis Bust = (Einzahlung + Bonus) / Verlust je Hand — also einfach
+   auflösen. Der Verlust je Hand hängt nicht am Bonus, deshalb geht das direkt. */
+function solveBonusForHands(m, w){
+  if(!w) return null;
+  w.amtRef = S.players[m.rows.indexOf(w)];
+  const H = Math.max(Math.round(S.goalVal), 0);
+  if(!(H > 0)) return { ok:false, noTarget:true };
+  if(!(w.lossH > 0)) return { ok:false, noLoss:true };
+  const free = w.dep / w.lossH;                    // so lange hält er ohne Bonus
+  const amt  = H*w.lossH - w.dep;
+  if(amt <= 0) return { ok:false, enough:true, free:free };
+  const wBase = S.wagerBase === "bonus" ? amt : w.dep + amt;
+  const maxX  = (w.stakeH > 0 && wBase > 0) ? H*w.stakeH/wBase : 0;
+  return { ok:true, value:amt, maxX:maxX, hands:H, free:free,
+           rake:H*w.rakeH, cost:amt };
 }
 
 function solveGoal(m, w){
   if(!w || !(w.lossH>0) || !(w.stakeH>0)) return null;
   w.amtRef = S.players[m.rows.indexOf(w)];
-  const H = w.hands;                       // deine Vorgabe, fix
-  const verlust = H*w.lossH;               // was er in H Händen verliert
+  const H = w.hands;                       // hand count you entered, fixed
+  const loss = H*w.lossH;                  // what he loses over H hands
 
-  // Nötiger Bonus, damit das Ziel aufgeht
-  let b, label;
-  if(S.goalMode==="you"){
-    // dein Ergebnis = Rake über H − Bonus
-    const rakeOhne = m.rows.reduce(function(a,r){
-      return a + Math.min(r.bon?H:H, r.bon?H:H)*r.rakeH; },0);
-    b = rakeOhne - S.goalVal;
-    label = "du machst "+eur(S.goalVal)+" bei "+kh(H)+" Händen";
-  } else {
-    b = S.goalVal + verlust;               // sein Ergebnis = Bonus − Verlust
-    label = w.name+" endet bei "+eur(S.goalVal)+" nach "+kh(H)+" Händen";
-  }
+  // His result = bonus − loss, so the bonus that hits the target is:
+  const b = S.goalVal + loss;
+  const label = w.name+" ends at "+eur(S.goalVal)+" after "+kh(H)+" hands";
 
   const wBase = S.wagerBase==="bonus" ? b : w.dep + b;
   const maxX  = (b>0 && wBase>0) ? H*w.stakeH/wBase : 0;   // damit er in H Händen freispielt
   const bust  = b>0 ? (w.dep+b)/w.lossH : 0;
-  const ohneBonus = -Math.min(H, w.dep/w.lossH)*w.lossH;   // Ergebnis ganz ohne Bonus
+  const noBonus = -Math.min(H, w.dep/w.lossH)*w.lossH;     // result with no bonus at all
 
-  return { value:b, label, maxX, bust, hands:H, ohneBonus,
+  return { value:b, label, maxX, bust, hands:H, ohneBonus:noBonus,
            tooLow: b<=0,
            overBust: H > bust + 0.5,
            ok: b>0 && H <= bust+0.5 && maxX>0 };
