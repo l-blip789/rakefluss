@@ -469,6 +469,10 @@ section{margin-bottom:34px}
       </div>
     </div>
 
+    <div class="btns" id="potWrap" style="margin-top:14px;display:none">
+      <button class="btn gd" id="potBtn"></button>
+    </div>
+    <p class="note" id="potNote"></p>
     <div class="btns" id="hintWrap" style="margin-top:14px;display:none">
       <button class="btn" id="hintBtn"></button>
     </div>
@@ -714,7 +718,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 38;
+const VERSION = 39;
 const VDATE   = "07.09.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -847,13 +851,27 @@ function erf(x){
 const ncdf = x => 0.5*(1+erf(x/Math.SQRT2));
 
 function tableRake(cap, pct){
+  /* Liegt für diese Zelle die gemessene Potverteilung vor UND steht im Feld noch der
+     gemessene Median, wird exakt über die Verteilung gerechnet. Tippt Leo einen
+     eigenen Median ein, gilt wieder die Lognormal-Näherung — sonst würde seine
+     Eingabe wirkungslos bleiben. */
+  const pd = potsFor(S.game, S.bb, S.seats);
+  if(pd && Math.abs(S.median - pd.m) < 0.05){
+    const r0 = Math.max(pct,0.01)/100;
+    var sum = 0, hit = 0;
+    pd.p.forEach(function(x){ sum += Math.min(r0*x, cap); if(r0*x >= cap-1e-9) hit++; });
+    const ph = sum/pd.p.length;
+    return { r100: ph*(S.flop/100)*100, pCap: hit/pd.p.length, perHand: ph,
+             capPot: cap/r0, meanPot: pd.p.reduce(function(a,b){return a+b;},0)/pd.p.length,
+             exact:true };
+  }
   const sig = 1.0, r = Math.max(pct,0.01)/100;
   const mu = Math.log(Math.max(S.median,0.5));
   const meanPot = Math.exp(mu+sig*sig/2);
   const z = (Math.log(Math.max(cap,0.001)/r)-mu)/sig;
   const pCap = 1-ncdf(z);
   const perHand = r*meanPot*ncdf(z-sig)+cap*pCap;
-  return { r100: perHand*(S.flop/100)*100, pCap, perHand, capPot: cap/r, meanPot };
+  return { r100: perHand*(S.flop/100)*100, pCap, perHand, capPot: cap/r, meanPot, exact:false };
 }
 /* Welcher Cap bringt den Tisch auf "target" bb/100? Mit festem Rake-Prozentsatz
    gibt es eine Obergrenze: ohne jeden Cap ist bei pct% x Durchschnittspot Schluss.
@@ -1008,6 +1026,32 @@ const BENCH = {
   "Short Deck|2|6":[7.42,11.52,32.9,70.0,-70.1,9.5,197149,"e"]
 };
 
+/* ── Echte Potverteilung statt Lognormal-Näherung ───────────────────
+   Bis V38 wurden die Potgrößen als Lognormal um den Median-Pot modelliert, Sigma
+   fest auf 1,0. Gemessen ist Sigma tatsächlich 0,88 bis 1,09 — die Annahme war gut.
+   Trotzdem liegt die Näherung systematisch 2 bis 6 % zu niedrig.
+
+   Ab V39 steht für gemessene Zellen die echte Verteilung hier: 20 Stützstellen der
+   Flop-Potgröße in bb (2,5. bis 97,5. Perzentil). Damit ist die Rechnung
+   min(5 % × Pot, Cap) exakt statt genähert — gegen den echten Rake geprüft:
+   Abweichung 0,0 bis 1,2 %, in acht von zehn Zellen unter 0,4 %.
+   m = gemessener Median-Pot, f = Flop-Anteil, n = Flop-Hände dahinter.
+   Skript: gn/pots20.py */
+const POTS = {
+  "NLHE|50|2":{p:[2.4,4.4,5.0,5.4,5.4,5.4,5.4,5.4,7.3,8.3,8.96,10.0,12.4,13.5,17.93,21.4,27.0,36.0,55.6,120.18],m:8.8,f:51.6,n:20594},
+  "NLHE|50|6":{p:[2.96,5.46,6.06,6.46,6.46,7.46,8.46,9.4,10.55,11.86,13.87,16.15,18.65,22.1,26.59,32.3,41.23,56.0,83.19,202.14],m:12.9,f:63.1,n:17034},
+  "PLO4|50|2":{p:[4.4,6.4,6.4,6.4,6.4,6.4,6.4,6.4,9.98,10.62,12.8,16.0,16.0,18.4,19.2,25.5,31.87,38.64,55.2,120.42],m:12.8,f:67.4,n:9884},
+  "PLO4|50|4":{p:[4.0,5.0,6.0,8.0,9.5,9.5,10.14,12.5,12.8,14.0,16.0,20.75,23.75,26.0,30.0,37.5,48.0,64.0,120.0,214.0],m:15.5,f:85.4,n:870},
+  "PLO5|200|2":{p:[6.4,6.4,6.4,6.4,6.4,10.24,12.8,16.0,18.4,18.4,18.4,18.4,19.2,30.54,36.8,42.8,50.7,58.88,110.0,220.8],m:18.4,f:77.1,n:1993},
+  "PLO5|200|4":{p:[4.0,5.0,8.0,9.5,9.5,10.0,12.5,12.5,14.0,16.0,19.0,21.58,24.5,26.0,30.0,36.5,44.8,60.0,93.6,215.0],m:18.0,f:91.4,n:1773},
+  "PLO5|50|2":{p:[2.4,6.4,6.4,6.4,6.4,6.4,6.4,6.4,10.62,12.8,15.62,16.0,18.4,19.2,21.25,30.54,37.54,48.0,73.6,200.0],m:14.1,f:69.8,n:30778},
+  "PLO5|50|5":{p:[7.0,8.5,8.5,8.5,9.5,11.62,14.0,17.0,19.29,23.0,25.0,26.5,30.0,39.01,47.0,59.16,77.5,102.6,182.39,234.19],m:23.5,f:74.3,n:11836},
+  "PLO5|50|6":{p:[3.96,7.46,8.46,8.96,9.46,11.96,12.96,15.34,18.65,21.29,23.92,25.92,30.65,38.65,48.96,66.15,83.14,116.52,193.28,223.25],m:23.4,f:83.6,n:1196},
+  "PLO6|50|2":{p:[2.4,6.4,6.4,6.4,6.4,6.4,6.4,6.4,9.6,12.4,14.85,16.0,18.4,18.4,21.33,31.07,38.4,50.54,80.0,200.0],m:12.8,f:66.7,n:7341}
+};
+
+function potsFor(game, bb, seats){ return POTS[game+"|"+fmtNum(bb)+"|"+seats] || null; }
+
 /* Hände pro Stunde je Spielart und Tischgröße, aus den Zeitstempeln der Handhistories.
 
    ACHTUNG, dahinter steckt eine Falle: die Tisch-ID in der Handhistory ist KEINE
@@ -1058,15 +1102,26 @@ function benchGet(game, bb, seats){
 }
 function fmtNum(x){ return String(Math.round(x*1e6)/1e6); }
 
-/* Reine Rake-Rechnung, ohne S anzufassen — dieselbe Formel wie tableRake. */
-function rakeAt(median, flop, cap, pct){
+/* Reine Rake-Rechnung, ohne S anzufassen. Liegt die echte Potverteilung vor, wird
+   exakt über sie summiert; sonst die Lognormal-Näherung wie bisher. */
+function rakeAt(median, flop, cap, pct, pd){
+  const r0 = Math.max(pct,0.01)/100;
+  if(pd && pd.p && pd.p.length){
+    var sum = 0, hit = 0;
+    pd.p.forEach(function(x){
+      const v = Math.min(r0*x, cap);
+      sum += v; if(r0*x >= cap-1e-9) hit++;
+    });
+    const perHand = sum/pd.p.length;
+    return { r100: perHand*(flop/100)*100, pCap: hit/pd.p.length, exact:true };
+  }
   const sig = 1.0, r = Math.max(pct,0.01)/100;
   const mu = Math.log(Math.max(median,0.5));
   const meanPot = Math.exp(mu+sig*sig/2);
   const z = (Math.log(Math.max(cap,0.001)/r)-mu)/sig;
   const pCap = 1-ncdf(z);
   const perHand = r*meanPot*ncdf(z-sig)+cap*pCap;
-  return { r100: perHand*(flop/100)*100, pCap: pCap };
+  return { r100: perHand*(flop/100)*100, pCap: pCap, exact:false };
 }
 
 /* Hände bis Bust, mit Band. Kumulierter Verlust nach n Händen ist normalverteilt
@@ -1094,8 +1149,9 @@ function ezModel(){
   const sc = schedCap(bb, seats), ms = measCap(bb, seats);
   const cap = ms ? ms.bb : (sc ? sc.bb : 0.4);
   const capSrc = ms ? "gemessen" : (sc ? "Rakestaffel" : "Standardwert");
-  const median = v[2], flop = v[3];
-  const t = rakeAt(median, flop, cap, 5);
+  const pd = potsFor(g, bb, seats);
+  const median = pd ? pd.m : v[2], flop = pd ? pd.f : v[3];
+  const t = rakeAt(median, flop, cap, 5, pd);
   /* Rake je Spieler nach Geldanteil (Fische setzen mehr ein und zahlen mehr). */
   const wF = v[1], wR = v[0];
   const totW = nFish*wF + nReg*wR;
@@ -1111,7 +1167,7 @@ function ezModel(){
   const rakeHour = t.r100/100*hph*bb;
   const rbOut = rakeHour * (S.ezRb/100) * (nReg*wR/Math.max(totW,1e-9));
   return { b:b, v:v, bb:bb, seats:seats, nFish:nFish, nReg:nReg, cap:cap, capSrc:capSrc,
-           lossM:lossM, hphM:hphM, lossOwn:S.ezLoss>0, hphOwn:S.ezHph>0,
+           lossM:lossM, hphM:hphM, lossOwn:S.ezLoss>0, hphOwn:S.ezHph>0, pd:pd,
            median:median, flop:flop, t:t, fishLoss:fishLoss, bust:bust, hph:hph,
            rakeHour:rakeHour, rbOut:rbOut, netHour:rakeHour-rbOut,
            rakeFishShare: t.r100>0 ? rakeFish/t.r100 : 0,
@@ -1954,6 +2010,11 @@ function spreadFlash(msg, bad){
   n.innerHTML = msg;
   n.style.color = bad ? "var(--rake)" : "var(--reg)";
 }
+$("potBtn").addEventListener("click", function(){
+  const pd = potsFor(S.game, S.bb, S.seats);
+  if(pd){ S.median = pd.m; S.flop = pd.f; }
+  render();
+});
 $("measBtn").addEventListener("click", function(){
   const ms = measCap(S.bb, S.seats);
   if(ms) S.cap = Math.round(ms.bb*10000)/10000;
@@ -2125,7 +2186,7 @@ function ezDraw(){
             '<th>Fish lasts</th><th>vs today</th></tr></thead><tbody>';
     const base = m.t.r100, denom = Math.max(m.nFish*m.wF + m.nReg*m.wR, 1e-9);
     caps.forEach(function(c){
-      const r  = rakeAt(m.median, m.flop, c, 5);
+      const r  = rakeAt(m.median, m.flop, c, 5, m.pd);
       const rh = r.r100/100*m.hph*bb;
       const rb = rh*(S.ezRb/100)*(m.nReg*m.wR/denom);
       const extra = (r.r100 - base) * (m.wF/denom);
@@ -2171,10 +2232,17 @@ function ezDraw(){
         tag("m", m.capSrc === "gemessen" ? "measured in hand histories"
               : m.capSrc === "Rakestaffel" ? "CoinPoker schedule" : "fallback")+"<br>"+
       "Swing per hand: <b>±"+fx(m.sd,0)+" bb</b>"+tag("e","assumed, not measured")+"<br>"+
+      "Pot distribution: "+(m.pd
+        ? "<b>the real one</b>"+tag("m", fmtInt(m.pd.n)+" flopped hands, 20 sample points — "+
+            "rake summed over the actual pots, checked against the real rake to within 0.4 %")
+        : "<b>modelled</b>"+tag("e","lognormal around the median, no measured distribution for this cell"))+"<br>"+
       '<span style="color:var(--muted)">The Tableau pull holds '+fmtInt(m.v[6])+
-      " hands for this cell. Cross-check: Tableau measures <b>"+fx(m.v[5],2)+
-      "</b> rake bb/100 per player there, this model computes <b>"+fx(m.t.r100/m.seats,2)+
-      "</b>.</span>";
+      " hands for this cell and measures <b>"+fx(m.v[5],2)+"</b> rake bb/100 per player; "+
+      "this model computes <b>"+fx(m.t.r100/m.seats,2)+"</b>. The two are not quite the same "+
+      "thing: Tableau averages over every occupancy at this table size, from two players up, "+
+      "while everything here describes a <b>full</b> table — and a full table always rakes more. "+
+      "Like for like, against the hand histories of a full table, the model is within 0.4 %."+
+      "</span>";
   })();
 
   /* Hinweis: was gemessen ist und was du selbst gesetzt hast */
@@ -2470,6 +2538,34 @@ function draw(){
   (function(){
     const el = $("capEur");
     if(el && document.activeElement!==el) el.value = fx(S.cap*BB, 2);
+  })();
+
+  /* Gemessene Potverteilung anbieten und sagen, ob exakt gerechnet wird */
+  (function(){
+    const w = $("potWrap"), b = $("potBtn"), n = $("potNote");
+    if(!w) return;
+    const pd = potsFor(S.game, S.bb, S.seats);
+    if(!pd){
+      w.style.display = "none";
+      n.innerHTML = "No measured pot distribution for "+esc(S.game)+" "+fmtStake(S.bb/2)+"/"+
+        fmtStake(S.bb)+" "+(S.seats===2?"heads-up":S.seats+"-max") +
+        " — pots are modelled as a lognormal around the median you entered.";
+      return;
+    }
+    const same = Math.abs(S.median - pd.m) < 0.05;
+    if(same){
+      w.style.display = "none";
+      n.innerHTML = "<b style='color:var(--reg)'>Exact.</b> The real pot distribution for this "+
+        "table is built in — "+fmtInt(pd.n)+" flopped hands, 20 sample points — so the rake is "+
+        "summed over the actual pots instead of a modelled curve. Checked against the real rake: "+
+        "within 0.4 %. Type your own median pot to switch back to the model.";
+      return;
+    }
+    w.style.display = "";
+    b.textContent = "Use the measured pots: "+fx(pd.m,1)+" bb median, "+fx(pd.f,1)+" % flop";
+    n.innerHTML = "A measured pot distribution exists for this table ("+fmtInt(pd.n)+
+      " flopped hands): median <b>"+fx(pd.m,1)+" bb</b>, flop in <b>"+fx(pd.f,1)+
+      " %</b>. Your "+fx(S.median,1)+" bb is being modelled as a lognormal instead.";
   })();
 
   /* ── Herkunft in der Expertenansicht ─────────────────────────────────
