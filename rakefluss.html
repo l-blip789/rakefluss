@@ -138,6 +138,36 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 .savebar input{flex:1;min-width:130px;width:auto;text-align:left}
 .flash{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:8px;min-height:14px}
 
+/* ═══ V40 · Popup mit CoinPokers Rakestruktur ═══════════════════════════ */
+.ovl{position:fixed;inset:0;background:rgba(8,10,14,.86);z-index:50;display:none;
+  overflow:auto;padding:24px 14px calc(40px + env(safe-area-inset-bottom))}
+.ovl.on{display:block}
+.ovlbox{max-width:900px;margin:0 auto;background:var(--surface);border:1px solid var(--line);
+  padding:18px 18px 22px}
+.ovlhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  border-bottom:2px solid var(--bone);padding-bottom:11px;margin-bottom:4px}
+.ovlhead h2{font-family:var(--cond);font-weight:700;font-size:21px;letter-spacing:.01em;
+  text-transform:uppercase;margin:0;color:var(--bone)}
+.rk{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;margin-top:14px}
+.rk th{font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;
+  padding:8px 7px;background:#232C3E;color:var(--bone);border:1px solid var(--line);text-align:center}
+.rk th.grp{background:#1A2233}
+.rk td{padding:6px 7px;border:1px solid var(--line);text-align:right;white-space:nowrap}
+.rk td.band{text-align:center;background:#243046;color:var(--bone);font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.rk td.bl{text-align:left;color:var(--bone)}
+.rk td.bbv{color:var(--muted)}
+.rk tr.here td{background:rgba(217,164,65,.14)}
+.rk tr.here td.bl{color:var(--fish);font-weight:600}
+.rk tr:nth-child(even) td:not(.band){background:rgba(255,255,255,.018)}
+.rk tr.here:nth-child(even) td{background:rgba(217,164,65,.14)}
+.rkpct{display:inline-block;font-family:var(--cond);font-weight:700;font-size:26px;
+  color:var(--fish);margin-left:10px;vertical-align:-2px}
+.lnk{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--reg);border-bottom:1px solid rgba(79,163,165,.5);cursor:pointer;background:none;
+  border-top:none;border-left:none;border-right:none;padding:0 0 1px}
+.lnk:hover{color:var(--bone);border-bottom-color:var(--bone)}
+
 /* ═══ V36 · Herkunft dezent markieren ══════════════════════════════════
    Gemessene Zahlen bekommen eine dünne gepunktete Linie darunter, abgeleitete
    dieselbe Linie in Gold. Eigene Eingaben bleiben nackt. Beim Draufzeigen sagt
@@ -300,7 +330,7 @@ section{margin-bottom:34px}
 
 <div id="easyView">
 <section>
-  <div class="shead"><span class="snum">01</span><span class="stitle">The table</span></div>
+  <div class="shead"><span class="snum">01</span><span class="stitle">The table</span><button class="lnk" data-rkopen>CoinPoker rake structure</button></div>
   <p class="sdesc">Four inputs, nothing more. Everything else comes from measured pool data — 90 days
     of Tableau for the money each player puts in, hand histories for pot size and flop rate,
     CoinPoker's own schedule for the rate and the cap.<br>
@@ -436,7 +466,7 @@ section{margin-bottom:34px}
 
 <!-- STRUKTUR -->
 <section>
-  <div class="shead"><span class="snum">02</span><span class="stitle">Rake structure</span></div>
+  <div class="shead"><span class="snum">02</span><span class="stitle">Rake structure</span><button class="lnk" data-rkopen>CoinPoker rake structure</button></div>
   <p class="sdesc">What the room charges per pot: the percentage and the cap. <b>This is the pair you change when you test a structure.</b> CoinPoker's official schedule is built in below.</p>
   <div class="panel">
     <div class="fields">
@@ -473,10 +503,6 @@ section{margin-bottom:34px}
       <button class="btn gd" id="potBtn"></button>
     </div>
     <p class="note" id="potNote"></p>
-    <div class="btns" id="hintWrap" style="margin-top:14px;display:none">
-      <button class="btn" id="hintBtn"></button>
-    </div>
-    <p class="note" id="hintNote"></p>
   </div>
 </section>
 
@@ -696,6 +722,21 @@ section{margin-bottom:34px}
 <div id="verdict"></div>
 </div>
 
+<!-- CoinPokers Rakestruktur, genau wie im Blatt -->
+<div class="ovl" id="rkOvl">
+  <div class="ovlbox">
+    <div class="ovlhead">
+      <h2>CoinPoker rake structure<span class="rkpct">5&#8201;%</span></h2>
+      <button class="btn" id="rkClose">Close</button>
+    </div>
+    <p class="note" style="margin-top:10px">Ring cash games. The rate is <b>5&#8201;% of the pot</b>
+      everywhere; only the cap changes. The cap follows the number of players dealt into the hand.
+      Your current stake is highlighted.</p>
+    <div class="scroll"><table class="rk" id="rkTbl"></table></div>
+    <p class="note" id="rkDev"></p>
+  </div>
+</div>
+
 <div class="foot">
   <span id="verFoot"></span><br>
   Inputs are saved on this device
@@ -718,7 +759,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 39;
+const VERSION = 40;
 const VDATE   = "07.09.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -2035,11 +2076,6 @@ $("schedToggle").addEventListener("click", function(){
 });
 (function(){ var o=false; try{ o = localStorage.getItem(SCHKEY)==="1"; }catch(e){}
   schedOpenSet(o); })();
-$("hintBtn").addEventListener("click", function(){
-  if(S.pctHint > 0) S.pct = S.pctHint;
-  if(S.capHint > 0) S.cap = S.capHint;
-  render();
-});
 
 
 /* ── Easy Mode zeichnen ──────────────────────────────────────────── */
@@ -2328,6 +2364,75 @@ $("ezToExp").addEventListener("click", function(){
   ezSetView("expert");
 });
 
+
+/* ── Popup: CoinPokers Rakestruktur, Aufbau wie in Leos Blatt ────────
+   Drei Spaltenpaare (Betrag und bb) für 2 · 3–4 · 5+ Spieler, Bänder links,
+   aktueller Stake hervorgehoben, darunter die gemessenen Abweichungen. */
+function rkDraw(){
+  const t = $("rkTbl");
+  if(!t) return;
+  const cur = (S.view === "easy") ? S.ezBB : S.bb;
+  var H = '<thead><tr><th class="grp" rowspan="2">&nbsp;</th><th rowspan="2">Blinds</th>'+
+          '<th colspan="2">2 player cap</th><th colspan="2">3&#8211;4 player cap</th>'+
+          '<th colspan="2">5+ player cap</th></tr>'+
+          '<tr><th>Cap</th><th>in bb</th><th>Cap</th><th>in bb</th><th>Cap</th><th>in bb</th></tr>'+
+          '</thead><tbody>';
+  var band = null, run = [];
+  SCHED_ROWS.forEach(function(r, i){
+    const next = SCHED_ROWS[i+1];
+    run.push(r);
+    if(!next || next.band !== r.band){
+      run.forEach(function(x, j){
+        const here = Math.abs(x.bb - cur) < 1e-9;
+        H += '<tr class="'+(here?"here":"")+'">';
+        if(j === 0) H += '<td class="band" rowspan="'+run.length+'">'+esc(x.band)+'</td>';
+        H += '<td class="bl">'+esc(x.label)+'</td>';
+        x.caps.forEach(function(c){
+          const eurv = x.inBB ? c*x.bb : c;
+          const bbv  = x.inBB ? c : c/x.bb;
+          H += '<td>'+(x.inBB ? "&#8212;" : "$"+fx(eurv,2))+'</td>'+
+               '<td class="bbv">'+fx(bbv,2)+' bb</td>';
+        });
+        H += '</tr>';
+      });
+      run = [];
+    }
+  });
+  t.innerHTML = H + '</tbody>';
+
+  /* Abweichungen, die wir in den Handhistories gemessen haben */
+  const D = [];
+  Object.keys(MEAS).forEach(function(bbk){
+    const bb = Number(bbk);
+    Object.keys(MEAS[bbk]).forEach(function(sk){
+      const seats = Number(sk), e = MEAS[bbk][sk];
+      if(!e.note) return;
+      const sc = schedCap(bb, seats);
+      if(!sc || Math.abs(sc.eur - e.eur) < 0.005) return;
+      D.push("<b>"+fmtStake(bb/2)+"/"+fmtStake(bb)+", "+(seats===2?"heads-up":seats+"-max")+
+             ":</b> sheet says $"+fx(sc.eur,2)+", the tables take <b>$"+fx(e.eur,2)+"</b> ("+
+             fmtInt(e.n)+" hands)");
+    });
+  });
+  $("rkDev").innerHTML = D.length
+    ? "<b>Where the tables do not follow the sheet</b>, measured in hand histories:<br>" +
+      D.join("<br>")
+    : "";
+}
+function rkOpen(on){
+  const o = $("rkOvl");
+  if(!o) return;
+  if(on) rkDraw();
+  o.classList.toggle("on", on);
+  document.body.style.overflow = on ? "hidden" : "";
+}
+document.querySelectorAll("[data-rkopen]").forEach(function(b){
+  b.addEventListener("click", function(){ rkOpen(true); });
+});
+$("rkClose").addEventListener("click", function(){ rkOpen(false); });
+$("rkOvl").addEventListener("click", function(e){ if(e.target === $("rkOvl")) rkOpen(false); });
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") rkOpen(false); });
+
 /* ── Zeichnen ────────────────────────────────────────────── */
 function render(){
   try { draw(); }
@@ -2513,26 +2618,6 @@ function draw(){
   $("r100note").innerHTML = "bb/100 gross at the table<br>cap binds from "+fx(m.t.capPot,0)+
     " bb (€"+Math.round(m.t.capPot*BB).toLocaleString("en-US")+") · in "+
     (m.t.pCap*100).toFixed(0)+"% of hands";
-
-  /* Gemessene Rakestruktur als Angebot — nie automatisch angewendet */
-  (function(){
-    const w = $("hintWrap"), b = $("hintBtn"), n = $("hintNote");
-    if(!w || !b || !n) return;
-    const hp = S.pctHint, hc = S.capHint;
-    if(!(hp > 0) && !(hc > 0)){ w.style.display = "none"; n.textContent = ""; return; }
-    const same = (!(hp>0) || Math.abs(hp-S.pct) < 0.005) && (!(hc>0) || Math.abs(hc-S.cap) < 0.005);
-    const txt = (hp>0 ? fx(hp,2)+" %" : "—")+" / Cap "+(hc>0 ? fx(hc,2)+" bb" : "—");
-    if(same){
-      w.style.display = "none";
-      n.innerHTML = "<b style='color:var(--reg)'>Your structure matches the data</b> ("+txt+").";
-      return;
-    }
-    w.style.display = "";
-    b.textContent = "Set to "+txt;
-    n.innerHTML = "Measured from the hand histories: <b>"+txt+"</b>. Entered is "+
-      fx(S.pct,2)+" % / cap "+fx(S.cap,2)+" bb. The button applies the measured values — "+
-      "otherwise your setting stands.";
-  })();
 
   /* Cap in Euro spiegeln */
   (function(){
