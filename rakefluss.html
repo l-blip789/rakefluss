@@ -139,6 +139,14 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 .flash{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:8px;min-height:14px}
 
 /* ═══ V30 · Gestaltung ══════════════════════════════════════════════════ */
+.purpose2{font-size:14px;line-height:1.55;color:var(--muted);max-width:62ch;margin:8px 0 0}
+.purpose2 b{color:var(--bone);font-weight:600}
+.eg{font-size:13px;line-height:1.55;color:var(--muted);max-width:62ch;
+  margin:12px 0 0;padding-left:12px;border-left:2px solid var(--reg)}
+.eg span{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--reg);display:block;margin-bottom:3px}
+.btn.xsm{font-size:9px;padding:2px 6px;float:right;margin-left:10px}
+.loaded{overflow:hidden}
 
 /* Kopf */
 header{border-bottom:none;padding-bottom:0;margin-bottom:30px}
@@ -232,10 +240,12 @@ section{margin-bottom:34px}
     </div>
     <span class="ver" id="verBadge">V–</span>
   </div>
-  <p class="purpose"><span class="q">One question:</span> if I change the rake structure,
-    <b>who pays how much, and what is left for the room?</b>
-    Put a real table in — the players, the money each puts in per hand — then move the rake
-    percentage and the cap and watch every number move with them.</p>
+  <p class="purpose"><b>Change the rake. See who pays it.</b></p>
+  <p class="purpose2">Load a real table, move the rake percentage or the cap, and everything
+    below re-computes: what each player pays, what he keeps, and what is left for the room
+    after rakeback and bonuses.</p>
+  <p class="eg"><span>For example</span> 25/50 has a €20 cap today, 0.40 bb. Type 0.60 into
+    the cap field and you see straight away who pays the extra and how much more the room keeps.</p>
   <div class="srcline" id="srcLine"></div>
   <div class="loaded" id="loadedLine" style="display:none"></div>
 </header>
@@ -646,7 +656,7 @@ function sanitize(o){
              wx:  Math.max(toNum(q.wx,  def.wx), 0.01),
              hands: Math.max(toNum(q.hands, 1000), 1) };
   });
-  o.src = typeof o.src === "string" ? o.src.slice(0,220) : "";
+  o.src = typeof o.src === "string" ? o.src.replace(/\s+/g," ").trim().slice(0,140) : "";
   o.loadedAt = typeof o.loadedAt === "string" ? o.loadedAt.slice(0,24) : "";
   o.game = (typeof o.game === "string" && o.game.trim()) ? o.game.trim().slice(0,24) : d.game;
   // An wie vielen Plätzen die eingelesenen Daten gemessen wurden. 0 = keine Daten.
@@ -1376,6 +1386,7 @@ function ioSummary(o, i){
     : [];
   var nm = (typeof o.name === "string" && o.name.trim()) ? o.name.trim()
          : (typeof st.src === "string" && st.src.trim()) ? st.src.trim() : "Block "+(i+1);
+  nm = nm.replace(/\s+/g, " ").trim().slice(0,90);
   return { obj:o, st:st, name:nm, seats:st.seats, bb:st.bb, sb:st.sb,
            n:pls.length, names:pls.map(function(q){ return String(q.name); }),
            hands:pls.reduce(function(a2,q){ return a2 + (Number(q.hands)||0); }, 0),
@@ -1574,9 +1585,18 @@ function draw(){
     if(!L) return;
     if(!S.src){ L.style.display = "none"; L.innerHTML = ""; return; }
     L.style.display = "";
-    L.innerHTML = "<b>On the table:</b> "+esc(S.src)+
+    /* Nur die erste Zeile, Leerraum zusammengezogen, hart gekürzt. Ein Block trägt hier
+       einen Namen; früher konnte auch ein ganzer Dateikopf hineinlaufen. */
+    var t = String(S.src).replace(/\s+/g, " ").trim();
+    if(t.length > 90) t = t.slice(0, 88).replace(/[\s·–—-]+$/, "") + "…";
+    L.innerHTML = '<button class="btn xsm" id="srcClear" title="Clear">clear</button>'+
+      "<b>On the table:</b> "+esc(t)+
       (S.loadedAt ? " · loaded "+esc(S.loadedAt) : "")+
       (S.dataSeats ? " · measured at "+S.dataSeats+" seats" : "");
+    const cb = $("srcClear");
+    if(cb) cb.addEventListener("click", function(){
+      S.src = ""; S.loadedAt = ""; render();
+    });
   })();
 
   const gIn = $("gameTxt");
