@@ -138,6 +138,20 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 .savebar input{flex:1;min-width:130px;width:auto;text-align:left}
 .flash{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:8px;min-height:14px}
 
+/* ═══ V36 · Herkunft dezent markieren ══════════════════════════════════
+   Gemessene Zahlen bekommen eine dünne gepunktete Linie darunter, abgeleitete
+   dieselbe Linie in Gold. Eigene Eingaben bleiben nackt. Beim Draufzeigen sagt
+   ein title, woher der Wert kommt. Keine neue Farbe, kein zusätzliches Gewicht. */
+.mv{border-bottom:1px dotted rgba(79,163,165,.75);cursor:help}
+.mv.e{border-bottom-color:rgba(217,164,65,.75);border-bottom-style:dotted}
+.field .dot{display:inline-block;width:4px;height:4px;border-radius:50%;
+  background:var(--reg);vertical-align:2px;margin-left:5px}
+.field .dot.e{background:var(--fish)}
+.legend{font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--muted);
+  margin:0 0 18px;display:flex;gap:16px;flex-wrap:wrap;align-items:baseline}
+.legend span.k{border-bottom:1px dotted rgba(79,163,165,.75);color:var(--bone)}
+.legend span.k.e{border-bottom-color:rgba(217,164,65,.75)}
+
 /* ═══ V33 · Easy Mode ═════════════════════════════════════════════════ */
 .vsw{display:flex;gap:0;border:1px solid var(--line);margin:18px 0 26px;width:max-content}
 .vsw button{background:none;border:none;border-right:1px solid var(--line);color:var(--muted);
@@ -278,6 +292,11 @@ section{margin-bottom:34px}
   <button id="vwEasy" class="on">Easy</button>
   <button id="vwExp">Expert</button>
 </div>
+<p class="legend">
+  <span><span class="k">1,234</span> measured from data</span>
+  <span><span class="k e">1,234</span> derived or assumed</span>
+  <span>plain = your own figure · hover any marked number for its source</span>
+</p>
 
 <div id="easyView">
 <section>
@@ -689,7 +708,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 35;
+const VERSION = 36;
 const VDATE   = "07.09.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -2006,6 +2025,11 @@ $("vwExp").addEventListener("click",  function(){ ezSetView("expert"); });
 })();
 
 /* eigener Geldformatierer für Easy Mode: kleine Beträge mit Cent */
+/* Zahl mit Herkunft: kind "m" = gemessen, "e" = abgeleitet, "" = eigene Eingabe. */
+function mv(txt, kind, note){
+  if(!kind) return String(txt);
+  return '<span class="mv'+(kind==="e"?" e":"")+'" title="'+esc(note||"")+'">'+txt+'</span>';
+}
 function ezEur(x){ return (x<0?"−":"")+"€"+Math.abs(x).toLocaleString("de-DE",
   {maximumFractionDigits: Math.abs(x)<100 ? 2 : 0}); }
 function hrs(h){ return h>=48 ? fx(h/24,1)+" Tage" : fx(h,1)+" Stunden"; }
@@ -2029,14 +2053,16 @@ function ezDraw(){
     H += '<div class="ans"><div class="at">How long the fish lasts</div>'+
       '<div class="abig">'+fmtInt(Math.round(m.bust.med))+' hands<small>'+
       fx(hoursMed,1)+' hours at the table</small></div>'+
-      '<div class="asub">He loses <b>'+fx(m.fishLoss,1)+' bb/100</b>, which is <b>'+
-      eur2(lossEurHand)+'</b> a hand. On a '+eur(S.ezDep)+' deposit that runs out after '+
-      fmtInt(Math.round(m.bust.med))+' hands.<br>'+
+      '<div class="asub">He loses <b>'+mv(fx(m.fishLoss,1)+" bb/100", m.lossOwn?"":"m",
+        m.lossOwn ? "" : "Tableau, 90 days — average of the loosest tenth of players in this kind of table")+
+      '</b>, which is <b>'+eur2(lossEurHand)+'</b> a hand. On a '+eur(S.ezDep)+
+      ' deposit that runs out after '+fmtInt(Math.round(m.bust.med))+' hands.<br>'+
       (solid
         ? 'With variance: somewhere between <b>'+fmtInt(Math.round(m.bust.fast))+'</b> and <b>'+
           fmtInt(Math.round(m.bust.slow))+'</b> hands in nine cases out of ten.'
         : '<b style="color:var(--fish)">A range would be false precision here.</b> Over '+
-          fmtInt(Math.round(m.bust.med))+' hands the swing (±'+fx(m.sd,0)+
+          fmtInt(Math.round(m.bust.med))+' hands the swing (±'+
+          mv(fx(m.sd,0),"e","assumed, not measured — the hand histories could give this exactly")+
           ' bb a hand) is far bigger than the '+fx(m.fishLoss/100,2)+
           ' bb he loses per hand. He can be gone in one bad session or last ten times as long. '+
           'The number above is the average of many such players, not a forecast for one.')+
@@ -2046,14 +2072,22 @@ function ezDraw(){
   /* B — what the table brings in */
   H += '<div class="ans"><div class="at">What the table brings the room</div>'+
     '<div class="abig">'+eur(m.netHour)+'<small>net an hour, after rakeback</small></div>'+
-    '<div class="asub">Rake <b>'+eur(m.rakeHour)+'</b> an hour — <b>'+fx(m.t.r100,2)+
-    ' bb/100 across the table</b>, '+fx(m.t.r100/m.seats,2)+' per player — and <b>'+
-    eur(m.rbOut)+'</b> of it goes back out as rakeback.<br>Over eight hours: <b>'+
-    eur(m.netHour*8)+'</b>.'+
+    '<div class="asub">Rake <b>'+eur(m.rakeHour)+'</b> an hour at <b>'+
+    mv(fx(m.hph,0), m.hphOwn?"":(m.hphM.m?"m":"e"),
+       m.hphOwn ? "" : (m.hphM.m ? "measured from the timestamps, tracked by seat set — the table ID is a game ID, not a table"
+                                 : "derived from table size, no timestamps for this cell"))+
+    ' hands an hour</b> — <b>'+fx(m.t.r100,2)+' bb/100 across the table</b>, '+
+    fx(m.t.r100/m.seats,2)+' per player — and <b>'+eur(m.rbOut)+
+    '</b> of it goes back out as rakeback.<br>Over eight hours: <b>'+eur(m.netHour*8)+'</b>.'+
     (m.nFish>0 && m.bust ? ' For as long as this fish lasts the table makes <b>'+
       eur(m.rakeHour*m.bust.med/m.hph)+'</b>, of which he pays <b>'+
       eur(m.rakeFish100/100*m.bust.med*bb)+'</b> himself.' : '')+
-    ' The cap is reached in <b>'+fx(m.t.pCap*100,0)+' %</b> of pots that see a flop.'+
+    ' The cap is reached in <b>'+fx(m.t.pCap*100,0)+'&#160;%</b> of pots that see a flop, '+
+    'computed from a median pot of <b>'+mv(fx(m.median,1)+" bb", m.v[7],
+      m.v[7]==="m" ? "measured in the hand histories for this exact cell"
+                   : "derived: 0.498 × money in per hand × seats, fitted on 15 measured cells")+
+    '</b> and a flop rate of <b>'+mv(fx(m.flop,1)+"&#160;%", m.v[7],
+      m.v[7]==="m" ? "measured in the hand histories" : "average for this game")+'</b>.'+
     '</div></div>';
 
   /* C — what a bonus really costs */
@@ -2089,7 +2123,9 @@ function ezDraw(){
       const bu = bustHands(S.ezDep/bb, loss/100, m.sd);
       const here = Math.abs(c - m.cap) < 0.0005;
       const d = ((rh-rb)/Math.max(m.netHour,1e-9)-1)*100;
-      R += '<tr'+(here?' style="background:rgba(217,164,65,.13)"':'')+'><td>'+fx(c,2)+' bb'+
+      R += '<tr'+(here?' style="background:rgba(217,164,65,.13)"':'')+'><td>'+
+        (here ? mv(fx(c,2)+" bb","m","CoinPoker's own schedule, confirmed in the hand histories")
+              : fx(c,2)+" bb")+
         (here?' <b style="color:var(--fish)">today</b>':'')+'</td><td>'+eur(c*bb)+'</td><td>'+
         fx(r.r100,2)+'</td><td>'+eur(rh-rb)+'</td><td>'+
         (bu?fmtInt(Math.round(bu.med)):'—')+'</td><td>'+
@@ -2151,6 +2187,26 @@ function ezDraw(){
     w.style.display = (m.lossOwn || m.hphOwn) ? "" : "none";
   })();
 
+  /* Punkt neben den Feldern, deren Wert nicht von Leo kommt */
+  (function(){
+    const mark = function(id, kind, note){
+      const lab = document.querySelector('label[for="'+id+'"]');
+      if(!lab) return;
+      const old = lab.querySelector(".dot");
+      if(old) old.remove();
+      if(!kind) { lab.title = ""; return; }
+      const d = document.createElement("span");
+      d.className = "dot"+(kind==="e"?" e":"");
+      lab.appendChild(d);
+      lab.title = note || "";
+    };
+    mark("ezLoss", m.lossOwn ? "" : "m", "Tableau, 90 days — the loosest tenth of players in this cell");
+    mark("ezHph",  m.hphOwn  ? "" : (m.hphM.m ? "m" : "e"),
+         m.hphM.m ? "measured from the timestamps in the hand histories"
+                  : "derived from table size — no timestamps measured for this cell");
+    mark("ezStake", ""); mark("ezDep", ""); mark("ezBonus", ""); mark("ezRb", "");
+  })();
+
   /* Eingaben nachziehen */
   const q = function(id, val){ const e = $(id); if(e && document.activeElement!==e) e.value = val; };
   q("ezDep", fx(S.ezDep,0)); q("ezHph", fx(m.hph,0)); q("ezLoss", fx(m.fishLoss,1));
@@ -2170,6 +2226,7 @@ $("ezToExp").addEventListener("click", function(){
   S.bb = m.bb; S.sb = m.bb/2; S.game = S.ezGame; S.seats = m.seats;
   S.cap = m.cap; S.pct = 5; S.median = m.median; S.flop = m.flop;
   S.rbReg = S.ezRb;
+  S.hph = Math.round(m.hph);          // gemessene Tischgeschwindigkeit mitnehmen
   padPlayers(m.seats);
   for(var i=0;i<m.seats;i++){
     const isFish = i < m.nFish;
@@ -2397,6 +2454,38 @@ function draw(){
   (function(){
     const el = $("capEur");
     if(el && document.activeElement!==el) el.value = fx(S.cap*BB, 2);
+  })();
+
+  /* ── Herkunft in der Expertenansicht ─────────────────────────────────
+     Punkt am Label, wenn der Wert aus Daten kommt und nicht von Leo. Der Cap gilt
+     als gemessen, wenn er der Staffel oder dem Messwert entspricht; Median-Pot,
+     Flop-Anteil, Inv und Eff. Rake stammen aus einem geladenen Datensatz. */
+  (function(){
+    const mark = function(id, kind, note){
+      const lab = document.querySelector('label[for="'+id+'"]');
+      if(!lab) return;
+      const old = lab.querySelector(".dot"); if(old) old.remove();
+      lab.title = kind ? (note||"") : "";
+      if(!kind) return;
+      const d = document.createElement("span");
+      d.className = "dot"+(kind==="e"?" e":"");
+      lab.appendChild(d);
+    };
+    const sc = schedCap(S.bb, S.seats), ms = measCap(S.bb, S.seats);
+    const capNote = (ms && Math.abs(ms.bb-S.cap)<0.0005) ? "measured in the hand histories"
+                  : (sc && Math.abs(sc.bb-S.cap)<0.0005) ? "CoinPoker's own schedule" : "";
+    mark("cap",    capNote?"m":"", capNote);
+    mark("capEur", capNote?"m":"", capNote);
+    mark("pct",    Math.abs(S.pct-5)<0.001 ? "m" : "",
+         "5.00 % is CoinPoker's rate at every stake — confirmed in the hand histories");
+    const imported = !!S.src;
+    mark("median", imported?"m":"", "from the loaded data: "+S.src);
+    mark("flop",   imported?"m":"", "from the loaded data: "+S.src);
+    document.querySelectorAll("#expertView thead th").forEach(function(th){
+      const t = th.textContent.trim();
+      if(t === "Inv bb/h" || t === "Eff. rake %")
+        th.innerHTML = imported ? mv(t, "m", "from the loaded data: "+S.src) : t;
+    });
   })();
 
   /* ── CoinPoker-Staffel: Karte, volle Tabelle, Messwerte ──────────────
