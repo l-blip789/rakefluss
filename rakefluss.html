@@ -301,7 +301,13 @@ section{margin-bottom:34px}
 <div id="easyView">
 <section>
   <div class="shead"><span class="snum">01</span><span class="stitle">The table</span></div>
-  <p class="sdesc">Four inputs, nothing more. Everything else comes from measured pool data — 90 days of Tableau for the money each player puts in, hand histories for pot size and flop rate, CoinPoker's own schedule for the rate and the cap.</p>
+  <p class="sdesc">Four inputs, nothing more. Everything else comes from measured pool data — 90 days
+    of Tableau for the money each player puts in, hand histories for pot size and flop rate,
+    CoinPoker's own schedule for the rate and the cap.<br>
+    <b>&#8220;Fish&#8221; is not a guess here.</b> It means a player who puts a lot of money into the pot
+    per hand <b>and</b> plays few hands. Both signals together, because money alone would also
+    catch a loose winning reg. Measured across 17,730 players: that group loses
+    <b>&#8722;57&#160;bb/100</b>, while a tight high-volume reg loses <b>&#8722;5</b>.</p>
   <div class="panel">
     <div class="fields">
       <div class="field"><label for="ezStake">Stake</label>
@@ -708,7 +714,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 36;
+const VERSION = 38;
 const VDATE   = "07.09.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -923,81 +929,83 @@ function measCap(bb, seats){
                  Rake bb/100 (nur Gegenprobe), Hände im Abzug, Quelle Pot/Flop]
    Quelle "m" = aus Handhistories gemessen, "e" = aus dem Geldeinsatz abgeleitet.
    inv und Fischverlust: Tableau Userwise, 90 Tage bis 06.09.2026, Format=Cash,
-   ohne Bomb Pots, 919.416 Zeilen. Fisch = das lockerste Zehntel der Zelle.
+   ohne Bomb Pots, 919.416 Zeilen.
+
+   FISCH-ABGRENZUNG (V38): zwei Signale, nicht eines. Fisch = viel Geld je Hand UND
+   wenig Volumen (obere 30 % beim Geld, untere Hälfte beim Handvolumen, Schwellen je
+   Zelle). Reg = das Gegenteil. Geld allein reicht nicht: ein lockerer Gewinner setzt
+   auch viel ein. Gemessen an 17.730 Spielern:
+       viel Geld + wenig Volumen  −56,9 bb/100   <- Fisch
+       viel Geld + viel Volumen   −16,1          <- loser Reg
+       wenig Geld + wenig Volumen −25,5
+       wenig Geld + viel Volumen   −5,1          <- tighter Reg
+   Die alte Ein-Signal-Regel (oberstes Zehntel nach Geld) kam nur auf −40,0 gegen −6,6.
    Potgröße und Flopanteil: BO-Handhistories (25/50) und GucciNIKE (50/100+).
    Prozentsatz und Cap kommen NICHT von hier — die stehen exakt in SCHED. */
 const BENCH = {
-  "NLHE|1|2":[5.36,8.46,5.7,51.6,-19.5,15.06,1384483,"e"],
-  "NLHE|1|6":[3.0,8.28,9.6,59.1,-83.6,11.07,18409158,"e"],
-  "NLHE|2|2":[5.54,8.52,5.8,51.6,-46.2,11.99,1137754,"e"],
-  "NLHE|2|6":[3.12,9.36,10.0,59.1,-76.0,9.82,13491398,"e"],
-  "NLHE|5|2":[5.57,8.89,5.8,51.6,-40.7,9.55,678724,"e"],
-  "NLHE|5|6":[3.26,8.65,10.3,59.1,-80.6,7.72,5848687,"e"],
-  "NLHE|10|2":[5.78,8.12,6.2,51.6,-33.6,7.06,564044,"e"],
-  "NLHE|10|6":[3.4,7.12,10.9,59.1,-69.9,6.01,2004292,"e"],
-  "NLHE|20|2":[5.57,8.56,6.0,51.6,-27.6,5.68,248202,"e"],
-  "NLHE|20|6":[3.56,7.28,11.9,59.1,-55.0,5.53,634718,"e"],
-  "NLHE|50|2":[5.72,8.08,8.8,51.6,-41.5,3.06,222144,"m"],
-  "NLHE|50|6":[3.47,6.46,11.2,59.1,-32.9,3.73,462027,"m"],
-  "NLHE|100|2":[5.84,7.99,6.2,51.6,-33.6,9.89,35182,"e"],
-  "NLHE|100|6":[3.65,6.94,13.3,59.1,-78.9,6.53,75149,"e"],
-  "NLHE|200|2":[5.89,8.56,6.4,51.6,-33.6,9.4,8552,"e"],
-  "PLO4|1|2":[8.4,14.07,9.0,67.4,-69.1,24.17,462232,"e"],
-  "PLO4|1|5":[4.02,7.81,11.8,75.0,-88.9,15.01,8239,"e"],
-  "PLO4|1|6":[4.34,13.48,14.5,75.0,-111.1,17.85,2774992,"e"],
-  "PLO4|2|2":[7.83,11.82,8.5,67.4,-54.8,18.66,455790,"e"],
-  "PLO4|2|6":[4.76,13.32,16.1,75.0,-82.0,16.02,2484131,"e"],
-  "PLO4|5|2":[7.72,11.89,8.5,67.4,-22.3,12.75,249918,"e"],
-  "PLO4|5|5":[4.82,12.16,15.5,75.0,-88.9,12.29,22146,"e"],
-  "PLO4|5|6":[4.44,10.47,14.8,75.0,-80.6,11.33,1181646,"e"],
-  "PLO4|10|2":[8.02,10.85,8.4,67.4,-13.0,9.57,185220,"e"],
-  "PLO4|10|5":[5.77,15.3,16.9,75.0,-88.9,9.19,52496,"e"],
-  "PLO4|10|6":[4.64,9.4,15.5,75.0,-27.3,8.73,432887,"e"],
-  "PLO4|20|2":[8.3,13.43,8.8,67.4,-51.5,7.67,66968,"e"],
-  "PLO4|20|4":[7.72,18.72,18.6,75.0,-88.9,8.99,22507,"e"],
-  "PLO4|20|5":[5.03,7.62,13.6,75.0,-88.9,7.2,30325,"e"],
-  "PLO4|20|6":[4.57,8.52,16.0,75.0,-72.6,7.26,158649,"e"],
-  "PLO4|50|2":[8.35,10.37,12.8,67.4,-51.5,4.29,68938,"m"],
-  "PLO4|50|4":[7.38,10.27,13.8,84.9,-88.9,4.96,12318,"m"],
-  "PLO4|50|5":[5.79,8.75,16.7,65.5,-88.9,4.62,13632,"m"],
-  "PLO4|50|6":[5.87,8.06,18.8,74.5,-88.9,4.47,10513,"m"],
-  "PLO4|100|2":[8.28,15.01,9.8,67.4,-51.5,12.87,32944,"e"],
-  "PLO5|1|2":[8.92,15.72,9.6,74.2,-65.9,25.41,262634,"e"],
-  "PLO5|1|6":[5.4,14.35,18.3,75.7,-100.2,21.41,966766,"e"],
-  "PLO5|2|2":[8.93,15.15,9.8,74.2,-87.0,20.24,415710,"e"],
-  "PLO5|2|6":[6.04,16.93,21.0,75.7,-68.3,19.41,3602118,"e"],
-  "PLO5|5|2":[9.13,17.42,12.2,74.2,-16.6,14.53,595780,"e"],
-  "PLO5|5|5":[5.03,9.28,14.3,75.7,-60.3,11.75,22767,"e"],
-  "PLO5|5|6":[5.59,15.16,18.7,75.7,-48.3,12.63,1623470,"e"],
-  "PLO5|10|2":[8.94,14.17,9.6,74.2,-42.1,9.78,261004,"e"],
-  "PLO5|10|5":[5.61,9.92,16.2,75.7,-60.3,9.51,82818,"e"],
-  "PLO5|10|6":[5.37,11.38,18.2,75.7,-15.6,9.48,607799,"e"],
-  "PLO5|20|2":[9.19,13.43,10.0,74.2,-40.9,7.33,163682,"e"],
-  "PLO5|20|5":[6.01,11.6,17.7,75.7,-60.3,8.63,68430,"e"],
-  "PLO5|20|6":[5.76,9.98,19.3,75.7,-12.2,8.07,186695,"e"],
-  "PLO5|50|2":[9.51,16.45,14.1,69.8,-111.1,4.16,178650,"m"],
-  "PLO5|50|5":[6.8,13.48,19.3,66.6,-30.4,4.86,356035,"m"],
-  "PLO5|50|6":[6.32,9.87,17.6,74.6,-60.3,5.25,69344,"m"],
-  "PLO5|100|2":[9.48,15.13,18.4,75.7,-53.0,12.69,78660,"m"],
-  "PLO5|100|4":[10.36,17.68,23.1,75.7,-60.3,13.86,49630,"e"],
-  "PLO5|100|5":[8.57,13.85,19.0,70.0,-60.3,12.73,41543,"m"],
-  "PLO5|200|2":[8.9,14.41,18.4,77.2,-53.0,13.1,26654,"m"],
-  "PLO5|200|4":[8.76,13.02,18.0,91.4,-60.3,12.19,95511,"m"],
-  "PLO6|1|2":[10.98,23.97,13.1,66.7,-59.0,27.92,334764,"e"],
-  "PLO6|1|5":[7.17,18.47,21.0,63.7,-87.8,26.5,697254,"e"],
-  "PLO6|2|2":[9.61,19.99,10.9,66.7,-31.6,19.95,207347,"e"],
-  "PLO6|2|5":[8.11,18.91,23.1,63.7,-98.3,22.64,940107,"e"],
-  "PLO6|5|2":[10.68,25.13,13.4,66.7,-33.9,14.34,389844,"e"],
-  "PLO6|5|5":[6.26,15.69,17.4,63.7,-42.4,13.31,761841,"e"],
-  "PLO6|10|2":[9.33,15.58,10.7,66.7,-17.8,9.78,134282,"e"],
-  "PLO6|10|5":[6.98,13.79,20.2,63.7,-51.9,10.93,180676,"e"],
-  "PLO6|20|2":[8.72,13.04,9.5,66.7,-59.0,7.27,88396,"e"],
-  "PLO6|20|5":[6.61,11.43,18.4,63.7,-75.4,7.03,27561,"e"],
-  "PLO6|50|2":[9.41,11.98,12.8,66.7,-59.0,3.99,78544,"m"],
-  "PLO6|50|5":[8.65,11.72,14.7,63.7,-75.4,3.84,23152,"m"],
-  "PLO6|100|2":[9.48,12.67,9.9,66.7,-59.0,12.0,21380,"e"],
-  "Short Deck|2|6":[8.27,14.01,26.5,70.0,-12.7,9.5,197149,"e"],
-  "Short Deck|10|6":[7.64,10.05,24.2,70.0,-12.7,9.35,51877,"e"]
+  "NLHE|1|2":[5.34,7.47,7.6,51.6,-65.5,15.06,1384483,"e"],
+  "NLHE|1|6":[2.97,6.33,15.1,59.1,-68.8,11.07,18409158,"e"],
+  "NLHE|2|2":[5.55,7.4,7.7,51.6,-52.7,11.99,1137754,"e"],
+  "NLHE|2|6":[3.1,6.71,15.9,59.1,-61.8,9.82,13491398,"e"],
+  "NLHE|5|2":[5.58,7.64,7.9,51.6,-43.3,9.55,678724,"e"],
+  "NLHE|5|6":[3.24,6.42,16.0,59.1,-56.4,7.72,5848687,"e"],
+  "NLHE|10|2":[5.83,7.58,8.1,51.6,-50.3,7.06,564044,"e"],
+  "NLHE|10|6":[3.33,5.84,15.5,59.1,-51.3,6.01,2004292,"e"],
+  "NLHE|20|2":[5.55,7.39,7.7,51.6,-21.0,5.68,248202,"e"],
+  "NLHE|20|6":[3.49,6.23,16.4,59.1,-50.8,5.53,634718,"e"],
+  "NLHE|50|2":[5.72,7.07,8.8,51.6,-50.3,3.06,222144,"m"],
+  "NLHE|50|6":[3.43,5.56,11.2,59.1,-31.9,3.73,462027,"m"],
+  "NLHE|100|2":[5.89,7.56,8.1,51.6,-50.3,9.89,35182,"e"],
+  "NLHE|100|6":[3.64,5.38,15.8,59.1,-63.2,6.53,75149,"e"],
+  "PLO4|1|2":[8.46,12.37,12.2,67.4,-100.7,24.17,462232,"e"],
+  "PLO4|1|6":[4.25,10.4,23.2,70.0,-69.8,17.85,2774992,"e"],
+  "PLO4|2|2":[7.78,10.88,11.1,67.4,-50.9,18.66,455790,"e"],
+  "PLO4|2|6":[4.56,10.59,24.2,70.0,-67.6,16.02,2484131,"e"],
+  "PLO4|5|2":[7.59,11.89,11.3,67.4,-50.3,12.75,249918,"e"],
+  "PLO4|5|5":[4.86,9.79,20.1,70.0,-60.1,12.29,22146,"e"],
+  "PLO4|5|6":[4.4,8.02,20.9,70.0,-43.0,11.33,1181646,"e"],
+  "PLO4|10|2":[8.1,10.19,11.1,67.4,-67.3,9.57,185220,"e"],
+  "PLO4|10|5":[5.9,16.82,29.1,70.0,-60.1,9.19,52496,"e"],
+  "PLO4|10|6":[4.64,7.99,21.5,70.0,-60.1,8.73,432887,"e"],
+  "PLO4|20|2":[8.25,12.31,12.0,67.4,-67.3,7.67,66968,"e"],
+  "PLO4|20|4":[7.62,15.69,25.5,70.0,-60.1,8.99,22507,"e"],
+  "PLO4|20|5":[4.83,7.1,17.5,70.0,-60.1,7.2,30325,"e"],
+  "PLO4|20|6":[4.55,7.66,20.9,70.0,-37.2,7.26,158649,"e"],
+  "PLO4|50|2":[8.27,11.31,12.8,67.4,-67.3,4.29,68938,"m"],
+  "PLO4|100|2":[8.25,13.16,12.3,67.4,-67.3,12.87,32944,"e"],
+  "PLO5|1|2":[8.91,12.73,12.8,74.2,-80.1,25.41,262634,"e"],
+  "PLO5|1|6":[5.26,11.61,27.3,75.7,-62.9,21.41,966766,"e"],
+  "PLO5|2|2":[8.92,12.63,12.7,74.2,-80.0,20.24,415710,"e"],
+  "PLO5|2|6":[5.79,14.58,32.1,75.7,-86.2,19.41,3602118,"e"],
+  "PLO5|5|2":[9.03,13.63,13.2,74.2,-68.0,14.53,595780,"e"],
+  "PLO5|5|5":[4.95,7.84,18.5,75.7,-64.4,11.75,22767,"e"],
+  "PLO5|5|6":[5.38,12.36,28.4,75.7,-49.0,12.63,1623470,"e"],
+  "PLO5|10|2":[8.85,12.99,12.8,74.2,-80.8,9.78,261004,"e"],
+  "PLO5|10|5":[5.68,9.45,21.6,75.7,-64.4,9.51,82818,"e"],
+  "PLO5|10|6":[5.27,9.46,24.8,75.7,-19.6,9.48,607799,"e"],
+  "PLO5|20|2":[9.16,13.15,13.1,74.2,-45.6,7.33,163682,"e"],
+  "PLO5|20|5":[5.99,10.26,23.1,75.7,-64.4,8.63,68430,"e"],
+  "PLO5|20|6":[5.69,8.77,25.2,75.7,-38.1,8.07,186695,"e"],
+  "PLO5|50|2":[9.31,12.49,14.1,69.8,-112.1,4.16,178650,"m"],
+  "PLO5|50|5":[6.78,9.65,19.3,66.6,-34.3,4.86,356035,"m"],
+  "PLO5|50|6":[6.2,9.49,17.6,74.6,-64.4,5.25,69344,"m"],
+  "PLO5|100|2":[9.41,13.92,18.4,75.7,-80.1,12.69,78660,"m"],
+  "PLO5|100|4":[10.51,16.61,31.3,75.7,-64.4,13.86,49630,"e"],
+  "PLO5|100|5":[8.39,13.84,19.0,70.0,-64.4,12.73,41543,"m"],
+  "PLO5|200|2":[8.89,11.05,18.4,77.2,-80.1,13.1,26654,"m"],
+  "PLO5|200|4":[8.79,12.12,18.0,91.4,-64.4,12.19,95511,"m"],
+  "PLO6|1|2":[10.6,17.89,16.2,66.7,-72.6,27.92,334764,"e"],
+  "PLO6|1|5":[6.98,15.17,29.9,70.0,-70.6,26.5,697254,"e"],
+  "PLO6|2|2":[9.44,14.56,13.9,66.7,-19.7,19.95,207347,"e"],
+  "PLO6|2|5":[7.75,16.56,33.0,70.0,-112.9,22.64,940107,"e"],
+  "PLO6|5|2":[10.7,17.32,16.1,66.7,-63.6,14.34,389844,"e"],
+  "PLO6|5|5":[6.12,12.7,25.7,70.0,-28.8,13.31,761841,"e"],
+  "PLO6|10|2":[9.19,14.88,13.8,66.7,-39.9,9.78,134282,"e"],
+  "PLO6|10|5":[6.68,12.15,26.4,70.0,-61.3,10.93,180676,"e"],
+  "PLO6|20|2":[8.73,11.74,12.2,66.7,-55.0,7.27,88396,"e"],
+  "PLO6|20|5":[6.48,10.95,24.8,70.0,-72.5,7.03,27561,"e"],
+  "PLO6|50|2":[9.35,11.81,12.8,66.7,-55.0,3.99,78544,"m"],
+  "Short Deck|2|6":[7.42,11.52,32.9,70.0,-70.1,9.5,197149,"e"]
 };
 
 /* Hände pro Stunde je Spielart und Tischgröße, aus den Zeitstempeln der Handhistories.
@@ -2054,7 +2062,9 @@ function ezDraw(){
       '<div class="abig">'+fmtInt(Math.round(m.bust.med))+' hands<small>'+
       fx(hoursMed,1)+' hours at the table</small></div>'+
       '<div class="asub">He loses <b>'+mv(fx(m.fishLoss,1)+" bb/100", m.lossOwn?"":"m",
-        m.lossOwn ? "" : "Tableau, 90 days — average of the loosest tenth of players in this kind of table")+
+        m.lossOwn ? "" : "Measured in Tableau over 90 days. A \u201cfish\u201d here is a player who puts a lot of "+
+          "money into the pot per hand AND plays few hands — the two together separate "+
+          "recreational players from loose winning regs. Money alone does not.")+
       '</b>, which is <b>'+eur2(lossEurHand)+'</b> a hand. On a '+eur(S.ezDep)+
       ' deposit that runs out after '+fmtInt(Math.round(m.bust.med))+' hands.<br>'+
       (solid
@@ -2144,7 +2154,8 @@ function ezDraw(){
       fmtStake(b.bb/2)+"/"+fmtStake(b.bb)+", "+b.seats+"-max)</span>";
     P.innerHTML =
       "Money in per hand, reg: <b>"+fx(m.wR,2)+" bb</b>"+tag("m","Tableau, 90 days")+nx+"<br>"+
-      "Money in per hand, fish: <b>"+fx(m.wF,2)+" bb</b>"+tag("m","loosest tenth of the cell")+"<br>"+
+      "Money in per hand, fish: <b>"+fx(m.wF,2)+" bb</b>"+
+        tag("m","much money per hand, few hands played")+"<br>"+
       "Fish loses: <b>"+fx(m.fishLoss,1)+" bb/100</b>"+
         (m.lossOwn ? tag("e","your figure, measured is "+fx(m.lossM,1))
                    : tag("m","Tableau, 90 days"))+"<br>"+
@@ -2200,7 +2211,10 @@ function ezDraw(){
       lab.appendChild(d);
       lab.title = note || "";
     };
-    mark("ezLoss", m.lossOwn ? "" : "m", "Tableau, 90 days — the loosest tenth of players in this cell");
+    mark("ezLoss", m.lossOwn ? "" : "m",
+      "Measured in Tableau over 90 days. A \u201cfish\u201d here is a player who puts a lot of money "+
+      "into the pot per hand AND plays few hands. Both signals together — money alone would "+
+      "also catch loose winning regs.");
     mark("ezHph",  m.hphOwn  ? "" : (m.hphM.m ? "m" : "e"),
          m.hphM.m ? "measured from the timestamps in the hand histories"
                   : "derived from table size — no timestamps measured for this cell");
@@ -2298,8 +2312,10 @@ function draw(){
   if(sdIn && document.activeElement!==sdIn) sdIn.value = fx(S.skillSD, 1);
 
   const stakes = fmtStake(S.sb)+"/"+fmtStake(S.bb);
+  /* Kein Spielername im Kopf — der Tisch wird über Stake und Format beschrieben,
+     nicht über eine Person. */
   $("sub").textContent = S.game+" · "+stakes+" · "+
-    (S.seats===2 ? "Heads-up" : S.seats+"-max")+" · Whale: "+W;
+    (S.seats===2 ? "Heads-up" : S.seats+"-max");
 
   /* Tischgröße */
   (function(){
