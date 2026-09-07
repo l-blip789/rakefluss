@@ -376,6 +376,23 @@ section{margin-bottom:34px}
       <tbody id="rows"></tbody>
     </table>
   </div>
+  <div class="panel" style="margin-top:14px;padding:14px 15px">
+    <span class="sname" style="display:block;margin-bottom:8px">Fill the regs in from the whale</span>
+    <p class="note" style="margin:0 0 10px">Give the whale a winrate and press the button. The
+      regs get random winrates that add up to exactly what he loses, so the table stays zero-sum.
+      <b>Press again for a new draw.</b> Spread controls how far apart they land; where the seats
+      have inv figures, the draw is centred on each reg's share of the money instead of on an
+      equal share.</p>
+    <div class="savebar" style="margin-top:0">
+      <button class="btn pri" id="spreadBtn">Set reg winrates from the whale</button>
+      <div class="field" style="flex:none">
+        <label for="skillSD" style="margin-bottom:3px">spread ± bb/100</label>
+        <input type="text" inputmode="decimal" id="skillSD" style="width:78px">
+      </div>
+      <button class="btn" id="spreadFlat">Make them equal</button>
+    </div>
+    <p class="note" id="spreadNote" style="margin-top:10px"></p>
+  </div>
   <p class="note" id="keyNote"></p>
   <div id="grossBal" style="display:none;margin-top:12px"></div>
 </section>
@@ -583,7 +600,7 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 30;
+const VERSION = 32;
 const VDATE   = "07.09.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
@@ -602,7 +619,7 @@ const DEFAULTS = {
   pct:5, cap:2.5, flop:70, median:14,
   rbReg:0, rbFish:0, rebate:0, rebBase:"net",
   wagerBase:"both", lockMode:"both",
-  ceiling:3, depth:250, hph:65, rebH:1000, pctHint:0, capHint:0, seats:6, sb:25, bb:50, src:"", loadedAt:"", game:"PLO5", dataSeats:0,
+  ceiling:3, depth:250, hph:65, rebH:1000, pctHint:0, capHint:0, seats:6, sb:25, bb:50, src:"", loadedAt:"", game:"PLO5", dataSeats:0, skillSD:12,
   goalMode:"ferry", goalVal:-5000, goalWho:5
 };
 
@@ -664,6 +681,7 @@ function sanitize(o){
   // Aus den Handdaten gemessene Rakestruktur. Nur Hinweis, wird nie angewendet —
   // erst wenn Leo im Block "Rakestruktur" auf Übernehmen tippt.
   o.pctHint = toNum(o.pctHint, 0);
+  o.skillSD = Math.max(0, Math.min(60, toNum(o.skillSD, 12)));
   o.capHint = toNum(o.capHint, 0);
   // Stakes: der Big Blind ist der Umrechnungskurs, er darf nie 0 werden
   o.bb = Math.max(o.bb, 0.01);
@@ -778,6 +796,31 @@ function measCap(bb, seats){
   if(!e) return null;
   return { eur:e.eur, bb:e.eur/bb, hands:e.n, note:e.note };
 }
+
+/* ── Wie sich das Geld des Wals unter den Regs verteilt ─────
+   Gemessen im BO-PLO5-Export, 25/50, 5-/6-max: 54.009 Hände, 236 Spieler, davon 29 Regs
+   mit mindestens 2.000 Händen (Fische ausgeschlossen über inv > 13 bb/Hand oder VPIP > 68).
+
+   Der entscheidende Befund: die WINRATES der Regs lassen sich nicht auseinanderhalten.
+   Beobachtete SD 28,7 bb/100, allein aus Varianz zu erwarten 32,0 — nach Abzug bleibt
+   null. Bootstrap: Punktschätzer 2,6, 90-%-Band 0 bis 17 bb/100. Ein Benchmark aus
+   gemessenen Winrates wäre also erfunden.
+
+   Was sich messen lässt, ist das eingesetzte Geld je Hand: Mittel 7,39 bb, SD 1,47,
+   Variationskoeffizient 20 %, Spanne 4,42–10,61 — und es korreliert mit dem Ergebnis
+   (r = +0,40). Wer mehr Geld gegen den Fisch bewegt, holt mehr davon. FAC hält die
+   typischen inv-Verhältnisse für eine zufällig gezogene Gruppe dieser Größe aus der
+   echten Population (20.000 Ziehungen), absteigend sortiert. */
+const FAC = {
+  1:[1.00], 2:[1.11,0.89], 3:[1.17,0.99,0.83], 4:[1.21,1.05,0.94,0.80],
+  5:[1.24,1.09,0.99,0.90,0.77], 6:[1.27,1.13,1.03,0.95,0.87,0.75]
+};
+/* Erwartungswerte der Rangplätze einer Standardnormalverteilung; Summe = 0, damit ein
+   zusätzlicher Könnens-Aufschlag die Nullsumme am Tisch nicht kaputt macht. */
+const ZORD = {
+  1:[0], 2:[0.564,-0.564], 3:[0.846,0,-0.846], 4:[1.029,0.297,-0.297,-1.029],
+  5:[1.163,0.495,0,-0.495,-1.163], 6:[1.267,0.642,0.202,-0.202,-0.642,-1.267]
+};
 
 /* Leos Rake-Blatt als Zeilen, für die Tabelle in der App. */
 const SCHED_ROWS = [
@@ -1528,6 +1571,67 @@ $("schedBtn").addEventListener("click", function(){
   if(sc) S.cap = Math.round(sc.bb*10000)/10000;
   render();
 });
+$("skillSD").addEventListener("input", function(e){
+  const v = Number(e.target.value);
+  S.skillSD = Number.isFinite(v) ? Math.max(0, Math.min(60, v)) : 0;
+  render();
+});
+function drawRegs(sd){
+  const PL = seated();
+  const regs = PL.filter(function(q){ return q.reg; });
+  const fish = PL.filter(function(q){ return !q.reg; });
+  if(!regs.length) return { err:"No regs at the table — mark at least one seat as REG." };
+  if(!fish.length) return { err:"No fish at the table — mark the whale's seat as FISH." };
+  const T = -fish.reduce(function(a,q){ return a + q.gross; }, 0);   // was die Fische abgeben
+  if(Math.abs(T) < 0.005)
+    return { err:"Give the whale a winrate first — his loss is what the regs share." };
+  const n = regs.length;
+  /* Mittelpunkt je Reg: nach eingesetztem Geld, wenn es dasteht, sonst gleich. */
+  const haveInv = regs.every(function(q){ return q.inv > 0; });
+  const w  = haveInv ? regs.map(function(q){ return q.inv; }) : regs.map(function(){ return 1; });
+  const sw = w.reduce(function(a,b){ return a+b; }, 0) || 1;
+  /* Normalverteilte Ziehung (Box-Muller), danach exakt auf Mittelwert 0 zentriert —
+     so bleibt die Summe über den Tisch genau T und der Tisch eine Nullsumme. */
+  var z = [];
+  for(var i=0;i<n;i++){
+    var u = Math.random() || 1e-9, v = Math.random() || 1e-9;
+    z.push(Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v));
+  }
+  const zm = z.reduce(function(a,b){ return a+b; }, 0) / n;
+  z = z.map(function(x){ return x - zm; });
+  regs.forEach(function(q, i){
+    q.gross = Math.round((T * w[i]/sw + sd * z[i]) * 10) / 10;
+  });
+  /* Rundungsrest auf den größten Reg, damit die Bilanz auf die Kommastelle aufgeht. */
+  const got = regs.reduce(function(a,q){ return a + q.gross; }, 0);
+  var big = regs[0];
+  regs.forEach(function(q){ if(q.gross > big.gross) big = q; });
+  big.gross = Math.round((big.gross + (T - got)) * 10) / 10;
+  return { T:T, n:n, haveInv:haveInv,
+           lo:Math.min.apply(null, regs.map(function(q){ return q.gross; })),
+           hi:Math.max.apply(null, regs.map(function(q){ return q.gross; })) };
+}
+$("spreadBtn").addEventListener("click", function(){
+  const r = drawRegs(Math.max(0, Number(S.skillSD) || 0));
+  if(r.err){ spreadFlash(r.err, true); return; }
+  pickSig = ""; render();
+  spreadFlash(r.n+" regs share "+fx(r.T,1)+" bb/100 — drawn between "+fx(r.lo,1)+" and "+
+    fx(r.hi,1)+", centred on "+(r.haveInv ? "each reg's share of the money in play" : "an equal share")+
+    ". Sum is exact. Press again for another draw.");
+});
+$("spreadFlat").addEventListener("click", function(){
+  const r = drawRegs(0);
+  if(r.err){ spreadFlash(r.err, true); return; }
+  pickSig = ""; render();
+  spreadFlash(r.n+" regs share "+fx(r.T,1)+" bb/100 in equal parts"+
+    (r.haveInv ? ", weighted by the money each puts in" : "")+".");
+});
+function spreadFlash(msg, bad){
+  const n = $("spreadNote");
+  if(!n) return;
+  n.innerHTML = msg;
+  n.style.color = bad ? "var(--rake)" : "var(--reg)";
+}
 $("measBtn").addEventListener("click", function(){
   const ms = measCap(S.bb, S.seats);
   if(ms) S.cap = Math.round(ms.bb*10000)/10000;
@@ -1601,6 +1705,8 @@ function draw(){
 
   const gIn = $("gameTxt");
   if(gIn && document.activeElement!==gIn) gIn.value = S.game;
+  const sdIn = $("skillSD");
+  if(sdIn && document.activeElement!==sdIn) sdIn.value = fx(S.skillSD, 1);
 
   const stakes = fmtStake(S.sb)+"/"+fmtStake(S.bb);
   $("sub").textContent = S.game+" · "+stakes+" · "+
