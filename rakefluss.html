@@ -137,6 +137,86 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 .savebar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .savebar input{flex:1;min-width:130px;width:auto;text-align:left}
 .flash{font-family:var(--mono);font-size:10.5px;color:var(--reg);margin-top:8px;min-height:14px}
+
+/* ═══ V30 · Gestaltung ══════════════════════════════════════════════════ */
+
+/* Kopf */
+header{border-bottom:none;padding-bottom:0;margin-bottom:30px}
+.hdrow{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  border-bottom:2px solid var(--bone);padding-bottom:12px}
+.purpose{font-size:15px;line-height:1.55;color:var(--bone);max-width:60ch;margin:14px 0 0}
+.purpose b{color:var(--fish);font-weight:600}
+.purpose .q{color:var(--muted)}
+
+/* Abschnitte: Nummer + Titel + ein Satz, was er tut */
+section{margin-bottom:34px}
+.shead{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.snum{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted);
+  border:1px solid var(--line);padding:2px 6px;flex:none}
+.stitle{font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.01em;
+  text-transform:uppercase;color:var(--bone);line-height:1.1}
+.sdesc{font-size:13px;color:var(--muted);margin:0 0 11px;max-width:66ch;line-height:1.5}
+.sdesc b{color:var(--bone);font-weight:600}
+.lab{display:none}
+
+.panel{background:var(--surface);border:1px solid var(--line);padding:17px 16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.part{border-top:1px solid var(--line);margin-top:20px;padding-top:17px}
+.part>.sname:first-child{display:block;margin-bottom:9px}
+
+/* Knöpfe: primär vs. sekundär */
+.btn{transition:border-color .12s,color .12s,background .12s}
+.btn:hover{border-color:var(--muted);color:var(--bone)}
+.btn.pri{color:var(--ink);background:var(--bone);border-color:var(--bone);font-weight:600}
+.btn.pri:hover{background:#fff;border-color:#fff;color:var(--ink)}
+.btn.pri[disabled]{opacity:.32;cursor:not-allowed;background:var(--bone)}
+.btn.gd{border-color:var(--reg);color:var(--reg)}
+.btn.gd:hover{background:var(--reg);color:var(--ink);border-color:var(--reg)}
+
+/* Rake-Staffel als echte Tabelle */
+.sched{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;margin-top:4px}
+.sched th{font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
+  font-weight:500;padding:0 6px 7px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.sched th:first-child{text-align:left;padding-left:0}
+.sched td{padding:6px;text-align:right;border-bottom:1px solid rgba(42,49,61,.55);white-space:nowrap}
+.sched td:first-child{text-align:left;padding-left:0;color:var(--muted)}
+.sched .band{color:var(--muted);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding-top:12px;border-bottom:none}
+.sched tr.here td{background:rgba(217,164,65,.13);color:var(--bone)}
+.sched tr.here td:first-child{color:var(--fish);font-weight:600;box-shadow:inset 2px 0 0 var(--fish)}
+.sched td.tier{color:var(--muted)}
+.sched tr.here td.tier.on{color:var(--fish);font-weight:600}
+.sched .bbv{color:var(--muted);font-size:10px}
+.sched tr.here .bbv{color:var(--bone)}
+
+/* Karte für Messwerte / Abweichungen */
+.card{background:var(--surface2);border:1px solid var(--line);padding:12px 13px;margin-top:13px}
+.card .ct{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:7px}
+.card.flag{border-left:2px solid var(--fish)}
+.card.flag .ct{color:var(--fish)}
+.kvline{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12px;
+  padding:3px 0}
+.kvline span:last-child{color:var(--bone)}
+
+/* Import */
+.dropzone{position:relative}
+.dropzone textarea{min-height:112px}
+.pv{border:1px solid var(--reg);background:rgba(79,163,165,.07);padding:12px 13px;margin-top:11px}
+.pv .pvt{font-family:var(--cond);font-weight:700;font-size:16px;color:var(--bone);margin-bottom:8px}
+.pv .pvl{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.75}
+.pv .pvl b{color:var(--bone);font-weight:600}
+.pv.bad{border-color:var(--rake);background:rgba(201,53,74,.08)}
+.blocklist{display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.blockbtn{text-align:left;background:var(--surface2);border:1px solid var(--line);color:var(--bone);
+  font-family:var(--mono);font-size:11.5px;padding:9px 11px;cursor:pointer;border-radius:0;
+  display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.blockbtn:hover{border-color:var(--fish)}
+.blockbtn .bmeta{color:var(--muted);font-size:10px;white-space:nowrap}
+.loaded{font-family:var(--mono);font-size:10.5px;color:var(--reg);border:1px solid var(--line);
+  border-left:2px solid var(--reg);padding:7px 10px;margin-top:10px;line-height:1.6}
+.loaded b{color:var(--bone)}
+
 </style>
 </head>
 <body>
@@ -145,15 +225,25 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
   padding:12px;margin-bottom:16px;font-family:var(--mono);font-size:12px;white-space:pre-wrap"></div>
 
 <header>
-  <h1>Rakefluss</h1>
-  <div class="sub" id="sub">PLO5</div>
-  <div><span class="ver" id="verBadge">V–</span></div>
+  <div class="hdrow">
+    <div>
+      <h1>Rakefluss</h1>
+      <div class="sub" id="sub">PLO5</div>
+    </div>
+    <span class="ver" id="verBadge">V–</span>
+  </div>
+  <p class="purpose"><span class="q">One question:</span> if I change the rake structure,
+    <b>who pays how much, and what is left for the room?</b>
+    Put a real table in — the players, the money each puts in per hand — then move the rake
+    percentage and the cap and watch every number move with them.</p>
   <div class="srcline" id="srcLine"></div>
+  <div class="loaded" id="loadedLine" style="display:none"></div>
 </header>
 
 <!-- TISCH · alles, was einen Tisch definiert, an einer Stelle -->
 <section>
-  <span class="lab">Table</span>
+  <div class="shead"><span class="snum">01</span><span class="stitle">Table</span></div>
+  <p class="sdesc">Stakes, seats, and which real players are sitting there. Everything below is computed for this one table.</p>
   <div class="panel">
 
     <span class="sname">Stakes and game</span>
@@ -192,30 +282,29 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
     <div class="part">
       <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">
-        <span class="sname">Import data · computed from hand histories</span>
+        <span class="sname" style="margin:0">Load real players from hand histories</span>
         <button class="btn" id="ioToggle">open</button>
       </div>
       <div id="ioPanel" style="display:none;margin-top:12px">
-        <div class="field" style="margin-bottom:12px">
-          <label for="srcTxt">Source / note</label>
-          <input type="text" id="srcTxt" class="nm" style="width:100%;max-width:none"
-            placeholder="e.g. 25/50 PLO5, Aug 17–23, 36,863 hands">
-        </div>
-        <textarea id="ioBox" rows="4" placeholder="paste a JSON block here, then tap Import"></textarea>
+        <p class="note" style="margin-top:0">A block is a piece of JSON computed from real hand
+          histories. It fills in the seats, every player's money in per hand, their VPIP and their
+          measured effective rake rate, plus the saw-flop percentage and the median pot —
+          so you are testing a structure against a real table instead of an invented one.
+          <b>Your rake % and cap are never overwritten.</b> Paste one block or a whole file with
+          several; nothing is applied until you press Import.</p>
+        <textarea id="ioBox" rows="5"
+          placeholder="Paste a block here — or the whole file, with all its blocks and headings"></textarea>
         <div class="savebar">
-          <button class="btn" id="ioLoad">Import</button>
-          <button class="btn" id="ioDump">Copy current</button>
-          <button class="btn" id="ioClear">Clear field</button>
+          <button class="btn" id="ioExample">Load an example</button>
+          <button class="btn" id="ioDump">Copy this table as a block</button>
+          <button class="btn" id="ioClear">Clear</button>
         </div>
-        <div class="btns" style="margin-top:8px">
-          <button class="btn" id="ioRakeBtn"></button>
+        <div class="blocklist" id="ioPick" style="display:none"></div>
+        <div id="ioPrev"></div>
+        <div class="btns" style="margin-top:11px">
+          <button class="btn pri" id="ioLoad" disabled>Import</button>
         </div>
         <div class="flash" id="ioFlash"></div>
-        <p class="note" id="ioNote"><b>Rake % and cap are never touched on import.</b>
-          They are your setting, not a measurement — a block cannot overwrite them while the
-          button above reads "off". Everything else is overwritten, so save the current table
-          first if you need it. "Copy current" hands you the block for this setup, to move it
-          to another device or browser.</p>
       </div>
     </div>
 
@@ -224,7 +313,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- STRUKTUR -->
 <section>
-  <span class="lab">Rake structure</span>
+  <div class="shead"><span class="snum">02</span><span class="stitle">Rake structure</span></div>
+  <p class="sdesc">What the room charges per pot: the percentage and the cap. <b>This is the pair you change when you test a structure.</b> CoinPoker's official schedule is built in below.</p>
   <div class="panel">
     <div class="fields">
       <div class="field"><label for="pct">Rake %</label><input type="text" inputmode="decimal" id="pct"></div>
@@ -237,20 +327,36 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
       <span class="big" id="r100">–</span>
       <span class="unit" id="r100note"></span>
     </div>
+    <div class="part">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <span class="sname" style="margin:0">What CoinPoker actually charges</span>
+        <button class="btn" id="schedToggle">show full sheet</button>
+      </div>
+      <div class="card" id="schedNow" style="margin-top:10px"></div>
+      <div class="btns" id="schedWrap" style="margin-top:11px;display:none">
+        <button class="btn gd" id="schedBtn"></button>
+        <button class="btn" id="measBtn" style="display:none"></button>
+      </div>
+      <p class="note" id="schedNote"></p>
+      <div id="schedPanel" style="display:none;margin-top:16px">
+        <div class="scroll"><table class="sched" id="schedTbl"></table></div>
+        <p class="note">Rate is <b>5 %</b> of the pot everywhere; the cap is what changes.
+          The highlighted row is your current stake, the highlighted column your table size.
+          Columns follow the number of players dealt into the hand.</p>
+      </div>
+    </div>
+
     <div class="btns" id="hintWrap" style="margin-top:14px;display:none">
       <button class="btn" id="hintBtn"></button>
     </div>
     <p class="note" id="hintNote"></p>
-    <div class="btns" id="schedWrap" style="margin-top:10px;display:none">
-      <button class="btn" id="schedBtn"></button>
-    </div>
-    <p class="note" id="schedNote"></p>
   </div>
 </section>
 
 <!-- SPIELER -->
 <section>
-  <span class="lab">Players · red dot = above the ceiling</span>
+  <div class="shead"><span class="snum">03</span><span class="stitle">Players</span></div>
+  <p class="sdesc">Who sits there and how much money each puts in per hand — that is what decides who pays the rake. A red dot marks a reg above the ceiling you set in 04.</p>
   <div class="scroll">
     <table>
       <thead><tr>
@@ -266,7 +372,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- OBERGRENZE -->
 <section>
-  <span class="lab">Reg ceiling · net after rake, before rakeback</span>
+  <div class="shead"><span class="snum">04</span><span class="stitle">Reg ceiling</span></div>
+  <p class="sdesc">The highest win rate you are willing to let a reg keep. Set it and the app tells you the cap that would get you there.</p>
   <div class="panel">
     <div class="fields one">
       <div class="field"><label for="ceiling">no reg above bb/100</label>
@@ -285,7 +392,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- REWARDS -->
 <section>
-  <span class="lab">Rewards</span>
+  <div class="shead"><span class="snum">05</span><span class="stitle">Rewards</span></div>
+  <p class="sdesc">Money the room hands back: rakeback by player type, plus a loss rebate for the fish.</p>
   <div class="panel">
     <div class="slide">
       <div class="srow"><span class="sname">Rakeback regs</span><span class="sval" id="rbRegV" style="color:var(--reg)">0%</span></div>
@@ -312,7 +420,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- REBATE IN GELD -->
 <section>
-  <span class="lab">Loss and rebate in money</span>
+  <div class="shead"><span class="snum">06</span><span class="stitle">Loss and rebate in money</span></div>
+  <p class="sdesc">The same rebate expressed in euros over a given number of hands, instead of in bb/100.</p>
   <div class="panel">
     <div class="fields one">
       <div class="field"><label for="rebH">Hands played</label>
@@ -324,7 +433,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- BONUS -->
 <section>
-  <span class="lab">Bonus · who gets one?</span>
+  <div class="shead"><span class="snum">07</span><span class="stitle">Bonus</span></div>
+  <p class="sdesc">Give a player a deposit bonus and set how the wagering requirement and the lock work.</p>
   <div class="panel">
     <div class="btns" id="bonusPick"></div>
 
@@ -350,7 +460,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- RÜCKWÄRTS -->
 <section>
-  <span class="lab">Solve backwards · set a target, derive the parameter</span>
+  <div class="shead"><span class="snum">08</span><span class="stitle">Solve backwards</span></div>
+  <p class="sdesc">Name the answer you want and let the app derive the input that produces it.</p>
   <div class="panel">
     <div class="btns" id="goalPick" style="margin-bottom:10px"></div>
     <div class="btns">
@@ -382,7 +493,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 <!-- ERGEBNIS -->
 <section>
   <div class="warn" id="staleHandsNote" style="display:none;margin-bottom:14px"></div>
-  <span class="lab">Result per bonus</span>
+  <div class="shead"><span class="snum">09</span><span class="stitle">Result</span></div>
+  <p class="sdesc">What the table produces: rake in, rewards and bonuses out, and what the room keeps.</p>
   <div id="bonusResults"></div>
   <div class="kpis six" style="margin-top:16px">
     <div class="kpi"><span class="kl">Session length</span>
@@ -404,7 +516,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- KURVE -->
 <section>
-  <span class="lab" id="curveLab">Your result over hands played</span>
+  <div class="shead"><span class="snum">10</span><span class="stitle">Curve</span></div>
+  <p class="sdesc"><span id="curveLab">Your result over hands played.</span> The dashed red line is the point where the bonus is cleared.</p>
   <div class="curve">
     <svg viewBox="0 0 600 155" width="100%" style="display:block" id="svg">
       <line x1="26" x2="574" y1="129" y2="129" stroke="#2A313D"></line>
@@ -426,7 +539,8 @@ textarea:focus{outline:2px solid var(--bone);outline-offset:1px}
 
 <!-- SONSTIGES -->
 <section>
-  <span class="lab">Whale depth</span>
+  <div class="shead"><span class="snum">11</span><span class="stitle">Whale depth</span></div>
+  <p class="sdesc">Stack depth and hands per hour — used for the session-length figures in 09.</p>
   <div class="panel">
     <div class="fields two">
       <div class="field"><label for="depth">Depth in bb</label><input type="text" inputmode="decimal" id="depth"></div>
@@ -459,8 +573,8 @@ window.addEventListener("error", function(e){
 /* ── Version ─────────────────────────────────────────────────
    Steigt mit jeder Änderung um 1. Steht an drei Stellen sichtbar:
    Tab-Titel, Schild unter der Kopfzeile, Fuß der Seite. Nur hier ändern. */
-const VERSION = 29;
-const VDATE   = "06.09.2026";
+const VERSION = 30;
+const VDATE   = "07.09.2026";
 
 /* Der Big Blind in Euro ist der Wechselkurs zwischen bb/100 und Geld.
    Kommt aus den Eingaben und wird in sanitize() und model() neu gesetzt. */
@@ -478,7 +592,7 @@ const DEFAULTS = {
   pct:5, cap:2.5, flop:70, median:14,
   rbReg:0, rbFish:0, rebate:0, rebBase:"net",
   wagerBase:"both", lockMode:"both",
-  ceiling:3, depth:250, hph:65, rebH:1000, pctHint:0, capHint:0, seats:6, sb:25, bb:50, src:"", game:"PLO5", dataSeats:0,
+  ceiling:3, depth:250, hph:65, rebH:1000, pctHint:0, capHint:0, seats:6, sb:25, bb:50, src:"", loadedAt:"", game:"PLO5", dataSeats:0,
   goalMode:"ferry", goalVal:-5000, goalWho:5
 };
 
@@ -533,6 +647,7 @@ function sanitize(o){
              hands: Math.max(toNum(q.hands, 1000), 1) };
   });
   o.src = typeof o.src === "string" ? o.src.slice(0,220) : "";
+  o.loadedAt = typeof o.loadedAt === "string" ? o.loadedAt.slice(0,24) : "";
   o.game = (typeof o.game === "string" && o.game.trim()) ? o.game.trim().slice(0,24) : d.game;
   // An wie vielen Plätzen die eingelesenen Daten gemessen wurden. 0 = keine Daten.
   o.dataSeats = Math.max(0, Math.min(6, Math.round(toNum(o.dataSeats, 0))));
@@ -625,6 +740,54 @@ function schedCap(bb, seats){
   if(!best) return null;
   return { eur:best[tier], bb:best[tier]/bb, tier:tierName, src:fmtStake(bb/2)+"/"+fmtStake(bb) };
 }
+
+/* ── Was wir wirklich gemessen haben ────────────────────────
+   Aus Handhistories, 07.09.2026. Schlüssel: Big Blind → Tischgröße.
+   Der Cap folgt in diesen Daten der TISCHGRÖSSE, nicht der Zahl der ausgeteilten
+   Spieler — an einem 4-max-Tisch zahlen auch vier Spieler den 2-Spieler-Cap.
+   Zwei belegte Abweichungen vom Blatt, beide unten als Text mit Handzahl. */
+const MEAS = {
+  50:   { 2:{eur:6.00,  n:30778, note:"Dedicated 2-max tables at 25/50 take €6.00, not the €5.00 on the sheet. Two players at a 5-/6-max table do pay €5.00 (12,260 hands)."},
+          3:{eur:12.00, n:4392,  note:""},
+          4:{eur:12.00, n:5366,  note:""},
+          5:{eur:20.00, n:11836, note:""},
+          6:{eur:20.00, n:1196,  note:""} },
+  100:  { 2:{eur:40.00, n:532,   note:"Dedicated 2-max tables take 0.40 bb, not the 0.50 bb the sheet gives for two players. Two players at a 5-max table do pay €50.00 (257 hands)."},
+          5:{eur:60.00, n:273,   note:""} },
+  200:  { 2:{eur:80.00, n:2062,  note:"Dedicated 2-max tables take 0.40 bb, not 0.50 bb."},
+          4:{eur:100.00,n:2607,  note:"4-max tables take 0.50 bb even with three or four players dealt — the sheet says 0.60 bb from three players up."},
+          5:{eur:120.00,n:209,   note:""} },
+  400:  { 2:{eur:160.00,n:516,   note:"Dedicated 2-max tables take 0.40 bb, not 0.50 bb."},
+          4:{eur:200.00,n:897,   note:"4-max tables take 0.50 bb even with three or four players dealt — the sheet says 0.60 bb."} },
+  2000: { 2:{eur:800.00,n:40,    note:"Dedicated 2-max tables take 0.40 bb. Small sample."} }
+};
+function measCap(bb, seats){
+  const row = MEAS[Math.round(bb)];
+  if(!row) return null;
+  const e = row[seats];
+  if(!e) return null;
+  return { eur:e.eur, bb:e.eur/bb, hands:e.n, note:e.note };
+}
+
+/* Leos Rake-Blatt als Zeilen, für die Tabelle in der App. */
+const SCHED_ROWS = [
+  {band:"Micro", label:"$0.01/$0.02", bb:0.02, caps:[0.05,0.12,0.20]},
+  {band:"Micro", label:"$0.02/$0.05", bb:0.05, caps:[0.13,0.30,0.50]},
+  {band:"Low",   label:"$0.05/$0.10", bb:0.10, caps:[0.25,0.60,1.00]},
+  {band:"Low",   label:"$0.10/$0.25", bb:0.25, caps:[0.50,1.20,2.00]},
+  {band:"Low",   label:"$0.25/$0.50", bb:0.50, caps:[1.00,2.40,4.00]},
+  {band:"Mid",   label:"$0.50/$1",    bb:1,    caps:[1.25,3.00,5.00]},
+  {band:"Mid",   label:"$1/$2",       bb:2,    caps:[1.50,3.60,6.00]},
+  {band:"Mid",   label:"$2/$5",       bb:5,    caps:[2.00,4.80,8.00]},
+  {band:"High",  label:"$5/$10",      bb:10,   caps:[2.50,6.00,10.00]},
+  {band:"High",  label:"$10/$20",     bb:20,   caps:[3.75,9.00,15.00]},
+  {band:"High",  label:"$25/$50",     bb:50,   caps:[5.00,12.00,20.00]},
+  {band:"VIP",   label:"$50/$100+",   bb:100,  caps:[0.50,0.60,0.60], inBB:true},
+  {band:"VIP",   label:"$100/$200",   bb:200,  caps:[0.50,0.60,0.60], inBB:true},
+  {band:"VIP",   label:"$200/$400",   bb:400,  caps:[0.50,0.60,0.60], inBB:true},
+  {band:"VIP",   label:"$500/$1000",  bb:1000, caps:[0.50,0.60,0.60], inBB:true},
+  {band:"VIP",   label:"$2,500/$5,000+", bb:5000, caps:[0.40,0.40,0.40], inBB:true}
+];
 
 function model(rebateRate){
   BB = Math.max(S.bb, 0.01);
@@ -766,6 +929,10 @@ const sbb = n => Number.isFinite(n) ? (n>=0?"+":"−")+Math.abs(n).toFixed(1) : 
 const kh  = n => !isFinite(n) ? "∞" : (n>=10000 ? (n/1000).toFixed(1)+"k" : Math.round(n).toLocaleString("en-US"));
 const parseNum = v => { const n = parseFloat(String(v).replace("−","-").replace(",",".")); return Number.isFinite(n)?n:0; };
 const fx = (n,d) => Number.isFinite(n) ? n.toFixed(d) : "–";
+/* V30-Helfer: HTML-sicher ausgeben und Tausenderpunkte. */
+function esc(t){ return String(t==null?"":t).replace(/[&<>"']/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function fmtInt(n){ n = Number(n)||0; return n.toLocaleString("en-US"); }
 /* Stakes lesbar: 0,25 bleibt 0,25 — 2000 wird nicht zu 2000,00 */
 const fmtStake = n => Number.isFinite(n)
   ? (Math.abs(n%1)<1e-9 ? n.toLocaleString("en-US")
@@ -1115,28 +1282,15 @@ $("ioToggle").addEventListener("click", function(){
   ioOpenSet(open);
 })();
 
-/* Rake % und Cap sind Leos Setzung, nicht aus Daten gemessen. Der Import lässt
-   sie deshalb in Ruhe — nur wenn dieser Schalter an ist, kommen sie mit.
-   Absichtlich keine Zustandsgröße: nichts, was ein Block umstellen könnte. */
-let ioTakeRake = false;
-function ioRakeLabel(){
-  const b = $("ioRakeBtn");
-  if(!b) return;
-  b.textContent = "Import rake % and cap too: "+(ioTakeRake?"on":"off");
-  b.classList.toggle("on", ioTakeRake);
-}
-$("ioRakeBtn").addEventListener("click", function(){
-  ioTakeRake = !ioTakeRake;
-  ioRakeLabel();
-  ioFlash(ioTakeRake
-    ? "Careful: the next block will now overwrite rake % and cap as well."
-    : "Rake % and cap are protected again.");
-});
-ioRakeLabel();
+/* Rake % und Cap sind Leos Setzung, nicht aus Daten gemessen. Ab V30 gibt es
+   keinen Schalter mehr, der das aufweichen könnte: der Import fasst beide nie an.
+   Wer die gemessenen Werte will, nimmt den Knopf im Abschnitt Rake structure. */
+const ioTakeRake = false;
 
-$("srcTxt").addEventListener("input", function(e){ S.src = e.target.value; render(); });
 $("gameTxt").addEventListener("input", function(e){ S.game = e.target.value; render(); });
-$("ioClear").addEventListener("click", function(){ $("ioBox").value = ""; ioFlash(""); });
+$("ioClear").addEventListener("click", function(){
+  $("ioBox").value = ""; ioFlash(""); ioScan();
+});
 $("ioDump").addEventListener("click", function(){
   const box = $("ioBox");
   box.value = JSON.stringify(S);
@@ -1148,6 +1302,7 @@ $("ioDump").addEventListener("click", function(){
     try { const pr = navigator.clipboard.writeText(box.value);
           if(pr && pr.catch) pr.catch(function(){}); } catch(e){}
   }
+  ioScan();
   ioFlash("The block is in the field and selected — copy it with Ctrl+C.");
 });
 /* Sucht in einem beliebigen Text alle vollständigen {...}-Objekte. Damit darf man
@@ -1203,79 +1358,153 @@ function prepPlayers(st){
   return o;
 }
 
-$("ioLoad").addEventListener("click", function(){
-  const raw = $("ioBox").value.trim();
-  if(!raw){ ioFlash("Paste a JSON block first.", true); return; }
-  var obj = null, extra = "";
-  try { const direct = JSON.parse(raw);
-        if(direct && typeof direct === "object" && !Array.isArray(direct)) obj = direct; } catch(e){}
-  const useful = function(o){
-    const st = (o && o.state && typeof o.state === "object") ? o.state : o;
-    return st && typeof st === "object" &&
-           Object.keys(DEFAULTS).some(function(k){ return st[k] !== undefined; });
-  };
-  // Sammelblock {scenarios:[…]} oder mehrere Objekte im Text: alle als Szenarien
-  // ablegen, das erste laden. So braucht man nur einmal einzufügen.
-  var list = [];
-  if(obj && Array.isArray(obj.scenarios)) list = obj.scenarios.filter(useful);
-  else if(obj && useful(obj)) list = [obj];
-  else list = jsonBlocks(raw).filter(useful);
-  if(!list.length){
-    ioFlash("No usable block found — the text holds no complete {…} with fields "+
-            "this app knows.", true); return;
+/* ── Vorschau vor dem Import ────────────────────────────────
+   V30: nichts wird angewendet, bevor dasteht, was sich ändert. Der Text im Feld
+   wird bei jeder Eingabe gescannt; gefundene Blöcke landen in ioBlocks, einer
+   davon ist ausgewählt. Erst "Import" schreibt. */
+let ioBlocks = [], ioSel = 0;
+
+function ioUseful(o){
+  const st = (o && o.state && typeof o.state === "object") ? o.state : o;
+  return st && typeof st === "object" &&
+         Object.keys(DEFAULTS).some(function(k){ return st[k] !== undefined; });
+}
+function ioSummary(o, i){
+  const st = (o && o.state && typeof o.state === "object") ? o.state : o;
+  const pls = Array.isArray(st.players)
+    ? st.players.filter(function(q){ return q && typeof q === "object" && String(q.name||"").trim(); })
+    : [];
+  var nm = (typeof o.name === "string" && o.name.trim()) ? o.name.trim()
+         : (typeof st.src === "string" && st.src.trim()) ? st.src.trim() : "Block "+(i+1);
+  return { obj:o, st:st, name:nm, seats:st.seats, bb:st.bb, sb:st.sb,
+           n:pls.length, names:pls.map(function(q){ return String(q.name); }),
+           hands:pls.reduce(function(a2,q){ return a2 + (Number(q.hands)||0); }, 0),
+           pct:st.pctHint, cap:st.capHint, capShare:st.capShare,
+           flop:st.flop, median:st.median };
+}
+function ioScan(){
+  const raw = ($("ioBox").value || "").trim();
+  ioBlocks = []; ioSel = 0;
+  if(raw){
+    var direct = null;
+    try { const d = JSON.parse(raw);
+          if(d && typeof d === "object" && !Array.isArray(d)) direct = d; } catch(e){}
+    var list = [];
+    if(direct && Array.isArray(direct.scenarios)) list = direct.scenarios.filter(ioUseful);
+    else if(direct && ioUseful(direct)) list = [direct];
+    else list = jsonBlocks(raw).filter(ioUseful);
+    ioBlocks = list.map(ioSummary);
   }
-  obj = list[0];
+  ioRenderPick();
+  ioRenderPrev();
+}
+function ioRenderPick(){
+  const w = $("ioPick");
+  if(!w) return;
+  if(ioBlocks.length < 2){ w.style.display = "none"; w.innerHTML = ""; return; }
+  w.style.display = "";
+  w.innerHTML = "";
+  ioBlocks.forEach(function(bk, i){
+    const btn = document.createElement("button");
+    btn.className = "blockbtn";
+    btn.style.borderColor = (i === ioSel) ? "var(--fish)" : "var(--line)";
+    btn.innerHTML = '<span>'+esc(bk.name)+'</span>'+
+      '<span class="bmeta">'+(bk.n||0)+' players · '+fmtInt(bk.hands||0)+' hands</span>';
+    btn.addEventListener("click", function(){ ioSel = i; ioRenderPick(); ioRenderPrev(); });
+    w.appendChild(btn);
+  });
+}
+function ioRenderPrev(){
+  const w = $("ioPrev"), go = $("ioLoad");
+  if(!w) return;
+  const raw = ($("ioBox").value || "").trim();
+  if(!raw){ w.innerHTML = ""; if(go) go.disabled = true; return; }
+  if(!ioBlocks.length){
+    w.innerHTML = '<div class="pv bad"><div class="pvt">Nothing usable in there</div>'+
+      '<div class="pvl">No complete <b>{…}</b> block with fields this app knows. '+
+      'If you pasted a whole file, keep it — the headings do no harm; the blocks just have to '+
+      'be complete. Try "Load an example" to see what one looks like.</div></div>';
+    if(go) go.disabled = true; return;
+  }
+  const bk = ioBlocks[Math.min(ioSel, ioBlocks.length-1)];
+  const now = seated().length;
+  const stake = (bk.sb !== undefined && bk.bb !== undefined)
+    ? fmtStake(Number(bk.sb))+"/"+fmtStake(Number(bk.bb)) : "stake unchanged";
+  var L = [];
+  L.push("<b>"+esc(stake)+"</b>, <b>"+(bk.seats!==undefined?bk.seats:"?")+" seats</b>, "+
+         "<b>"+bk.n+" players</b>"+(bk.hands?" from <b>"+fmtInt(bk.hands)+" hands</b>":""));
+  if(bk.names.length) L.push("Seats: "+esc(bk.names.slice(0,6).join(" · ")));
+  L.push("Replaces the "+now+" player"+(now===1?"":"s")+" on the table now.");
+  L.push("Rake stays at <b>"+fx(S.pct,2)+" %</b>, cap at <b>"+fx(S.cap,2)+" bb</b> — never overwritten.");
+  if(bk.pct || bk.cap){
+    var m = "Measured in those hands: <b>"+fx(Number(bk.pct)||0,2)+" %</b> and a cap of <b>"+
+            fx(Number(bk.cap)||0,2)+" bb</b>";
+    if(bk.capShare !== undefined) m += ", reached in <b>"+fx(Number(bk.capShare),0)+" %</b> of flopped hands";
+    m += ". Apply them in section 02 if you want them.";
+    L.push(m);
+  }
+  if(ioBlocks.length > 1)
+    L.push("The other "+(ioBlocks.length-1)+" block"+(ioBlocks.length===2?"":"s")+
+           " in this text are saved as tables you can switch to.");
+  w.innerHTML = '<div class="pv"><div class="pvt">'+esc(bk.name)+'</div>'+
+                '<div class="pvl">'+L.join("<br>")+'</div></div>';
+  if(go) go.disabled = false;
+}
+$("ioBox").addEventListener("input", ioScan);
+
+$("ioExample").addEventListener("click", function(){
+  $("ioBox").value = JSON.stringify({
+    src:"25/50 · 5 dealt at a 5-max table · 15,932 hands · measured",
+    sb:25, bb:50, seats:5, dataSeats:5, game:"PLO5",
+    flop:74.3, median:23.5, pctHint:5, capHint:0.4, capShare:95.6,
+    players:[
+      {name:"CrazyTraider",   hands:4666, vpip:34.0, inv:5.99,  eff:0.875, reg:true},
+      {name:"RicFlair",       hands:2971, vpip:35.8, inv:6.62,  eff:0.846, reg:true},
+      {name:"mrfunkyfresh",   hands:2654, vpip:27.5, inv:5.19,  eff:0.849, reg:true},
+      {name:"tony1993",       hands:2614, vpip:34.1, inv:6.08,  eff:0.914, reg:true},
+      {name:"TonyTheToenail", hands:2577, vpip:51.9, inv:10.13, eff:0.788, reg:false}
+    ]}, null, 1);
+  ioScan();
+  ioFlash("A real 25/50 table from the August export — press Import to load it.");
+});
+
+$("ioLoad").addEventListener("click", function(){
+  if(!ioBlocks.length){ ioFlash("Nothing to import — paste a block first.", true); return; }
+  const list = ioBlocks;
+  const pick = Math.min(ioSel, list.length-1);
+  var extra = "";
   if(list.length > 1){
     const all = scenAll();
     var saved = [];
-    list.forEach(function(o, i){
-      const st = (o.state && typeof o.state === "object") ? o.state : o;
-      const nm = (typeof o.name === "string" && o.name.trim()) ? o.name.trim()
-               : (typeof st.src === "string" && st.src ? st.src.split(" · ")[0] : "Block "+(i+1));
-      var cand = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)),
-        prepPlayers(st)));
-      if(!ioTakeRake){ cand.pct = S.pct; cand.cap = S.cap; }   // Struktur bleibt deine
+    list.forEach(function(bk){
+      var cand = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), prepPlayers(bk.st)));
+      cand.pct = S.pct; cand.cap = S.cap;          // Struktur bleibt deine
       cand.dataSeats = cand.seats;
-      if(!cand.src) cand.src = nm;
-      all[nm] = cand;
-      saved.push(nm);
+      if(!cand.src) cand.src = bk.name;
+      all[bk.name] = cand;
+      saved.push(bk.name);
     });
-    if(scenWrite(all)){
-      scenSig = ""; scenRefresh();
-      extra = " · "+saved.length+" tables created — the buttons under 'Saved tables' "+
-              "right above switch between them";
-    } else {
-      extra = " · could not save the tables (the browser is blocking storage)";
-    }
+    extra = scenWrite(all)
+      ? " · all "+saved.length+" blocks saved as tables — the buttons under 'Saved tables' switch between them"
+      : " · could not save the other blocks (the browser is blocking storage)";
+    if(scenWrite(all)){ scenSig = ""; scenRefresh(); }
   }
-  const name = typeof obj.name === "string" ? obj.name : "";
-  const state = (obj.state && typeof obj.state === "object") ? obj.state : obj;
+  const bk = list[pick];
+  const state = bk.st;
   const known = Object.keys(DEFAULTS);
   const used = known.filter(function(k){ return state[k] !== undefined; });
-  const unknown = Object.keys(state).filter(function(k){ return known.indexOf(k) < 0; });
   if(!used.length){ ioFlash("No known fields in that block.", true); return; }
   const keepRake = { pct:S.pct, cap:S.cap };
   S = sanitize(Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), prepPlayers(state)));
-  var rakeMsg = "";
-  if(!ioTakeRake){
-    S.pct = keepRake.pct; S.cap = keepRake.cap;
-    const hadRake = state.pct !== undefined || state.cap !== undefined;
-    rakeMsg = " · rake "+fx(S.pct,2)+" % / cap "+fx(S.cap,2)+" bb unchanged"+
-              (hadRake ? " (the block held other values, ignored)" : "");
-  } else {
-    rakeMsg = " · rake and cap taken from the block";
-  }
-  // Die Tischgröße, für die diese Messwerte gelten — Invested, Median-Pot und
-  // Flop-Anteil sind an einem Tisch dieser Größe entstanden.
+  S.pct = keepRake.pct; S.cap = keepRake.cap;
   S.dataSeats = S.seats;
-  if(name && !S.src) S.src = name;
+  if(!S.src) S.src = bk.name;
+  S.loadedAt = new Date().toISOString().slice(0,10);
   pickSig = ""; blockSig = "";
   buildRows();
   render();
-  if(name) $("scenName").value = name;
-  ioFlash("Imported: "+used.length+" fields, "+S.seats+" seats"+rakeMsg+extra+
-    (unknown.length ? " · ignored: "+unknown.join(", ") : "")+
-    (name ? " · name '"+name+"' is in the save field" : ""));
+  $("scenName").value = bk.name.slice(0,60);
+  ioFlash("Loaded "+esc(bk.name)+" — "+bk.n+" players, rake and cap untouched"+extra);
 });
 
 $("minCapBtn").addEventListener("click", ()=>{
@@ -1288,6 +1517,26 @@ $("schedBtn").addEventListener("click", function(){
   if(sc) S.cap = Math.round(sc.bb*10000)/10000;
   render();
 });
+$("measBtn").addEventListener("click", function(){
+  const ms = measCap(S.bb, S.seats);
+  if(ms) S.cap = Math.round(ms.bb*10000)/10000;
+  render();
+});
+/* Die ganze Staffel ein- und ausklappen; Zustand bleibt auf dem Gerät. */
+const SCHKEY = "rakefluss.schedOpen";
+function schedOpenSet(open){
+  const pan = $("schedPanel"), btn = $("schedToggle");
+  if(pan) pan.style.display = open ? "" : "none";
+  if(btn){ btn.textContent = open ? "hide full sheet" : "show full sheet";
+           btn.classList.toggle("on", open); }
+  try { localStorage.setItem(SCHKEY, open ? "1" : "0"); } catch(e){}
+}
+$("schedToggle").addEventListener("click", function(){
+  schedOpenSet($("schedPanel").style.display === "none");
+  render();
+});
+(function(){ var o=false; try{ o = localStorage.getItem(SCHKEY)==="1"; }catch(e){}
+  schedOpenSet(o); })();
 $("hintBtn").addEventListener("click", function(){
   if(S.pctHint > 0) S.pct = S.pctHint;
   if(S.capHint > 0) S.cap = S.capHint;
@@ -1317,9 +1566,18 @@ function draw(){
   const W = m.whale.name;
 
   const srcEl = $("srcLine");
-  if(srcEl) srcEl.textContent = S.src ? "Daten: "+S.src : "";
-  const srcIn = $("srcTxt");
-  if(srcIn && document.activeElement!==srcIn) srcIn.value = S.src;
+  if(srcEl) srcEl.textContent = "";
+  /* Herkunftszeile im Kopf: steht dauerhaft da, damit nach einer Woche klar ist,
+     welche Daten auf dem Tisch liegen. Wird mit dem Szenario gespeichert. */
+  (function(){
+    const L = $("loadedLine");
+    if(!L) return;
+    if(!S.src){ L.style.display = "none"; L.innerHTML = ""; return; }
+    L.style.display = "";
+    L.innerHTML = "<b>On the table:</b> "+esc(S.src)+
+      (S.loadedAt ? " · loaded "+esc(S.loadedAt) : "")+
+      (S.dataSeats ? " · measured at "+S.dataSeats+" seats" : "");
+  })();
 
   const gIn = $("gameTxt");
   if(gIn && document.activeElement!==gIn) gIn.value = S.game;
@@ -1483,34 +1741,85 @@ function draw(){
     if(el && document.activeElement!==el) el.value = fx(S.cap*BB, 2);
   })();
 
-  /* CoinPoker-Staffel als Angebot — wie der Messwert-Hinweis nie automatisch angewendet */
+  /* ── CoinPoker-Staffel: Karte, volle Tabelle, Messwerte ──────────────
+     Die Staffel steht ab V30 sichtbar in der App, nicht nur hinter einem Knopf.
+     Zusätzlich das, was wir in den Handhistories tatsächlich gemessen haben —
+     an zwei Stellen weicht die Realität vom Blatt ab. */
   (function(){
-    const w = $("schedWrap"), b = $("schedBtn"), n = $("schedNote");
-    if(!w || !b || !n) return;
+    const card = $("schedNow"), w = $("schedWrap"), b = $("schedBtn"),
+          mb = $("measBtn"), n = $("schedNote");
+    if(!card) return;
     const sc = schedCap(S.bb, S.seats);
-    if(!sc){
-      w.style.display = "none";
-      n.innerHTML = "No CoinPoker schedule entry for a "+fmtStake(S.bb)+" big blind — cap stays as entered.";
-      return;
+    const ms = measCap(S.bb, S.seats);
+    var H = '<div class="ct">At '+esc(fmtStake(S.sb)+"/"+fmtStake(S.bb))+
+            ', '+(S.seats===2?"heads-up":S.seats+"-max")+'</div>';
+    H += '<div class="kvline"><span>Your setting</span><span>'+fx(S.pct,2)+' % · cap '+
+         fx(S.cap,2)+' bb = €'+fx(S.cap*BB,2)+'</span></div>';
+    H += '<div class="kvline"><span>Official sheet</span><span>'+
+         (sc ? "5.00 % · cap €"+fx(sc.eur,2)+" = "+fx(sc.bb,2)+" bb" : "no entry for this stake")+
+         '</span></div>';
+    if(ms) H += '<div class="kvline"><span>Measured in hand histories</span><span>5.00 % · cap €'+
+         fx(ms.eur,2)+' = '+fx(ms.bb,2)+' bb</span></div>';
+    card.className = "card" + ((ms && sc && Math.abs(ms.bb-sc.bb) > 0.0005) ? " flag" : "");
+    card.innerHTML = H;
+
+    const agree = ms && sc && Math.abs(ms.bb - sc.bb) <= 0.0005;
+    var notes = [];
+    if(!sc) notes.push("The sheet has no row for a big blind of "+fmtStake(S.bb)+
+        " — the cap stays as you entered it.");
+    if(ms){
+      notes.push("Checked against <b>"+fmtInt(ms.hands)+" real hands</b>: "+
+        (agree ? "the tables charge exactly what the sheet says."
+               : "<b style='color:var(--fish)'>the tables do not charge what the sheet says.</b>"));
+      if(ms.note) notes.push(ms.note);
+    } else if(sc){
+      notes.push("No hand histories measured for this stake and table size yet — the sheet is all we have.");
     }
-    const same = Math.abs(sc.bb - S.cap) < 0.0005;
-    const txt = "€"+fx(sc.eur,2)+" = "+fx(sc.bb,2)+" bb";
-    const hu2550 = (Math.abs(S.bb-50) < 1e-9 && S.seats === 2)
-      ? " <b style='color:var(--rake)'>Measured at 25/50: dedicated 2-max tables take €6.00 "+
-        "(30,778 hands), not the €5.00 on the sheet. Two players at a 5-/6-max table pay €5.00 "+
-        "(12,260 hands). For a real heads-up table use 0.12 bb.</b>"
-      : "";
-    if(same){
-      w.style.display = "none";
-      n.innerHTML = "<b style='color:var(--reg)'>Cap matches the CoinPoker schedule</b> ("+sc.src+", "+
-        sc.tier+": "+txt+")."+hu2550;
-      return;
-    }
-    w.style.display = "";
-    b.textContent = "Set cap to "+txt+" ("+sc.tier+")";
-    n.innerHTML = "CoinPoker schedule for "+sc.src+", "+sc.tier+": <b>"+txt+"</b>. Entered is "+
-      fx(S.cap,2)+" bb = €"+fx(S.cap*BB,2)+". The cap follows the number of players dealt in — "+
-      "2, 3–4, 5 and more each have their own."+hu2550;
+    if(sc && Math.abs(sc.bb - S.cap) > 0.0005)
+      notes.push("Your cap is <b>"+fx(S.cap,2)+" bb = €"+fx(S.cap*BB,2)+"</b>, "+
+        (S.cap > sc.bb ? "above" : "below")+" "+(ms ? "both" : "it")+".");
+    else if(sc)
+      notes.push("<b style='color:var(--reg)'>Your cap matches the sheet.</b>");
+    n.innerHTML = notes.join(" ");
+
+    var show = false;
+    if(sc && Math.abs(sc.bb - S.cap) > 0.0005){
+      b.style.display = ""; show = true;
+      b.textContent = agree ? "Set cap to "+fx(sc.bb,2)+" bb (sheet and measured agree)"
+                            : "Use the sheet: "+fx(sc.bb,2)+" bb";
+    } else { b.style.display = "none"; }
+    if(ms && !agree && Math.abs(ms.bb - S.cap) > 0.0005){
+      mb.style.display = ""; show = true;
+      mb.textContent = "Use what is actually charged: "+fx(ms.bb,2)+" bb";
+    } else { mb.style.display = "none"; }
+    w.style.display = show ? "" : "none";
+  })();
+
+  /* Die ganze Staffel als Tabelle. Aktuelle Zeile und Spalte hervorgehoben. */
+  (function(){
+    const t = $("schedTbl");
+    if(!t) return;
+    const tier = S.seats<=2 ? 0 : (S.seats<=4 ? 1 : 2);
+    var H = "<thead><tr><th>Blinds</th><th>2 players</th><th>3–4 players</th>"+
+            "<th>5+ players</th></tr></thead><tbody>";
+    var band = "";
+    SCHED_ROWS.forEach(function(r){
+      if(r.band !== band){
+        band = r.band;
+        H += '<tr><td class="band" colspan="4">'+esc(band)+'</td></tr>';
+      }
+      const here = Math.abs(r.bb - S.bb) < 1e-9;
+      H += '<tr class="'+(here?"here":"")+'"><td>'+esc(r.label)+'</td>';
+      r.caps.forEach(function(c, i){
+        const inBB = r.inBB ? c : c / r.bb;
+        const eur  = r.inBB ? c * r.bb : c;
+        H += '<td class="tier'+(here && i===tier ? " on":"")+'">'+
+             (r.inBB ? fx(inBB,2)+" bb" : "$"+fx(eur,2)+' <span class="bbv">'+fx(inBB,2)+" bb</span>")+
+             '</td>';
+      });
+      H += "</tr>";
+    });
+    t.innerHTML = H + "</tbody>";
   })();
 
   /* Obergrenze */
